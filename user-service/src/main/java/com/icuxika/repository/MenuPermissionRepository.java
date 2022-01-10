@@ -1,0 +1,12 @@
+package com.icuxika.repository;
+
+import com.icuxika.user.entity.MenuPermission;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.lang.NonNull;
+
+import java.util.Collection;
+import java.util.List;
+
+public interface MenuPermissionRepository extends JpaRepository<MenuPermission, Long> {
+    List<MenuPermission> findByPermissionIdIn(@NonNull Collection<Long> permissionIds);
+}

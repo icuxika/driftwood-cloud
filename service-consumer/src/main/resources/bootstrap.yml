@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: @artifactId@
+
+  profiles:
+    active: @profiles.active@
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yml
+        shared-configs:
+          - data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+            refresh: true
+          - data-id: resource-server.yml
+            refresh: true

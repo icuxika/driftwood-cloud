@@ -1,0 +1,54 @@
+server:
+  port: 8900
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: authorization-server
+          uri: lb://authorization-server
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+            - BasicAuth
+
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/admin/**
+          filters:
+            - StripPrefix=1
+
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/user/**
+          filters:
+            - StripPrefix=1
+
+        - id: nacos-config
+          uri: lb://nacos-config
+          predicates:
+            - Path=/config/**
+          filters:
+            - StripPrefix=1
+
+        - id: service-consumer
+          uri: lb://service-consumer
+          predicates:
+            - Path=/consumer/**
+          filters:
+            - StripPrefix=1
+
+    sentinel:
+      filter:
+        enabled: false
+      transport:
+        port: 8719
+        dashboard: localhost:8888
+      eager: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE

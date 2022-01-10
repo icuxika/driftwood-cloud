@@ -1,0 +1,17 @@
+server:
+  port: 8901
+
+spring:
+  sql:
+    init:
+      username: root
+      password: ALLURE_love921
+      schema-locations:
+        - classpath:sql/oauth2-authorization-schema.sql
+        - classpath:sql/oauth2-authorization-consent-schema.sql
+        - classpath:sql/oauth2-registered-client-schema.sql
+      mode: never
+
+logging:
+  level:
+    com.alibaba.nacos.client.*: ERROR
