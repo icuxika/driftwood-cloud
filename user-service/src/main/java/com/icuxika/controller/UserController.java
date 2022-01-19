@@ -50,6 +50,7 @@ public class UserController {
 
     /**
      * 获取当前登录用户的用户信息
+     *
      * @return 用户信息
      */
     @GetMapping("getUserInfo")

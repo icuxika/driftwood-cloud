@@ -4,7 +4,9 @@ import com.icuxika.common.BaseEntity;
 import com.icuxika.dict.MenuType;
 import com.icuxika.dict.SystemStatusType;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Table(name = "menu")
 @Entity

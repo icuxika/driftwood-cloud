@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.icuxika</groupId>
         <artifactId>driftwood-cloud</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
     <artifactId>authorization-server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
     <name>authorization-server</name>
     <description>authorization-server</description>
 
@@ -21,14 +20,12 @@
         <dependency>
             <groupId>com.icuxika</groupId>
             <artifactId>framework-security</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.icuxika</groupId>
             <artifactId>framework-object</artifactId>
-            <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.icuxika</groupId>
+    <artifactId>framework-dependencies</artifactId>
+    <packaging>pom</packaging>
+    <version>${driftwood.project.version}</version>
+
+    <properties>
+        <driftwood.project.version>0.0.1</driftwood.project.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>nacos-config</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>service-consumer</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>gateway</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>authorization-server</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>user-service</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>admin-service</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>framework-security</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>framework-object</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
