@@ -4,6 +4,7 @@ import com.icuxika.config.source.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.keygen.Base64StringKeyGenerator;
@@ -139,7 +140,11 @@ public class PhoneAuthenticationProvider implements AuthenticationProvider {
                 this.authorizationService.save(authorization);
                 return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken);
             } catch (Exception e) {
-                throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR), e);
+                OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR);
+                if (e instanceof BadCredentialsException) {
+                    error = new OAuth2Error(e.getMessage());
+                }
+                throw new OAuth2AuthenticationException(error, e);
             }
         }
     }

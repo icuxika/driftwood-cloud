@@ -1,44 +1,40 @@
 package com.icuxika.config.phone;
 
-import com.icuxika.common.ApiData;
-import com.icuxika.config.UserDetailsImpl;
-import com.icuxika.user.entity.User;
-import com.icuxika.user.feign.UserService;
-import org.springframework.beans.BeanUtils;
+import com.icuxika.exception.FeignFallbackException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.Arrays;
-import java.util.Collection;
-
+/**
+ * 类似于 {@link org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider}
+ * 用来支持根据手机号查询用户名
+ */
 public class PhoneUserDetailsAuthenticationProvider implements AuthenticationProvider {
 
-    private final UserService userService;
+    private static final Logger L = LoggerFactory.getLogger(PhoneUserDetailsAuthenticationProvider.class);
 
-    public PhoneUserDetailsAuthenticationProvider(UserService userService) {
-        this.userService = userService;
+    private final PhoneUserDetailsService phoneUserDetailsService;
+
+    public PhoneUserDetailsAuthenticationProvider(PhoneUserDetailsService phoneUserDetailsService) {
+        this.phoneUserDetailsService = phoneUserDetailsService;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String phone = (String) authentication.getPrincipal();
-        ApiData<User> userApiData = userService.findByPhone(phone);
-        if (!userApiData.isSuccess()) {
-            throw new RuntimeException();
+        String code = (String) authentication.getCredentials();
+        UserDetails userDetails;
+        try {
+            userDetails = phoneUserDetailsService.loadUserByPhone(phone, code);
+        } catch (UsernameNotFoundException | FeignFallbackException e) {
+            L.error("根据手机号[" + phone + "]查询用户信息失败");
+            throw new BadCredentialsException(e.getMessage());
         }
-        User user = userApiData.getData();
-        if (user == null) {
-            throw new BadCredentialsException("");
-        }
-        UserDetailsImpl userDetails = new UserDetailsImpl();
-        BeanUtils.copyProperties(user, userDetails);
-
-        Collection<? extends GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
-        userDetails.setAuthorities(authorities);
         PhoneVerificationAuthenticationToken result = new PhoneVerificationAuthenticationToken(userDetails, "123456", userDetails.getAuthorities());
         result.setDetails(authentication.getDetails());
         return result;

@@ -6,10 +6,7 @@ import com.icuxika.config.jackson2.UserDetailsImplMixin;
 import com.icuxika.config.jose.Jwks;
 import com.icuxika.config.password.PasswordAuthenticationConverter;
 import com.icuxika.config.password.PasswordAuthenticationProvider;
-import com.icuxika.config.phone.PhoneAuthenticationConverter;
-import com.icuxika.config.phone.PhoneAuthenticationProvider;
-import com.icuxika.config.phone.PhoneUserDetailsAuthenticationProvider;
-import com.icuxika.user.feign.UserService;
+import com.icuxika.config.phone.*;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -29,7 +26,6 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -58,7 +54,7 @@ import java.util.stream.Collectors;
 public class AuthorizationServerConfig {
 
     @Autowired
-    private UserService userService;
+    private PhoneUserDetailsService phoneUserDetailsService;
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -160,7 +156,7 @@ public class AuthorizationServerConfig {
         phoneAuthenticationProvider.setProviderSettings(providerSettings);
         http.authenticationProvider(phoneAuthenticationProvider);
 
-        PhoneUserDetailsAuthenticationProvider phoneUserDetailsAuthenticationProvider = new PhoneUserDetailsAuthenticationProvider(userService);
+        PhoneUserDetailsAuthenticationProvider phoneUserDetailsAuthenticationProvider = new PhoneUserDetailsAuthenticationProvider(phoneUserDetailsService);
         http.authenticationProvider(phoneUserDetailsAuthenticationProvider);
     }
 
@@ -176,33 +172,33 @@ public class AuthorizationServerConfig {
 
             if (token != null) {
                 if (token.isAuthenticated() && OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
-                    Authentication userPasswordAuthentication = null;
                     AuthorizationGrantType authorizationGrantType = context.getAuthorizationGrantType();
+
+                    Authentication userPasswordAuthentication = null;
                     if (authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
                         userPasswordAuthentication = context.getPrincipal();
                     }
-
                     if (authorizationGrantType == AuthorizationGrantType.PASSWORD) {
                         userPasswordAuthentication = context.get(PasswordAuthenticationProvider.USERNAME_PASSWORD_AUTHENTICATION_KEY);
                     }
-
-                    if (userPasswordAuthentication instanceof UsernamePasswordAuthenticationToken) {
-                        UserDetails userDetails = (UserDetails) userPasswordAuthentication.getPrincipal();
-                        Set<String> authorities = userDetails.getAuthorities().stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .collect(Collectors.toSet());
-                        JwtClaimsSet.Builder builder = context.getClaims();
-                        builder.claim(OAuth2ParameterNames.SCOPE, authorities);
+                    if (authorizationGrantType.equals(new AuthorizationGrantType(PhoneAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PHONE_VALUE))) {
+                        userPasswordAuthentication = context.get(PhoneAuthenticationProvider.PHONE_VERIFICATION_AUTHENTICATION_KEY);
                     }
 
-                    if (authorizationGrantType.equals(new AuthorizationGrantType(PhoneAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PHONE_VALUE))) {
-                        Authentication phoneVerificationAuthentication = context.get(PhoneAuthenticationProvider.PHONE_VERIFICATION_AUTHENTICATION_KEY);
-                        UserDetails userDetails = (UserDetails) phoneVerificationAuthentication.getPrincipal();
+                    UserDetailsImpl userDetails = null;
+                    if (userPasswordAuthentication instanceof UsernamePasswordAuthenticationToken) {
+                        userDetails = (UserDetailsImpl) userPasswordAuthentication.getPrincipal();
+                    }
+                    if (userPasswordAuthentication instanceof PhoneVerificationAuthenticationToken) {
+                        userDetails = (UserDetailsImpl) userPasswordAuthentication.getPrincipal();
+                    }
+                    if (userDetails != null) {
                         Set<String> authorities = userDetails.getAuthorities().stream()
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toSet());
                         JwtClaimsSet.Builder builder = context.getClaims();
                         builder.claim(OAuth2ParameterNames.SCOPE, authorities);
+                        builder.claim("userId", userDetails.getId());
                     }
                 }
             }

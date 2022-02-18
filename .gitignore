@@ -34,3 +34,6 @@ build/
 
 ### JPA ###
 .jpb
+
+### Log ###
+logs

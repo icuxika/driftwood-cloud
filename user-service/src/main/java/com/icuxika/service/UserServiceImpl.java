@@ -3,8 +3,7 @@ package com.icuxika.service;
 import com.icuxika.repository.*;
 import com.icuxika.user.entity.User;
 import com.icuxika.user.vo.UserVO;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.icuxika.util.SecurityUtil;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -40,9 +39,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO getUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(authentication);
-        return null;
+        Long userId = SecurityUtil.getUserId();
+        User user = userRepository.getById(userId);
+        UserVO userVO = new UserVO();
+        userVO.setUserId(userId);
+        userVO.setNickname(user.getNickname());
+        return userVO;
     }
 
 }

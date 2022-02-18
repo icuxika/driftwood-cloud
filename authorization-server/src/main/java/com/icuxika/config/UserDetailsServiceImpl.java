@@ -2,7 +2,7 @@ package com.icuxika.config;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.user.entity.User;
-import com.icuxika.user.feign.UserService;
+import com.icuxika.user.feign.UserClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,11 +19,11 @@ import java.util.Collection;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserService userService;
+    private UserClient userClient;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        ApiData<User> userApiData = userService.findByUsername(s);
+        ApiData<User> userApiData = userClient.findByUsername(s);
         if (!userApiData.isSuccess()) {
             throw new UsernameNotFoundException("系统异常");
         }

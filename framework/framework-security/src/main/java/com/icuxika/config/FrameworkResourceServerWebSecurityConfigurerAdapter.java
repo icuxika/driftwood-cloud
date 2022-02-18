@@ -19,9 +19,12 @@ public class FrameworkResourceServerWebSecurityConfigurerAdapter extends WebSecu
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .authorizeRequests(authorizeRequests ->
-                        authorizeRequests.requestMatchers(new AuthorizeRequestMatcher()).permitAll()
-                                .anyRequest().authenticated()
+                .csrf().ignoringAntMatchers("/druid/**")
+                .and()
+                .authorizeRequests(authorizeRequests -> authorizeRequests
+                        .antMatchers("/actuator/**", "/druid/**").permitAll()
+                        .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
                         .authenticationEntryPoint(new AuthenticationEntryPointImpl())

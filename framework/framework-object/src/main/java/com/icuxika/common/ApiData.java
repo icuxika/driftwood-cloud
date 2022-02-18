@@ -40,12 +40,12 @@ public class ApiData<T> {
         return new ApiData<>(HttpStatus.OK.value(), data, msg);
     }
 
-    public static ApiData<Void> error(String msg) {
-        return new ApiData<>(ApiStatusCode.FAILURE.getCode(), null, msg);
-    }
-
     public static <T> ApiData<T> error(T data, String msg) {
         return new ApiData<>(ApiStatusCode.FAILURE.getCode(), data, msg);
+    }
+
+    public static <T> ApiData<T> error(String msg) {
+        return new ApiData<>(ApiStatusCode.FAILURE.getCode(), null, msg);
     }
 
     public ApiData(Integer code, T data, String msg) {

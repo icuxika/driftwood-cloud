@@ -15,3 +15,24 @@ spring:
 logging:
   level:
     com.alibaba.nacos.client.*: ERROR
+    com.icuxika.user.feign.UserService: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+  sentinel:
+    enabled: true
+    default-rule: default
+    rules:
+      default:
+        - grade: 2
+          count: 1
+          timeWindow: 15
+          statIntervalMs: 1000
+          minRequestAmount: 1
