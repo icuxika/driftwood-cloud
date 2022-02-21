@@ -54,6 +54,11 @@
                 <artifactId>framework-object</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>framework-config</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>

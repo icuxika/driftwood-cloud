@@ -5,18 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.icuxika</groupId>
-        <artifactId>driftwood-cloud</artifactId>
+        <artifactId>framework</artifactId>
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>framework</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>framework-config</artifactId>
+    <packaging>jar</packaging>
 
-    <modules>
-        <module>framework-dependencies</module>
-        <module>framework-security</module>
-        <module>framework-object</module>
-        <module>framework-config</module>
-    </modules>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+    </dependencies>
 </project>
