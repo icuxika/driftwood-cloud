@@ -1,5 +1,7 @@
 package com.icuxika.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -9,6 +11,7 @@ import java.time.LocalDateTime;
 
 @Table(name = "oauth2_registered_client")
 @Entity
+@JsonIgnoreProperties(value = "hibernateLazyInitializer")
 public class Oauth2RegisteredClient {
     @Id
     @Column(name = "id", nullable = false, length = 100)
