@@ -11,6 +11,11 @@ spring:
         - classpath:sql/oauth2-authorization-consent-schema.sql
         - classpath:sql/oauth2-registered-client-schema.sql
       mode: never
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8899
 
 logging:
   level:

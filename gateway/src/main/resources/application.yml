@@ -46,9 +46,14 @@ spring:
         enabled: false
       transport:
         port: 8719
-        dashboard: localhost:8888
-      eager: true
+        dashboard: 127.0.0.1:8899
 
 logging:
   level:
     org.springframework.cloud.gateway: TRACE
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
