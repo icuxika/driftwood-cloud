@@ -27,12 +27,12 @@ feign:
   circuitbreaker:
     enabled: true
   sentinel:
-    enabled: true
+    enabled: false
     default-rule: default
     rules:
       default:
         - grade: 2
           count: 1
           timeWindow: 15
-          statIntervalMs: 1000
+          statIntervalMs: 3000
           minRequestAmount: 1
