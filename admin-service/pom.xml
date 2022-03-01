@@ -18,13 +18,13 @@
     <dependencies>
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-security</artifactId>
+            <artifactId>framework-object</artifactId>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-object</artifactId>
+            <artifactId>framework-security</artifactId>
             <scope>compile</scope>
         </dependency>
 

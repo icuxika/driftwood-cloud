@@ -14,4 +14,14 @@ public class SystemConstant {
      * Tree数据根结点父id
      */
     public static final Long TREE_ROOT_ID = 0L;
+
+    /**
+     * Feign请求标识请求头key
+     */
+    public static final String FEIGN_REQUEST_HEADER_KEY = "feign-request";
+
+    /**
+     * Feign请求标识请求头value
+     */
+    public static final String FEIGN_REQUEST_HEADER_VALUE = "verification";
 }

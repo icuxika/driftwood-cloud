@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "user-service", contextId = "userClient", fallback = UserClientFallback.class)
 public interface UserClient {
 
-    @GetMapping(value = "/user/findByUsername", headers = {"FEIGN-REQUEST=VERIFICATION"})
+    @GetMapping(value = "/user/findByUsername")
     ApiData<User> findByUsername(@RequestParam("username") String username);
 
-    @GetMapping(value = "/user/findByPhone", headers = {"FEIGN-REQUEST=VERIFICATION"})
+    @GetMapping(value = "/user/findByPhone")
     ApiData<User> findByPhone(@RequestParam("phone") String phone);
 
 }
