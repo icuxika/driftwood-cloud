@@ -1,7 +1,5 @@
 package com.icuxika.common;
 
-import org.springframework.http.HttpStatus;
-
 /**
  * 接口返回数据包装类
  * 正常请求接口一般返回此类型数据，由 code 代表具体返回内容
@@ -33,11 +31,11 @@ public class ApiData<T> {
     }
 
     public static <T> ApiData<T> ok(T data) {
-        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), data, HttpStatus.OK.getReasonPhrase());
+        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), data, ApiStatusCode.SUCCESS.getMsg());
     }
 
     public static <T> ApiData<T> ok(T data, String msg) {
-        return new ApiData<>(HttpStatus.OK.value(), data, msg);
+        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), data, msg);
     }
 
     public static <T> ApiData<T> error(T data, String msg) {

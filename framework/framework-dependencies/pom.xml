@@ -46,12 +46,17 @@
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
-                <artifactId>framework-security</artifactId>
+                <artifactId>framework-basic</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-object</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>framework-security</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
             <dependency>
@@ -70,6 +75,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>3.12.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>8.0.28</version>
             </dependency>
 
         </dependencies>

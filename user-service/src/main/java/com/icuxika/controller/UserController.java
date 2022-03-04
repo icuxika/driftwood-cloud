@@ -29,7 +29,7 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("findByUsername")
-    @PreAuthorize("fvs.isFeign(#request) || hasRole('USER')")
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('USER')")
     public ApiData<User> findByUsername(@RequestParam("username") String username, HttpServletRequest request) {
         User user = userService.findByUsername(username);
         return ApiData.ok(user);
@@ -42,7 +42,7 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("findByPhone")
-    @PreAuthorize("fvs.isFeign(#request) || hasRole('USER')")
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('USER')")
     public ApiData<User> findByPhone(@RequestParam("phone") String phone, HttpServletRequest request) {
         User user = userService.findByPhone(phone);
         return ApiData.ok(user);
