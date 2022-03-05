@@ -18,12 +18,13 @@
     </properties>
 
     <modules>
+        <module>framework</module>
+        <module>framework-service</module>
         <module>nacos-config</module>
         <module>service-consumer</module>
         <module>gateway</module>
         <module>authorization-server</module>
         <module>user-service</module>
-        <module>framework</module>
         <module>admin-service</module>
     </modules>
 
@@ -73,6 +74,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
 

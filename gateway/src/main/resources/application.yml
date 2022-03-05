@@ -59,9 +59,3 @@ spring:
 logging:
   level:
     org.springframework.cloud.gateway: TRACE
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
