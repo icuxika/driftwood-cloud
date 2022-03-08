@@ -26,25 +26,49 @@ public class ApiData<T> {
     public ApiData() {
     }
 
-    public static ApiData<Void> ok(String msg) {
-        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), null, msg);
-    }
-
     public static <T> ApiData<T> ok(T data) {
-        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), data, ApiStatusCode.SUCCESS.getMsg());
+        return ok(data, ApiStatusCode.SUCCESS.getMsg());
     }
 
     public static <T> ApiData<T> ok(T data, String msg) {
-        return new ApiData<>(ApiStatusCode.SUCCESS.getCode(), data, msg);
+        return ok(ApiStatusCode.SUCCESS.getCode(), data, msg);
+    }
+
+    public static <T> ApiData<T> okMsg(String msg) {
+        return error(ApiStatusCode.SUCCESS.getCode(), null, msg);
+    }
+
+    public static <T> ApiData<T> ok(Integer code, T data, String msg) {
+        return new ApiData<>(code, data, msg);
+    }
+
+    public static <T> ApiData<T> error(Integer code) {
+        return error(code, null, ApiStatusCode.FAILURE.getMsg());
+    }
+
+    public static <T> ApiData<T> error(ApiStatusCode apiStatusCode) {
+        return error(apiStatusCode.getCode(), null, apiStatusCode.getMsg());
+    }
+
+    public static <T> ApiData<T> error(Integer code, String msg) {
+        return error(code, null, msg);
     }
 
     public static <T> ApiData<T> error(T data, String msg) {
-        return new ApiData<>(ApiStatusCode.FAILURE.getCode(), data, msg);
+        return error(ApiStatusCode.FAILURE.getCode(), data, msg);
     }
 
-    public static <T> ApiData<T> error(String msg) {
-        return new ApiData<>(ApiStatusCode.FAILURE.getCode(), null, msg);
+    public static <T> ApiData<T> errorMsg(String msg) {
+        return error(ApiStatusCode.FAILURE.getCode(), null, msg);
     }
+
+    /**
+     * error情况的data一般只给全局异常返回使用
+     */
+    public static <T> ApiData<T> error(Integer code, T data, String msg) {
+        return new ApiData<>(code, data, msg);
+    }
+
 
     public ApiData(Integer code, T data, String msg) {
         this.code = code;
@@ -52,8 +76,12 @@ public class ApiData<T> {
         this.msg = msg;
     }
 
+    /**
+     * 业务状态码 [10000, 20000) 代表请求成功
+     */
     public Boolean isSuccess() {
-        return this.getCode().equals(ApiStatusCode.SUCCESS.getCode());
+        return this.getCode().compareTo(ApiStatusCode.SUCCESS.getCode()) >= 0
+                && this.getCode().compareTo(ApiStatusCode.FAILURE.getCode()) < 0;
     }
 
     public Integer getCode() {

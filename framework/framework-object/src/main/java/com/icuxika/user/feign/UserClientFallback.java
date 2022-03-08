@@ -14,12 +14,12 @@ public class UserClientFallback implements UserClient {
     @Override
     public ApiData<User> findByUsername(String username) {
         L.warn("[findByUsername]进入fallback");
-        return ApiData.error("[findByUsername]进入fallback");
+        return ApiData.errorMsg("[findByUsername]进入fallback");
     }
 
     @Override
     public ApiData<User> findByPhone(String phone) {
         L.warn("[findByPhone]进入fallback");
-        return ApiData.error("[findByPhone]进入fallback");
+        return ApiData.errorMsg("[findByPhone]进入fallback");
     }
 }

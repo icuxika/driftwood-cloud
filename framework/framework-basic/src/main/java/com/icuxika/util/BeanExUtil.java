@@ -1,6 +1,6 @@
 package com.icuxika.util;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashSet;
@@ -85,7 +85,7 @@ public class BeanExUtil {
                                 break;
                             case NOT_BLANK:
                                 String str = (String) value;
-                                if (StringUtils.isBlank(str)) {
+                                if (!StringUtils.hasText(str)) {
                                     ignorePropertySet.add(declaredField.getName());
                                     break;
                                 }

@@ -35,18 +35,18 @@ public class Oauth2RegisteredClientController {
     @PostMapping
     public ApiData<Void> save(@RequestBody Oauth2RegisteredClient oauth2RegisteredClient) {
         oauth2RegisteredClientService.save(oauth2RegisteredClient);
-        return ApiData.ok("新增成功");
+        return ApiData.okMsg("新增成功");
     }
 
     @PutMapping
     public ApiData<Void> update(@RequestBody Oauth2RegisteredClient oauth2RegisteredClient) {
         oauth2RegisteredClientService.update(oauth2RegisteredClient);
-        return ApiData.ok("更新成功");
+        return ApiData.okMsg("更新成功");
     }
 
     @DeleteMapping("/{id}")
     public ApiData<Void> deleteById(@PathVariable("id") String id) {
         oauth2RegisteredClientService.deleteById(id);
-        return ApiData.ok("删除成功");
+        return ApiData.okMsg("删除成功");
     }
 }
