@@ -19,10 +19,10 @@ public class FrameworkResourceServerWebSecurityConfigurerAdapter extends WebSecu
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().ignoringAntMatchers("/druid/**")
-                .and()
+                .csrf().disable()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/actuator/**", "/druid/**").permitAll()
+                        // flowable-ui -> modeler
+                        .antMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
                         .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
                         .anyRequest().authenticated()
                 )

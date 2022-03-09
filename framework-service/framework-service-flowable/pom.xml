@@ -20,12 +20,13 @@
     <dependencies>
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-security</artifactId>
+            <artifactId>framework-config</artifactId>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <groupId>com.icuxika</groupId>
+            <artifactId>framework-security</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -65,11 +66,11 @@
         <!--            <artifactId>flowable-spring-boot-starter-ui-idm</artifactId>-->
         <!--            <version>${flowable.version}</version>-->
         <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.flowable</groupId>-->
-        <!--            <artifactId>flowable-spring-boot-starter-ui-modeler</artifactId>-->
-        <!--            <version>${flowable.version}</version>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-ui-modeler</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

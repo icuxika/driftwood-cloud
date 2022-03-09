@@ -1,2 +1,20 @@
 server:
   port: 8906
+
+flowable:
+  idm:
+    app:
+      admin:
+        user-id: admin
+        password: test
+        first-name: driftwood
+        last-name: driftwood
+
+management:
+  health:
+    ldap:
+      enabled: false
+
+logging:
+  level:
+    org.flowable: INFO

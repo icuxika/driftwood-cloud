@@ -41,6 +41,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: framework-service-flowable
+          uri: lb://framework-service-flowable
+          predicates:
+            - Path=/flowable/**
+          filters:
+            - StripPrefix=1
+
     sentinel:
       filter:
         enabled: false
