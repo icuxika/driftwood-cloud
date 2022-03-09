@@ -7,7 +7,7 @@
     </appender>
 
     <appender name="SingleFILE" class="ch.qos.logback.core.FileAppender">
-        <file>target/application.log</file>
+        <file>logs/authorization-server/application.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
