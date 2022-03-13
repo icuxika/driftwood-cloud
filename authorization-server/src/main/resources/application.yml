@@ -20,7 +20,7 @@ spring:
 logging:
   level:
     com.alibaba.nacos.client.*: ERROR
-    com.icuxika.user.feign.UserService: DEBUG
+    com.icuxika.user.feign.UserClient: DEBUG
 
 feign:
   client:

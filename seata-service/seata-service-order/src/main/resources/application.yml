@@ -1,5 +1,5 @@
 server:
-  port: 8905
+  port: 8908
 
 seata:
   enabled: true

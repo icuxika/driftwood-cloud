@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.icuxika</groupId>
+        <artifactId>driftwood-cloud</artifactId>
+        <version>0.0.1</version>
+    </parent>
+
+    <artifactId>seata-service</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>seata-service-storage</module>
+        <module>seata-service-order</module>
+        <module>seata-service-account</module>
+    </modules>
+</project>

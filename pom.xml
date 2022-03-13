@@ -26,6 +26,7 @@
         <module>authorization-server</module>
         <module>user-service</module>
         <module>admin-service</module>
+        <module>seata-service</module>
     </modules>
 
     <dependencyManagement>
