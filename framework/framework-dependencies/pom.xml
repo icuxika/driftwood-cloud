@@ -10,6 +10,9 @@
 
     <properties>
         <driftwood.project.version>0.0.1</driftwood.project.version>
+        <!-- Seata 1.4.2版本下，MySQL8.22以上的版本会导致LocalDateTime无法转换异常 -->
+        <!-- spring-boot-dependencies有内定的MySQL版本设置，需在dependencyManagement中将此pom配置它之前，才能覆盖MySQL版本 -->
+        <mysql.version>8.0.22</mysql.version>
     </properties>
 
     <dependencyManagement>
@@ -80,7 +83,7 @@
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.28</version>
+                <version>${mysql.version}</version>
             </dependency>
 
         </dependencies>

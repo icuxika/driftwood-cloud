@@ -10,6 +10,26 @@ seata:
     grouplist:
       default: ${SEATA_HOST:127.0.0.1}:${SEATA_PORT:8091}
     disable-global-transaction: false
+  enable-auto-data-source-proxy: true
+  use-jdk-proxy: false
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      namespace: ""
+      group: SEATA_GROUP
+      username: "nacos"
+      password: "nacos"
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      namespace: ""
+      group: SEATA_GROUP
+      dataId: "seataServer.properties"
+      username: "nacos"
+      password: "nacos"
 
 logging:
   level:
