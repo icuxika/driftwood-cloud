@@ -3,10 +3,10 @@ server:
 
 seata:
   enabled: true
-  tx-service-group: seata-service
+  tx-service-group: seata_service_group
   service:
     vgroup-mapping:
-      seata-service: default
+      seata_service_group: default
     grouplist:
       default: ${SEATA_HOST:127.0.0.1}:${SEATA_PORT:8091}
     disable-global-transaction: false
@@ -19,8 +19,8 @@ seata:
       server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
       namespace: ""
       group: SEATA_GROUP
-      username: "nacos"
-      password: "nacos"
+      username: "icuxika"
+      password: "rbj549232512"
   config:
     type: nacos
     nacos:
@@ -28,8 +28,8 @@ seata:
       namespace: ""
       group: SEATA_GROUP
       dataId: "seataServer.properties"
-      username: "nacos"
-      password: "nacos"
+      username: "icuxika"
+      password: "rbj549232512"
 
 logging:
   level:

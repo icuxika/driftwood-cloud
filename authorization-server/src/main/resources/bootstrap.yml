@@ -15,6 +15,4 @@ spring:
         file-extension: yml
         shared-configs:
           - data-id: application-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-            refresh: true
-          - data-id: application-${spring.application.name}-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
-            refresh: true
+            refresh: false
