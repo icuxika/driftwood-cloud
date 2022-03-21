@@ -14,5 +14,6 @@
 
     <modules>
         <module>framework-service-flowable</module>
+        <module>framework-service-websocket</module>
     </modules>
 </project>

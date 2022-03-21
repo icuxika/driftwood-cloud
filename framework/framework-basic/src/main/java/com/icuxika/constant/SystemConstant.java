@@ -24,4 +24,9 @@ public class SystemConstant {
      * Feign请求标识请求头value
      */
     public static final String FEIGN_REQUEST_HEADER_VALUE = "verification";
+
+    /**
+     * WebSocket请求连接建立需要在传递token的请求参数key
+     */
+    public static final String WEBSOCKET_QUERY_PARAMS_KEY = "token";
 }

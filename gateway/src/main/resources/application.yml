@@ -4,6 +4,15 @@ server:
 spring:
   cloud:
     gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+        add-to-simple-url-handler-mapping: true
+
       routes:
         - id: authorization-server
           uri: lb://authorization-server
@@ -48,6 +57,14 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: framework-service-websocket
+          uri: lb:ws://framework-service-websocket
+          predicates:
+            - Path=/websocket/**
+          filters:
+            - StripPrefix=1
+            - WebSocket
+
     sentinel:
       filter:
         enabled: false
@@ -65,4 +82,4 @@ spring:
 
 logging:
   level:
-    org.springframework.cloud.gateway: TRACE
+    org.springframework.cloud.gateway: INFO
