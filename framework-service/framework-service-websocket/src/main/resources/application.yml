@@ -1,2 +1,26 @@
 server:
   port: 8910
+
+spring:
+  cloud:
+    stream:
+      rocketmq:
+        binder:
+          name-server: ${ROCKETMQ_HOST:127.0.0.1}:${ROCKETMQ_PORT:9876}
+        bindings:
+          websocketMessageConsumer-out-0:
+            producer:
+              group: default_producer_group
+          websocketMessageConsumer-in-0:
+            consumer:
+              messageModel: BROADCASTING
+      bindings:
+        websocketMessageConsumer-out-0:
+          destination: websocket_message
+        websocketMessageConsumer-in-0:
+          destination: websocket_message
+          group: default_consumer_group
+
+logging:
+  level:
+    com.icuxika.config.ManageableWebSocketSession: TRACE

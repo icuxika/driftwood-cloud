@@ -20,6 +20,8 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     private static final Logger L = LoggerFactory.getLogger(WebSocketHandshakeInterceptor.class);
 
+    public static final String ATTRIBUTE_HEADER_INFO = "websocket-session-info";
+
     /**
      * 表示当前客户端类型
      */
@@ -35,8 +37,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest httpServletRequest = ((ServletServerHttpRequest) request).getServletRequest();
             L.info("token: " + httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
-            String clientType = httpServletRequest.getParameter(QUERY_KEY_CLIENT_TYPE);
+            Integer clientType = Integer.valueOf(httpServletRequest.getParameter(QUERY_KEY_CLIENT_TYPE));
             L.info("Current User Id: " + SecurityUtil.getUserId());
+            attributes.put(ATTRIBUTE_HEADER_INFO, new WebSocketSessionInfo(SecurityUtil.getUserId(), clientType));
             return true;
         }
         return false;
@@ -44,6 +47,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
-
+        if (exception != null) {
+            exception.printStackTrace();
+            L.error(exception.getMessage());
+        }
     }
 }
