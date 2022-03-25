@@ -11,7 +11,7 @@ import java.util.Collection;
 public class PhoneVerificationAuthenticationToken extends AbstractAuthenticationToken {
 
     private final Object principal;
-    private final Object credentials;
+    private Object credentials;
 
     public PhoneVerificationAuthenticationToken(Object principal, Object credentials) {
         super(null);
@@ -35,5 +35,16 @@ public class PhoneVerificationAuthenticationToken extends AbstractAuthentication
     @Override
     public Object getPrincipal() {
         return this.principal;
+    }
+
+    @Override
+    public void setAuthenticated(boolean authenticated) {
+        super.setAuthenticated(false);
+    }
+
+    @Override
+    public void eraseCredentials() {
+        super.eraseCredentials();
+        this.credentials = null;
     }
 }

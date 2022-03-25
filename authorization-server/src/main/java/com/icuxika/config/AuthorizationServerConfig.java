@@ -2,6 +2,8 @@ package com.icuxika.config;
 
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.icuxika.config.jackson2.LongMixin;
+import com.icuxika.config.jackson2.PhoneVerificationAuthenticationTokenMixin;
 import com.icuxika.config.jackson2.UserDetailsImplMixin;
 import com.icuxika.config.jose.Jwks;
 import com.icuxika.config.password.PasswordAuthenticationConverter;
@@ -98,6 +100,8 @@ public class AuthorizationServerConfig {
         objectMapper.registerModule(new OAuth2AuthorizationServerJackson2Module());
         objectMapper.registerModule(new CoreJackson2Module());
         objectMapper.addMixIn(UserDetailsImpl.class, UserDetailsImplMixin.class);
+        objectMapper.addMixIn(Long.class, LongMixin.class);
+        objectMapper.addMixIn(PhoneVerificationAuthenticationToken.class, PhoneVerificationAuthenticationTokenMixin.class);
         rowMapper.setObjectMapper(objectMapper);
         service.setAuthorizationRowMapper(rowMapper);
         return service;

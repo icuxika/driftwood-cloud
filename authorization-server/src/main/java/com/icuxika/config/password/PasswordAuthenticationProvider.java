@@ -25,12 +25,10 @@ import org.springframework.security.oauth2.server.authorization.client.Registere
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.util.CollectionUtils;
 
+import java.security.Principal;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -69,78 +67,84 @@ public class PasswordAuthenticationProvider implements AuthenticationProvider {
         OAuth2ClientAuthenticationToken clientPrincipal = getAuthenticatedClientElseThrowInvalidClient(passwordAuthenticationToken);
         RegisteredClient registeredClient = clientPrincipal.getRegisteredClient();
 
-        if (!registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.PASSWORD)) {
+        if (registeredClient != null && registeredClient.getAuthorizationGrantTypes() != null && !registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.PASSWORD)) {
             throw new OAuth2AuthenticationException(OAuth2ErrorCodes.UNAUTHORIZED_CLIENT);
-        } else {
-            Map<String, Object> additionalParameters = passwordAuthenticationToken.getAdditionalParameters();
-            String username = (String) additionalParameters.get(OAuth2ParameterNames.USERNAME);
-            String password = (String) additionalParameters.get(OAuth2ParameterNames.PASSWORD);
+        }
 
-            try {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-                Authentication usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-                Set<String> authorizedScopes = registeredClient.getScopes();
+        Map<String, Object> additionalParameters = passwordAuthenticationToken.getAdditionalParameters();
+        String username = (String) additionalParameters.get(OAuth2ParameterNames.USERNAME);
+        String password = (String) additionalParameters.get(OAuth2ParameterNames.PASSWORD);
 
-                if (!CollectionUtils.isEmpty(passwordAuthenticationToken.getScopes())) {
-                    Set<String> unauthorizedScopes = passwordAuthenticationToken.getScopes().stream()
-                            .filter(requestScope -> !registeredClient.getScopes().contains(requestScope))
-                            .collect(Collectors.toSet());
+        try {
+            UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+            Authentication usernamePasswordAuthentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+            Set<String> authorizedScopes = registeredClient.getScopes();
 
-                    if (!CollectionUtils.isEmpty(unauthorizedScopes)) {
-                        throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_SCOPE);
-                    }
+            if (!CollectionUtils.isEmpty(passwordAuthenticationToken.getScopes())) {
+                Set<String> unauthorizedScopes = passwordAuthenticationToken.getScopes().stream()
+                        .filter(requestScope -> !registeredClient.getScopes().contains(requestScope))
+                        .collect(Collectors.toSet());
 
-                    authorizedScopes = new LinkedHashSet<>(passwordAuthenticationToken.getScopes());
+                if (!CollectionUtils.isEmpty(unauthorizedScopes)) {
+                    throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_SCOPE);
                 }
 
-                String issuer = this.providerSettings != null ? this.providerSettings.getIssuer() : null;
-                JoseHeader.Builder headersBuilder = JwtUtils.headers();
-                JwtClaimsSet.Builder claimsBuilder = JwtUtils.accessTokenClaims(
-                        registeredClient, issuer, clientPrincipal.getName(), authorizedScopes
-                );
-                JwtEncodingContext context = JwtEncodingContext.with(headersBuilder, claimsBuilder)
-                        .registeredClient(registeredClient)
-                        .principal(clientPrincipal)
-                        .authorizedScopes(authorizedScopes)
-                        .tokenType(OAuth2TokenType.ACCESS_TOKEN)
-                        .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                        .authorizationGrant(passwordAuthenticationToken)
-                        .put(USERNAME_PASSWORD_AUTHENTICATION_KEY, usernamePasswordAuthentication)
-                        .build();
-                this.jwtCustomizer.customize(context);
-                JoseHeader headers = context.getHeaders().build();
-                JwtClaimsSet claims = context.getClaims().build();
-                Jwt jwtAccessToken = this.jwtEncoder.encode(headers, claims);
-
-                OAuth2AccessToken accessToken = new OAuth2AccessToken(
-                        OAuth2AccessToken.TokenType.BEARER,
-                        jwtAccessToken.getTokenValue(),
-                        jwtAccessToken.getIssuedAt(),
-                        jwtAccessToken.getExpiresAt(),
-                        authorizedScopes
-                );
-
-                OAuth2RefreshToken refreshToken = null;
-                if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN)) {
-                    refreshToken = generateRefreshToken(registeredClient.getTokenSettings().getRefreshTokenTimeToLive());
-                }
-
-                OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
-                        .principalName(clientPrincipal.getName())
-                        .authorizationGrantType(AuthorizationGrantType.PASSWORD)
-                        .token(accessToken, metadata -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, jwtAccessToken.getTokenValue()))
-                        .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes);
-
-                if (refreshToken != null) {
-                    authorizationBuilder.refreshToken(refreshToken);
-                }
-
-                OAuth2Authorization authorization = authorizationBuilder.build();
-                this.authorizationService.save(authorization);
-                return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken);
-            } catch (Exception e) {
-                throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR), e);
+                authorizedScopes = new LinkedHashSet<>(passwordAuthenticationToken.getScopes());
             }
+
+            String issuer = this.providerSettings != null ? this.providerSettings.getIssuer() : null;
+
+            JoseHeader.Builder headersBuilder = JwtUtils.headers();
+            JwtClaimsSet.Builder claimsBuilder = JwtUtils.accessTokenClaims(
+                    registeredClient, issuer, clientPrincipal.getName(), authorizedScopes
+            );
+
+            JwtEncodingContext context = JwtEncodingContext.with(headersBuilder, claimsBuilder)
+                    .registeredClient(registeredClient)
+                    .principal(usernamePasswordAuthentication)
+                    .authorizedScopes(authorizedScopes)
+                    .tokenType(OAuth2TokenType.ACCESS_TOKEN)
+                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                    .authorizationGrant(passwordAuthenticationToken)
+                    .put(USERNAME_PASSWORD_AUTHENTICATION_KEY, usernamePasswordAuthentication)
+                    .build();
+
+            this.jwtCustomizer.customize(context);
+
+            JoseHeader headers = context.getHeaders().build();
+            JwtClaimsSet claims = context.getClaims().build();
+            Jwt jwtAccessToken = this.jwtEncoder.encode(headers, claims);
+
+            OAuth2AccessToken accessToken = new OAuth2AccessToken(
+                    OAuth2AccessToken.TokenType.BEARER,
+                    jwtAccessToken.getTokenValue(),
+                    jwtAccessToken.getIssuedAt(),
+                    jwtAccessToken.getExpiresAt(),
+                    authorizedScopes
+            );
+
+            OAuth2RefreshToken refreshToken = null;
+            if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN)) {
+                refreshToken = generateRefreshToken(registeredClient.getTokenSettings().getRefreshTokenTimeToLive());
+            }
+
+            OAuth2Authorization.Builder authorizationBuilder = OAuth2Authorization.withRegisteredClient(registeredClient)
+                    .principalName(usernamePasswordAuthentication.getName())
+                    .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                    .token(accessToken, metadata -> metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, jwtAccessToken.getClaims()))
+                    .attribute(OAuth2Authorization.AUTHORIZED_SCOPE_ATTRIBUTE_NAME, authorizedScopes)
+                    .attribute(Principal.class.getName(), usernamePasswordAuthentication);
+
+            if (refreshToken != null) {
+                authorizationBuilder.refreshToken(refreshToken);
+            }
+
+            OAuth2Authorization authorization = authorizationBuilder.build();
+            this.authorizationService.save(authorization);
+            Map<String, Object> tokenAdditionalParameters = new HashMap<>();
+            return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, tokenAdditionalParameters);
+        } catch (Exception e) {
+            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR), e);
         }
     }
 
