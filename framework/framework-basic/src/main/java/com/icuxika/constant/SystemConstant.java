@@ -29,4 +29,20 @@ public class SystemConstant {
      * WebSocket请求连接建立需要在传递token的请求参数key
      */
     public static final String WEBSOCKET_QUERY_PARAMS_KEY = "token";
+
+    /**
+     * 存储用户不同设备当前激活的AccessToken
+     */
+    public final static String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
+
+    /**
+     * 生成token时携带的信息：用户ID
+     */
+    public final static String OAUTH2_JWT_CLAIM_KEY_USER_ID = "userId";
+
+    /**
+     * 生成token时携带的信息：设备类型
+     */
+    public final static String OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE = "clientType";
+
 }

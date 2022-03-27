@@ -1,11 +1,10 @@
 package com.icuxika.util;
 
+import com.icuxika.constant.SystemConstant;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 public interface SecurityUtil {
-
-    String CLAIM_USER_ID = "userId";
 
     static Jwt getJwt() {
         return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -20,10 +19,10 @@ public interface SecurityUtil {
     }
 
     static Long getUserId(Jwt jwt) {
-        return getClaim(jwt, CLAIM_USER_ID, Long.class);
+        return getClaim(jwt, SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, Long.class);
     }
 
     static Long getUserId() {
-        return getClaim(getJwt(), CLAIM_USER_ID, Long.class);
+        return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, Long.class);
     }
 }

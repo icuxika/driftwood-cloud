@@ -8,7 +8,9 @@ import com.icuxika.config.jackson2.UserDetailsImplMixin;
 import com.icuxika.config.jose.Jwks;
 import com.icuxika.config.password.PasswordAuthenticationConverter;
 import com.icuxika.config.password.PasswordAuthenticationProvider;
+import com.icuxika.config.password.PasswordAuthenticationToken;
 import com.icuxika.config.phone.*;
+import com.icuxika.constant.SystemConstant;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
@@ -36,7 +38,9 @@ import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.*;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2RefreshTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
@@ -45,6 +49,7 @@ import org.springframework.security.oauth2.server.authorization.web.authenticati
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2ClientCredentialsAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2RefreshTokenAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
@@ -56,6 +61,9 @@ import java.util.stream.Collectors;
 public class AuthorizationServerConfig {
 
     @Autowired
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
+
+    @Autowired
     private PhoneUserDetailsService phoneUserDetailsService;
 
     @Bean
@@ -63,16 +71,18 @@ public class AuthorizationServerConfig {
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer<>();
         http.apply(authorizationServerConfigurer.tokenEndpoint(oAuth2TokenEndpointConfigurer ->
-                oAuth2TokenEndpointConfigurer.accessTokenRequestConverter(new DelegatingAuthenticationConverter(
-                                Arrays.asList(
-                                        new OAuth2AuthorizationCodeAuthenticationConverter(),
-                                        new OAuth2RefreshTokenAuthenticationConverter(),
-                                        new OAuth2ClientCredentialsAuthenticationConverter(),
-                                        new PasswordAuthenticationConverter(),
-                                        new PhoneAuthenticationConverter()
+                oAuth2TokenEndpointConfigurer
+                        .accessTokenRequestConverter(new DelegatingAuthenticationConverter(
+                                        Arrays.asList(
+                                                new OAuth2AuthorizationCodeAuthenticationConverter(),
+                                                new OAuth2RefreshTokenAuthenticationConverter(),
+                                                new OAuth2ClientCredentialsAuthenticationConverter(),
+                                                new PasswordAuthenticationConverter(),
+                                                new PhoneAuthenticationConverter()
+                                        )
                                 )
                         )
-                )));
+                        .accessTokenResponseHandler(authenticationSuccessHandler)));
 
         RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
         http
@@ -178,15 +188,28 @@ public class AuthorizationServerConfig {
                 if (token.isAuthenticated() && OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
                     AuthorizationGrantType authorizationGrantType = context.getAuthorizationGrantType();
 
-                    Authentication userPasswordAuthentication = null;
+                    Authentication userPasswordAuthentication = context.getPrincipal();
+
+                    Long clientType = 0L;
+
                     if (authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
-                        userPasswordAuthentication = context.getPrincipal();
+                        OAuth2AuthorizationCodeAuthenticationToken oAuth2AuthorizationCodeAuthenticationToken = context.getAuthorizationGrant();
+                        clientType = Long.parseLong((String) oAuth2AuthorizationCodeAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
                     }
+
+                    if (authorizationGrantType == AuthorizationGrantType.REFRESH_TOKEN) {
+                        OAuth2RefreshTokenAuthenticationToken oAuth2RefreshTokenAuthenticationToken = context.getAuthorizationGrant();
+                        clientType = Long.parseLong((String) oAuth2RefreshTokenAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
+                    }
+
                     if (authorizationGrantType == AuthorizationGrantType.PASSWORD) {
-                        userPasswordAuthentication = context.get(PasswordAuthenticationProvider.USERNAME_PASSWORD_AUTHENTICATION_KEY);
+                        PasswordAuthenticationToken passwordAuthenticationToken = context.getAuthorizationGrant();
+                        clientType = Long.parseLong((String) passwordAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
                     }
+
                     if (authorizationGrantType.equals(new AuthorizationGrantType(PhoneAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PHONE_VALUE))) {
-                        userPasswordAuthentication = context.get(PhoneAuthenticationProvider.PHONE_VERIFICATION_AUTHENTICATION_KEY);
+                        PhoneAuthenticationToken phoneAuthenticationToken = context.getAuthorizationGrant();
+                        clientType = Long.parseLong((String) phoneAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
                     }
 
                     UserDetailsImpl userDetails = null;
@@ -202,7 +225,8 @@ public class AuthorizationServerConfig {
                                 .collect(Collectors.toSet());
                         JwtClaimsSet.Builder builder = context.getClaims();
                         builder.claim(OAuth2ParameterNames.SCOPE, authorities);
-                        builder.claim("userId", userDetails.getId());
+                        builder.claim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, userDetails.getId());
+                        builder.claim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE, clientType);
                     }
                 }
             }
