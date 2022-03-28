@@ -79,7 +79,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             String token = accessToken.getTokenValue();
             JWTClaimsSet jwtClaimsSet = JWTParser.parse(token).getJWTClaimsSet();
             Long userId = (Long) jwtClaimsSet.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID);
-            Long clientType = (Long) jwtClaimsSet.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE);
+            Integer clientType = ((Long) jwtClaimsSet.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE)).intValue();
             String key = userId + ":" + clientType;
             @SuppressWarnings("unchecked")
             List<String> userTokenList = (List<String>) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_USER_SESSION, key);

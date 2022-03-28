@@ -1,18 +1,20 @@
 package com.icuxika.config;
 
-import com.icuxika.converter.PasswordJwtAuthenticationConverter;
+import com.icuxika.constant.SystemConstant;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
 public class FrameworkResourceServerWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
     JwtAuthenticationConverter jwtAuthenticationConverter() {
-        PasswordJwtAuthenticationConverter passwordJwtAuthenticationConverter = new PasswordJwtAuthenticationConverter();
-        passwordJwtAuthenticationConverter.setAuthorityPrefix("");
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(SystemConstant.OAUTH2_JWT_CLAIM_KEY_AUTHORITIES);
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(passwordJwtAuthenticationConverter);
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
 

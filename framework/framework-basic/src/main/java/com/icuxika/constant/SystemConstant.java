@@ -36,6 +36,11 @@ public class SystemConstant {
     public final static String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
 
     /**
+     * 生成token时携带的信息：用户权限
+     */
+    public final static String OAUTH2_JWT_CLAIM_KEY_AUTHORITIES = "authorities";
+
+    /**
      * 生成token时携带的信息：用户ID
      */
     public final static String OAUTH2_JWT_CLAIM_KEY_USER_ID = "userId";

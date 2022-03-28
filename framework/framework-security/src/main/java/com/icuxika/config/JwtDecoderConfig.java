@@ -61,7 +61,7 @@ public class JwtDecoderConfig {
      */
     private class SessionValidator implements OAuth2TokenValidator<Jwt> {
 
-        OAuth2Error error = new OAuth2Error("custom_code", "Custom error message", null);
+        OAuth2Error error = new OAuth2Error("login_expired", "Login expired", null);
 
         @Override
         public OAuth2TokenValidatorResult validate(Jwt token) {
@@ -74,7 +74,7 @@ public class JwtDecoderConfig {
 
             String currentToken = token.getTokenValue();
             Long userId = token.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID);
-            Long clientType = token.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE);
+            Integer clientType = ((Long) token.getClaim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE)).intValue();
             String key = userId + ":" + clientType;
             @SuppressWarnings("unchecked")
             List<String> activeTokenList = (List<String>) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_USER_SESSION, key);

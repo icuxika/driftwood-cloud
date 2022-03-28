@@ -10,6 +10,7 @@ import com.icuxika.config.password.PasswordAuthenticationConverter;
 import com.icuxika.config.password.PasswordAuthenticationProvider;
 import com.icuxika.config.password.PasswordAuthenticationToken;
 import com.icuxika.config.phone.*;
+import com.icuxika.constant.ClientType;
 import com.icuxika.constant.SystemConstant;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -34,7 +35,6 @@ import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
-import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.*;
@@ -54,6 +54,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -190,26 +191,26 @@ public class AuthorizationServerConfig {
 
                     Authentication userPasswordAuthentication = context.getPrincipal();
 
-                    Long clientType = 0L;
+                    Integer clientType = 0;
 
                     if (authorizationGrantType == AuthorizationGrantType.AUTHORIZATION_CODE) {
                         OAuth2AuthorizationCodeAuthenticationToken oAuth2AuthorizationCodeAuthenticationToken = context.getAuthorizationGrant();
-                        clientType = Long.parseLong((String) oAuth2AuthorizationCodeAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
+                        clientType = getClientType(oAuth2AuthorizationCodeAuthenticationToken.getAdditionalParameters());
                     }
 
                     if (authorizationGrantType == AuthorizationGrantType.REFRESH_TOKEN) {
                         OAuth2RefreshTokenAuthenticationToken oAuth2RefreshTokenAuthenticationToken = context.getAuthorizationGrant();
-                        clientType = Long.parseLong((String) oAuth2RefreshTokenAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
+                        clientType = getClientType(oAuth2RefreshTokenAuthenticationToken.getAdditionalParameters());
                     }
 
                     if (authorizationGrantType == AuthorizationGrantType.PASSWORD) {
                         PasswordAuthenticationToken passwordAuthenticationToken = context.getAuthorizationGrant();
-                        clientType = Long.parseLong((String) passwordAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
+                        clientType = getClientType(passwordAuthenticationToken.getAdditionalParameters());
                     }
 
                     if (authorizationGrantType.equals(new AuthorizationGrantType(PhoneAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PHONE_VALUE))) {
                         PhoneAuthenticationToken phoneAuthenticationToken = context.getAuthorizationGrant();
-                        clientType = Long.parseLong((String) phoneAuthenticationToken.getAdditionalParameters().getOrDefault("client_type", 0));
+                        clientType = getClientType(phoneAuthenticationToken.getAdditionalParameters());
                     }
 
                     UserDetailsImpl userDetails = null;
@@ -224,12 +225,22 @@ public class AuthorizationServerConfig {
                                 .map(GrantedAuthority::getAuthority)
                                 .collect(Collectors.toSet());
                         JwtClaimsSet.Builder builder = context.getClaims();
-                        builder.claim(OAuth2ParameterNames.SCOPE, authorities);
+                        builder.claim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_AUTHORITIES, authorities);
                         builder.claim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, userDetails.getId());
                         builder.claim(SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE, clientType);
                     }
                 }
             }
+        }
+
+        private Integer getClientType(Map<String, Object> additionalParameters) {
+            Integer clientType = ClientType.HTML;
+            if (additionalParameters != null && additionalParameters.containsKey("client_type")) {
+                Object value = additionalParameters.get("client_type");
+                // 此处value为String类型，放入claim中后又自动转换为Long类型
+                return Integer.valueOf(String.valueOf(value));
+            }
+            return clientType;
         }
     }
 
