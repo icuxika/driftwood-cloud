@@ -1,5 +1,6 @@
 package com.icuxika.user.vo;
 
+import com.icuxika.user.entity.Menu;
 import com.icuxika.user.entity.Permission;
 import com.icuxika.user.entity.Role;
 
@@ -26,6 +27,11 @@ public class UserVO {
      * 用户具有的权限集合
      */
     private List<Permission> permissionList;
+
+    /**
+     * 用户能够访问的菜单集合
+     */
+    private List<Menu> menuList;
 
     public Long getUserId() {
         return userId;
@@ -57,5 +63,13 @@ public class UserVO {
 
     public void setPermissionList(List<Permission> permissionList) {
         this.permissionList = permissionList;
+    }
+
+    public List<Menu> getMenuList() {
+        return menuList;
+    }
+
+    public void setMenuList(List<Menu> menuList) {
+        this.menuList = menuList;
     }
 }

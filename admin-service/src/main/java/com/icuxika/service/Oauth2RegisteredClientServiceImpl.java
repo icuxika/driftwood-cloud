@@ -46,7 +46,7 @@ public class Oauth2RegisteredClientServiceImpl implements Oauth2RegisteredClient
     public void update(Oauth2RegisteredClient oauth2RegisteredClient) {
         Oauth2RegisteredClient exist = oauth2RegisteredClientRepository.findById(oauth2RegisteredClient.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
         BeanUtils.copyProperties(oauth2RegisteredClient, exist, BeanExUtil.getIgnorePropertyArray(oauth2RegisteredClient));
-        oauth2RegisteredClientRepository.save(oauth2RegisteredClient);
+        oauth2RegisteredClientRepository.save(exist);
     }
 
     @Override
