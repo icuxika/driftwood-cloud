@@ -34,9 +34,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.jackson2.CoreJackson2Module;
 import org.springframework.security.jackson2.SecurityJackson2Modules;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
+import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.core.OAuth2TokenType;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.server.authorization.*;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
@@ -44,6 +44,8 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
+import org.springframework.security.oauth2.server.authorization.token.JwtGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AuthorizationCodeAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2ClientCredentialsAuthenticationConverter;
@@ -93,10 +95,8 @@ public class AuthorizationServerConfig {
                 .apply(authorizationServerConfigurer);
 
         SecurityFilterChain securityFilterChain = http.formLogin(Customizer.withDefaults()).build();
-        // 密码模式
-        addPasswordAuthenticationProvider(http);
-        // 短信模式
-        addPhoneAuthenticationProvider(http);
+        // 添加自定义验证模式
+        addCustomProviders(http);
         return securityFilterChain;
     }
 
@@ -140,41 +140,44 @@ public class AuthorizationServerConfig {
         return context -> new JwtCustomizerImpl().customize(context);
     }
 
+    private void addCustomProviders(HttpSecurity http) {
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
+
+        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = context -> new JwtCustomizerImpl().customize(context);
+        JwtGenerator jwtGenerator = http.getSharedObject(JwtGenerator.class);
+        jwtGenerator.setJwtCustomizer(jwtCustomizer);
+
+        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = http.getSharedObject(OAuth2TokenGenerator.class);
+
+        // 密码模式
+        addPasswordAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
+        // 短信模式
+        addPhoneAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
+    }
+
     /**
      * 密码模式
      */
-    private void addPasswordAuthenticationProvider(HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        ProviderSettings providerSettings = http.getSharedObject(ProviderSettings.class);
-        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
-        JwtEncoder jwtEncoder = http.getSharedObject(JwtEncoder.class);
-        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = context -> new JwtCustomizerImpl().customize(context);
-
-        PasswordAuthenticationProvider passwordAuthenticationProvider = new PasswordAuthenticationProvider(authenticationManager, authorizationService, jwtEncoder);
-        passwordAuthenticationProvider.setJwtCustomizer(jwtCustomizer);
-        passwordAuthenticationProvider.setProviderSettings(providerSettings);
+    private void addPasswordAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+        PasswordAuthenticationProvider passwordAuthenticationProvider = new PasswordAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
         http.authenticationProvider(passwordAuthenticationProvider);
     }
 
     /**
      * 短信模式
      */
-    private void addPhoneAuthenticationProvider(HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        ProviderSettings providerSettings = http.getSharedObject(ProviderSettings.class);
-        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
-        JwtEncoder jwtEncoder = http.getSharedObject(JwtEncoder.class);
-        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = context -> new JwtCustomizerImpl().customize(context);
-
-        PhoneAuthenticationProvider phoneAuthenticationProvider = new PhoneAuthenticationProvider(authenticationManager, authorizationService, jwtEncoder);
-        phoneAuthenticationProvider.setJwtCustomizer(jwtCustomizer);
-        phoneAuthenticationProvider.setProviderSettings(providerSettings);
+    private void addPhoneAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+        PhoneAuthenticationProvider phoneAuthenticationProvider = new PhoneAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
         http.authenticationProvider(phoneAuthenticationProvider);
 
         PhoneUserDetailsAuthenticationProvider phoneUserDetailsAuthenticationProvider = new PhoneUserDetailsAuthenticationProvider(phoneUserDetailsService);
         http.authenticationProvider(phoneUserDetailsAuthenticationProvider);
     }
 
+    /**
+     * 自定义token携带内容
+     */
     private static class JwtCustomizerImpl {
         private void customize(JwtEncodingContext context) {
             AbstractAuthenticationToken token = null;
