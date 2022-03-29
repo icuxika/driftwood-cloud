@@ -44,7 +44,6 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
-import org.springframework.security.oauth2.server.authorization.token.JwtGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.oauth2.server.authorization.web.authentication.DelegatingAuthenticationConverter;
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2AuthorizationCodeAuthenticationConverter;
@@ -135,51 +134,12 @@ public class AuthorizationServerConfig {
         return ProviderSettings.builder().issuer("http://driftwood-cloud:8900/auth").build();
     }
 
+    /**
+     * 自定义token携带信息
+     */
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> buildCustomizer() {
-        return context -> new JwtCustomizerImpl().customize(context);
-    }
-
-    private void addCustomProviders(HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
-        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
-
-        OAuth2TokenCustomizer<JwtEncodingContext> jwtCustomizer = context -> new JwtCustomizerImpl().customize(context);
-        JwtGenerator jwtGenerator = http.getSharedObject(JwtGenerator.class);
-        jwtGenerator.setJwtCustomizer(jwtCustomizer);
-
-        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = http.getSharedObject(OAuth2TokenGenerator.class);
-
-        // 密码模式
-        addPasswordAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
-        // 短信模式
-        addPhoneAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
-    }
-
-    /**
-     * 密码模式
-     */
-    private void addPasswordAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
-        PasswordAuthenticationProvider passwordAuthenticationProvider = new PasswordAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
-        http.authenticationProvider(passwordAuthenticationProvider);
-    }
-
-    /**
-     * 短信模式
-     */
-    private void addPhoneAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
-        PhoneAuthenticationProvider phoneAuthenticationProvider = new PhoneAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
-        http.authenticationProvider(phoneAuthenticationProvider);
-
-        PhoneUserDetailsAuthenticationProvider phoneUserDetailsAuthenticationProvider = new PhoneUserDetailsAuthenticationProvider(phoneUserDetailsService);
-        http.authenticationProvider(phoneUserDetailsAuthenticationProvider);
-    }
-
-    /**
-     * 自定义token携带内容
-     */
-    private static class JwtCustomizerImpl {
-        private void customize(JwtEncodingContext context) {
+        return context -> {
             AbstractAuthenticationToken token = null;
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -234,17 +194,53 @@ public class AuthorizationServerConfig {
                     }
                 }
             }
-        }
+        };
+    }
 
-        private Integer getClientType(Map<String, Object> additionalParameters) {
-            Integer clientType = ClientType.HTML;
-            if (additionalParameters != null && additionalParameters.containsKey("client_type")) {
-                Object value = additionalParameters.get("client_type");
-                // 此处value为String类型，放入claim中后又自动转换为Long类型
-                return Integer.valueOf(String.valueOf(value));
-            }
-            return clientType;
+    /**
+     * 添加自定义认证方式
+     */
+    private void addCustomProviders(HttpSecurity http) {
+        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        OAuth2AuthorizationService authorizationService = http.getSharedObject(OAuth2AuthorizationService.class);
+        @SuppressWarnings("unchecked")
+        OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator = http.getSharedObject(OAuth2TokenGenerator.class);
+        // 密码模式
+        addPasswordAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
+        // 短信模式
+        addPhoneAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
+    }
+
+    /**
+     * 密码模式
+     */
+    private void addPasswordAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+        PasswordAuthenticationProvider passwordAuthenticationProvider = new PasswordAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
+        http.authenticationProvider(passwordAuthenticationProvider);
+    }
+
+    /**
+     * 短信模式
+     */
+    private void addPhoneAuthenticationProvider(HttpSecurity http, AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
+        PhoneAuthenticationProvider phoneAuthenticationProvider = new PhoneAuthenticationProvider(authenticationManager, authorizationService, tokenGenerator);
+        http.authenticationProvider(phoneAuthenticationProvider);
+
+        PhoneUserDetailsAuthenticationProvider phoneUserDetailsAuthenticationProvider = new PhoneUserDetailsAuthenticationProvider(phoneUserDetailsService);
+        http.authenticationProvider(phoneUserDetailsAuthenticationProvider);
+    }
+
+    /**
+     * 判断请求中是否携带了设备类型信息，没有的话，默认为{@link ClientType#HTML}
+     */
+    private Integer getClientType(Map<String, Object> additionalParameters) {
+        Integer clientType = ClientType.HTML;
+        if (additionalParameters != null && additionalParameters.containsKey("client_type")) {
+            Object value = additionalParameters.get("client_type");
+            // 此处value为String类型，放入claim中后又自动转换为Long类型
+            return Integer.valueOf(String.valueOf(value));
         }
+        return clientType;
     }
 
 }
