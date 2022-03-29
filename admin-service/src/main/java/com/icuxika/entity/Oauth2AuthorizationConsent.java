@@ -5,8 +5,8 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Table(name = "oauth2_authorization_consent")
 @Entity
+@Table(name = "oauth2_authorization_consent")
 public class Oauth2AuthorizationConsent {
     @EmbeddedId
     private Oauth2AuthorizationConsentId id;
@@ -28,13 +28,5 @@ public class Oauth2AuthorizationConsent {
 
     public void setId(Oauth2AuthorizationConsentId id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Oauth2AuthorizationConsent{" +
-                "id=" + id +
-                ", authorities='" + authorities + '\'' +
-                '}';
     }
 }

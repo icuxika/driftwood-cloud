@@ -5,10 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
-@Table(name = "oauth2_authorization")
 @Entity
+@Table(name = "oauth2_authorization")
 public class Oauth2Authorization {
     @Id
     @Column(name = "id", nullable = false, length = 100)
@@ -23,8 +22,8 @@ public class Oauth2Authorization {
     @Column(name = "authorization_grant_type", nullable = false, length = 100)
     private String authorizationGrantType;
 
-    @Column(name = "attributes", length = 4000)
-    private String attributes;
+    @Column(name = "attributes")
+    private byte[] attributes;
 
     @Column(name = "state", length = 500)
     private String state;
@@ -38,8 +37,8 @@ public class Oauth2Authorization {
     @Column(name = "authorization_code_expires_at")
     private LocalDateTime authorizationCodeExpiresAt;
 
-    @Column(name = "authorization_code_metadata", length = 2000)
-    private String authorizationCodeMetadata;
+    @Column(name = "authorization_code_metadata")
+    private byte[] authorizationCodeMetadata;
 
     @Column(name = "access_token_value")
     private byte[] accessTokenValue;
@@ -50,8 +49,8 @@ public class Oauth2Authorization {
     @Column(name = "access_token_expires_at")
     private LocalDateTime accessTokenExpiresAt;
 
-    @Column(name = "access_token_metadata", length = 2000)
-    private String accessTokenMetadata;
+    @Column(name = "access_token_metadata")
+    private byte[] accessTokenMetadata;
 
     @Column(name = "access_token_type", length = 100)
     private String accessTokenType;
@@ -68,8 +67,8 @@ public class Oauth2Authorization {
     @Column(name = "oidc_id_token_expires_at")
     private LocalDateTime oidcIdTokenExpiresAt;
 
-    @Column(name = "oidc_id_token_metadata", length = 2000)
-    private String oidcIdTokenMetadata;
+    @Column(name = "oidc_id_token_metadata")
+    private byte[] oidcIdTokenMetadata;
 
     @Column(name = "refresh_token_value")
     private byte[] refreshTokenValue;
@@ -80,14 +79,14 @@ public class Oauth2Authorization {
     @Column(name = "refresh_token_expires_at")
     private LocalDateTime refreshTokenExpiresAt;
 
-    @Column(name = "refresh_token_metadata", length = 2000)
-    private String refreshTokenMetadata;
+    @Column(name = "refresh_token_metadata")
+    private byte[] refreshTokenMetadata;
 
-    public String getRefreshTokenMetadata() {
+    public byte[] getRefreshTokenMetadata() {
         return refreshTokenMetadata;
     }
 
-    public void setRefreshTokenMetadata(String refreshTokenMetadata) {
+    public void setRefreshTokenMetadata(byte[] refreshTokenMetadata) {
         this.refreshTokenMetadata = refreshTokenMetadata;
     }
 
@@ -115,11 +114,11 @@ public class Oauth2Authorization {
         this.refreshTokenValue = refreshTokenValue;
     }
 
-    public String getOidcIdTokenMetadata() {
+    public byte[] getOidcIdTokenMetadata() {
         return oidcIdTokenMetadata;
     }
 
-    public void setOidcIdTokenMetadata(String oidcIdTokenMetadata) {
+    public void setOidcIdTokenMetadata(byte[] oidcIdTokenMetadata) {
         this.oidcIdTokenMetadata = oidcIdTokenMetadata;
     }
 
@@ -163,11 +162,11 @@ public class Oauth2Authorization {
         this.accessTokenType = accessTokenType;
     }
 
-    public String getAccessTokenMetadata() {
+    public byte[] getAccessTokenMetadata() {
         return accessTokenMetadata;
     }
 
-    public void setAccessTokenMetadata(String accessTokenMetadata) {
+    public void setAccessTokenMetadata(byte[] accessTokenMetadata) {
         this.accessTokenMetadata = accessTokenMetadata;
     }
 
@@ -195,11 +194,11 @@ public class Oauth2Authorization {
         this.accessTokenValue = accessTokenValue;
     }
 
-    public String getAuthorizationCodeMetadata() {
+    public byte[] getAuthorizationCodeMetadata() {
         return authorizationCodeMetadata;
     }
 
-    public void setAuthorizationCodeMetadata(String authorizationCodeMetadata) {
+    public void setAuthorizationCodeMetadata(byte[] authorizationCodeMetadata) {
         this.authorizationCodeMetadata = authorizationCodeMetadata;
     }
 
@@ -235,11 +234,11 @@ public class Oauth2Authorization {
         this.state = state;
     }
 
-    public String getAttributes() {
+    public byte[] getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String attributes) {
+    public void setAttributes(byte[] attributes) {
         this.attributes = attributes;
     }
 
@@ -273,35 +272,5 @@ public class Oauth2Authorization {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Oauth2Authorization{" +
-                "id='" + id + '\'' +
-                ", registeredClientId='" + registeredClientId + '\'' +
-                ", principalName='" + principalName + '\'' +
-                ", authorizationGrantType='" + authorizationGrantType + '\'' +
-                ", attributes='" + attributes + '\'' +
-                ", state='" + state + '\'' +
-                ", authorizationCodeValue=" + Arrays.toString(authorizationCodeValue) +
-                ", authorizationCodeIssuedAt=" + authorizationCodeIssuedAt +
-                ", authorizationCodeExpiresAt=" + authorizationCodeExpiresAt +
-                ", authorizationCodeMetadata='" + authorizationCodeMetadata + '\'' +
-                ", accessTokenValue=" + Arrays.toString(accessTokenValue) +
-                ", accessTokenIssuedAt=" + accessTokenIssuedAt +
-                ", accessTokenExpiresAt=" + accessTokenExpiresAt +
-                ", accessTokenMetadata='" + accessTokenMetadata + '\'' +
-                ", accessTokenType='" + accessTokenType + '\'' +
-                ", accessTokenScopes='" + accessTokenScopes + '\'' +
-                ", oidcIdTokenValue=" + Arrays.toString(oidcIdTokenValue) +
-                ", oidcIdTokenIssuedAt=" + oidcIdTokenIssuedAt +
-                ", oidcIdTokenExpiresAt=" + oidcIdTokenExpiresAt +
-                ", oidcIdTokenMetadata='" + oidcIdTokenMetadata + '\'' +
-                ", refreshTokenValue=" + Arrays.toString(refreshTokenValue) +
-                ", refreshTokenIssuedAt=" + refreshTokenIssuedAt +
-                ", refreshTokenExpiresAt=" + refreshTokenExpiresAt +
-                ", refreshTokenMetadata='" + refreshTokenMetadata + '\'' +
-                '}';
     }
 }

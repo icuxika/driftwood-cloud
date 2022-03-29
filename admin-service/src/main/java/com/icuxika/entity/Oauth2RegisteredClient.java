@@ -1,17 +1,13 @@
 package com.icuxika.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
-@Table(name = "oauth2_registered_client")
 @Entity
-@JsonIgnoreProperties(value = "hibernateLazyInitializer")
+@Table(name = "oauth2_registered_client")
 public class Oauth2RegisteredClient {
     @Id
     @Column(name = "id", nullable = false, length = 100)
@@ -27,7 +23,7 @@ public class Oauth2RegisteredClient {
     private String clientSecret;
 
     @Column(name = "client_secret_expires_at")
-    private Instant clientSecretExpiresAt;
+    private LocalDateTime clientSecretExpiresAt;
 
     @Column(name = "client_name", nullable = false, length = 200)
     private String clientName;
@@ -106,11 +102,11 @@ public class Oauth2RegisteredClient {
         this.clientName = clientName;
     }
 
-    public Instant getClientSecretExpiresAt() {
+    public LocalDateTime getClientSecretExpiresAt() {
         return clientSecretExpiresAt;
     }
 
-    public void setClientSecretExpiresAt(Instant clientSecretExpiresAt) {
+    public void setClientSecretExpiresAt(LocalDateTime clientSecretExpiresAt) {
         this.clientSecretExpiresAt = clientSecretExpiresAt;
     }
 
@@ -144,23 +140,5 @@ public class Oauth2RegisteredClient {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Oauth2RegisteredClient{" +
-                "id='" + id + '\'' +
-                ", clientId='" + clientId + '\'' +
-                ", clientIdIssuedAt=" + clientIdIssuedAt +
-                ", clientSecret='" + clientSecret + '\'' +
-                ", clientSecretExpiresAt=" + clientSecretExpiresAt +
-                ", clientName='" + clientName + '\'' +
-                ", clientAuthenticationMethods='" + clientAuthenticationMethods + '\'' +
-                ", authorizationGrantTypes='" + authorizationGrantTypes + '\'' +
-                ", redirectUris='" + redirectUris + '\'' +
-                ", scopes='" + scopes + '\'' +
-                ", clientSettings='" + clientSettings + '\'' +
-                ", tokenSettings='" + tokenSettings + '\'' +
-                '}';
     }
 }
