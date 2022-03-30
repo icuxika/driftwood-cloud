@@ -62,10 +62,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserVO getUserInfo() {
         Long currentUserId = SecurityUtil.getUserId();
-        if (!userRepository.existsById(currentUserId)) {
-            throw new RuntimeException("用户数据不存在");
-        }
-        User user = userRepository.getById(currentUserId);
+        User user = userRepository.findById(currentUserId).orElseThrow(() -> new RuntimeException("用户数据不存在"));
 
         // 角色
         List<Long> roleIdList = userRoleRepository.findByUserIdEquals(currentUserId).stream().map(UserRole::getRoleId).collect(Collectors.toList());
