@@ -3,8 +3,8 @@ package com.icuxika.controller;
 import com.icuxika.common.ApiData;
 import com.icuxika.feign.OrderClient;
 import com.icuxika.feign.StorageClient;
-import com.icuxika.user.entity.User;
 import com.icuxika.user.feign.UserClient;
+import com.icuxika.user.vo.UserAuthVO;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class TestController {
     @PreAuthorize("hasRole('USER')")
     @GetMapping("printUser")
     public void printUser() {
-        ApiData<User> userApiData = userClient.findByUsername("icuxika");
+        ApiData<UserAuthVO> userApiData = userClient.findByUsername("icuxika");
         if (userApiData.isSuccess()) {
             System.out.println(userApiData.getData());
         } else {

@@ -8,5 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 public interface MenuPermissionRepository extends JpaRepository<MenuPermission, Long> {
+
+    List<MenuPermission> findByIdIn(@NonNull Collection<Long> ids);
+
     List<MenuPermission> findByPermissionIdIn(@NonNull Collection<Long> permissionIds);
 }

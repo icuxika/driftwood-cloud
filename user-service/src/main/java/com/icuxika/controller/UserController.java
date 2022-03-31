@@ -2,7 +2,9 @@ package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.service.UserService;
+import com.icuxika.user.dto.BindOneDTO;
 import com.icuxika.user.entity.User;
+import com.icuxika.user.vo.UserAuthVO;
 import com.icuxika.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,10 +31,10 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("findByUsername")
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('USER')")
-    public ApiData<User> findByUsername(@RequestParam("username") String username, HttpServletRequest request) {
-        User user = userService.findByUsername(username);
-        return ApiData.ok(user);
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    public ApiData<UserAuthVO> findByUsername(@RequestParam("username") String username, HttpServletRequest request) {
+        UserAuthVO userAuthVO = userService.findByUsername(username);
+        return ApiData.ok(userAuthVO);
     }
 
     /**
@@ -42,10 +44,10 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("findByPhone")
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('USER')")
-    public ApiData<User> findByPhone(@RequestParam("phone") String phone, HttpServletRequest request) {
-        User user = userService.findByPhone(phone);
-        return ApiData.ok(user);
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    public ApiData<UserAuthVO> findByPhone(@RequestParam("phone") String phone, HttpServletRequest request) {
+        UserAuthVO userAuthVO = userService.findByPhone(phone);
+        return ApiData.ok(userAuthVO);
     }
 
     /**
@@ -86,5 +88,11 @@ public class UserController {
     public ApiData<Void> deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return ApiData.okMsg("删除成功");
+    }
+
+    @PostMapping("/bindRoles")
+    public ApiData<Void> bindRoles(@RequestBody BindOneDTO bindOneDTO) {
+        userService.bindRoles(bindOneDTO);
+        return ApiData.okMsg("绑定成功");
     }
 }

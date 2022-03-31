@@ -1,7 +1,7 @@
 package com.icuxika.user.feign;
 
 import com.icuxika.common.ApiData;
-import com.icuxika.user.entity.User;
+import com.icuxika.user.vo.UserAuthVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserClient {
 
     @GetMapping(value = "/user/findByUsername")
-    ApiData<User> findByUsername(@RequestParam("username") String username);
+    ApiData<UserAuthVO> findByUsername(@RequestParam("username") String username);
 
     @GetMapping(value = "/user/findByPhone")
-    ApiData<User> findByPhone(@RequestParam("phone") String phone);
+    ApiData<UserAuthVO> findByPhone(@RequestParam("phone") String phone);
 
 }

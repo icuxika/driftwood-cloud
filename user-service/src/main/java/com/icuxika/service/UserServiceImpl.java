@@ -1,7 +1,9 @@
 package com.icuxika.service;
 
 import com.icuxika.repository.*;
+import com.icuxika.user.dto.BindOneDTO;
 import com.icuxika.user.entity.*;
+import com.icuxika.user.vo.UserAuthVO;
 import com.icuxika.user.vo.UserVO;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
@@ -18,6 +20,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,39 +53,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElse(null);
+    public UserAuthVO findByUsername(String username) {
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("用户不存在"));
+        return buildUserAuthVO(user);
     }
 
     @Override
-    public User findByPhone(String phone) {
-        return userRepository.findByPhone(phone).orElse(null);
+    public UserAuthVO findByPhone(String phone) {
+        User user = userRepository.findByPhone(phone).orElseThrow(() -> new RuntimeException("用户不存在"));
+        return buildUserAuthVO(user);
     }
 
     @Override
     public UserVO getUserInfo() {
         Long currentUserId = SecurityUtil.getUserId();
         User user = userRepository.findById(currentUserId).orElseThrow(() -> new RuntimeException("用户数据不存在"));
-
-        // 角色
-        List<Long> roleIdList = userRoleRepository.findByUserIdEquals(currentUserId).stream().map(UserRole::getRoleId).collect(Collectors.toList());
-        List<Role> roleList = roleIdList.isEmpty() ? Collections.emptyList() : roleRepository.findByIdIn(roleIdList);
-
-        // 权限
-        List<Long> permissionIdList = roleIdList.isEmpty() ? Collections.emptyList() : rolePermissionRepository.findByRoleIdIn(roleIdList).stream().map(RolePermission::getPermissionId).distinct().collect(Collectors.toList());
-        List<Permission> permissionList = permissionIdList.isEmpty() ? Collections.emptyList() : permissionRepository.findByIdIn(permissionIdList);
-
-        // 菜单
-        List<Long> menuIdList = permissionIdList.isEmpty() ? Collections.emptyList() : menuPermissionRepository.findByPermissionIdIn(permissionIdList).stream().map(MenuPermission::getMenuId).distinct().collect(Collectors.toList());
-        List<Menu> menuList = menuIdList.isEmpty() ? Collections.emptyList() : menuRepository.findByIdIn(menuIdList);
-
-        UserVO userVO = new UserVO();
-        userVO.setUserId(currentUserId);
-        userVO.setNickname(user.getNickname());
-        userVO.setRoleList(roleList);
-        userVO.setPermissionList(permissionList);
-        userVO.setMenuList(menuList);
-        return userVO;
+        return buildUserVO(user);
     }
 
     @Override
@@ -141,4 +127,86 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void bindRoles(BindOneDTO bindOneDTO) {
+        if (!userRepository.existsById(bindOneDTO.getId())) {
+            throw new RuntimeException("用户数据不存在");
+        }
+        if (roleRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
+            throw new RuntimeException("角色数据不存在");
+        }
+        Long currentUserId = SecurityUtil.getUserId();
+        List<UserRole> existList = userRoleRepository.findByRoleIdIn(bindOneDTO.getIdList());
+        List<UserRole> userRoleList = bindOneDTO.getIdList().stream().map(roleId -> {
+            UserRole userRole = new UserRole();
+            userRole.setUserId(bindOneDTO.getId());
+            userRole.setRoleId(roleId);
+            userRole.setCreateTime(LocalDateTime.now());
+            userRole.setCreateUserId(currentUserId);
+            userRole.setUpdateTime(LocalDateTime.now());
+            userRole.setUpdateUserId(currentUserId);
+            existList.stream().filter(exist -> exist.getUserId().equals(bindOneDTO.getId()) && exist.getRoleId().equals(roleId)).findFirst().ifPresent(exist -> {
+                userRole.setId(exist.getId());
+                userRole.setCreateTime(exist.getCreateTime());
+                userRole.setCreateUserId(exist.getCreateUserId());
+                userRole.setUpdateTime(LocalDateTime.now());
+                userRole.setUpdateUserId(currentUserId);
+            });
+            return userRole;
+        }).collect(Collectors.toList());
+        userRoleRepository.saveAll(userRoleList);
+    }
+
+    /**
+     * 查询用户详细信息（不包含密码等）
+     *
+     * @param user 用户
+     * @return 用户详细信息
+     */
+    private UserVO buildUserVO(User user) {
+        UserVO userVO = new UserVO();
+        userVO.setUserId(user.getId());
+        userVO.setNickname(user.getNickname());
+        setUserAuthInfo(user.getId(), userVO::setRoleList, userVO::setPermissionList, userVO::setMenuList);
+        return userVO;
+    }
+
+    /**
+     * 查询用户详细信息
+     *
+     * @param user 用户
+     * @return 用户详细信息
+     */
+    private UserAuthVO buildUserAuthVO(User user) {
+        UserAuthVO userAuthVO = new UserAuthVO();
+        BeanUtils.copyProperties(user, userAuthVO);
+        setUserAuthInfo(user.getId(), userAuthVO::setRoleList, userAuthVO::setPermissionList, menus -> {
+        });
+        return userAuthVO;
+    }
+
+    /**
+     * 填充用户角色权限等信息
+     *
+     * @param userId           用户ID
+     * @param roleSetter       角色填充器
+     * @param permissionSetter 权限填充器
+     * @param menuSetter       菜单填充器
+     */
+    private void setUserAuthInfo(Long userId, Consumer<List<Role>> roleSetter, Consumer<List<Permission>> permissionSetter, Consumer<List<Menu>> menuSetter) {
+        // 角色
+        List<Long> roleIdList = userRoleRepository.findByUserId(userId).stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        List<Role> roleList = roleIdList.isEmpty() ? Collections.emptyList() : roleRepository.findByIdIn(roleIdList);
+        roleSetter.accept(roleList);
+
+        // 权限
+        List<Long> permissionIdList = roleIdList.isEmpty() ? Collections.emptyList() : rolePermissionRepository.findByRoleIdIn(roleIdList).stream().map(RolePermission::getPermissionId).distinct().collect(Collectors.toList());
+        List<Permission> permissionList = permissionIdList.isEmpty() ? Collections.emptyList() : permissionRepository.findByIdIn(permissionIdList);
+        permissionSetter.accept(permissionList);
+
+        // 菜单
+        List<Long> menuIdList = permissionIdList.isEmpty() ? Collections.emptyList() : menuPermissionRepository.findByPermissionIdIn(permissionIdList).stream().map(MenuPermission::getMenuId).distinct().collect(Collectors.toList());
+        List<Menu> menuList = menuIdList.isEmpty() ? Collections.emptyList() : menuRepository.findByIdIn(menuIdList);
+        menuSetter.accept(menuList);
+    }
 }

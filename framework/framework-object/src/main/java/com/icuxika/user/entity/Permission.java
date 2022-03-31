@@ -11,10 +11,16 @@ import javax.persistence.Table;
 public class Permission extends BaseEntity {
 
     /**
-     * 权限
+     * 名称
      */
     @Column(nullable = false)
     private String name;
+
+    /**
+     * 权限
+     */
+    @Column(nullable = false)
+    private String authority;
 
     /**
      * 权限类型
@@ -41,6 +47,14 @@ public class Permission extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
+    public void setAuthority(String authority) {
+        this.authority = authority;
     }
 
     public Integer getType() {

@@ -9,7 +9,11 @@ import java.util.List;
 
 public interface RolePermissionRepository extends JpaRepository<RolePermission, Long> {
 
-    List<RolePermission> findByRoleIdEquals(@NonNull Long roleId);
+    List<RolePermission> findByRoleId(@NonNull Long roleId);
+
+    List<RolePermission> findByPermissionId(@NonNull Long permissionId);
+
+    List<RolePermission> findByPermissionIdIn(@NonNull Collection<Long> permissionIds);
 
     List<RolePermission> findByRoleIdIn(@NonNull Collection<Long> roleIds);
 

@@ -1,42 +1,35 @@
 package com.icuxika.config;
 
 import com.icuxika.common.ApiData;
-import com.icuxika.user.entity.User;
+import com.icuxika.config.common.CommonUserService;
 import com.icuxika.user.feign.UserClient;
-import org.springframework.beans.BeanUtils;
+import com.icuxika.user.vo.UserAuthVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 @Service(value = "userDetailsService")
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImpl implements UserDetailsService, CommonUserService {
 
+    @Qualifier("com.icuxika.user.feign.UserClient")
     @Autowired
     private UserClient userClient;
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        ApiData<User> userApiData = userClient.findByUsername(s);
+        ApiData<UserAuthVO> userApiData = userClient.findByUsername(s);
         if (!userApiData.isSuccess()) {
             throw new UsernameNotFoundException("系统异常");
         }
 
-        User user = userApiData.getData();
+        UserAuthVO user = userApiData.getData();
         if (user == null) {
             throw new UsernameNotFoundException("用户名为空");
         }
 
-        UserDetailsImpl userDetails = new UserDetailsImpl();
-        BeanUtils.copyProperties(user, userDetails);
-        Collection<? extends GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN"));
-        userDetails.setAuthorities(authorities);
-        return userDetails;
+        return buildUserDetails(user);
     }
 }

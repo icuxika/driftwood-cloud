@@ -1,15 +1,17 @@
 package com.icuxika.service;
 
+import com.icuxika.user.dto.BindOneDTO;
 import com.icuxika.user.entity.User;
+import com.icuxika.user.vo.UserAuthVO;
 import com.icuxika.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
 
-    User findByUsername(String username);
+    UserAuthVO findByUsername(String username);
 
-    User findByPhone(String phone);
+    UserAuthVO findByPhone(String phone);
 
     UserVO getUserInfo();
 
@@ -22,4 +24,6 @@ public interface UserService {
     void update(User user);
 
     void deleteById(Long id);
+
+    void bindRoles(BindOneDTO bindOneDTO);
 }

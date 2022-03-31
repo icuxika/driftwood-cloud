@@ -17,6 +17,12 @@ public class Role extends BaseEntity {
     private String name;
 
     /**
+     * 角色
+     */
+    @Column(nullable = false)
+    private String role;
+
+    /**
      * 角色描述
      */
     @Column()
@@ -28,6 +34,14 @@ public class Role extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public String getDescription() {
