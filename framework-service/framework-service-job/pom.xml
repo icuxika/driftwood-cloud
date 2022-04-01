@@ -19,6 +19,12 @@
     <dependencies>
         <dependency>
             <groupId>com.icuxika</groupId>
+            <artifactId>framework-security</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.icuxika</groupId>
             <artifactId>framework-xxl-job</artifactId>
             <scope>compile</scope>
         </dependency>
