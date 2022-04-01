@@ -19,37 +19,12 @@
         <dependencies>
             <dependency>
                 <groupId>com.icuxika</groupId>
-                <artifactId>nacos-config</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
-                <artifactId>service-consumer</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
-                <artifactId>gateway</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
-                <artifactId>authorization-server</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
-                <artifactId>user-service</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
-                <artifactId>admin-service</artifactId>
-                <version>${driftwood.project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.icuxika</groupId>
                 <artifactId>framework-basic</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>framework-config</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
             <dependency>
@@ -64,7 +39,7 @@
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
-                <artifactId>framework-config</artifactId>
+                <artifactId>framework-xxl-job</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
 

@@ -7,10 +7,10 @@
         <artifactId>framework-service</artifactId>
         <version>0.0.1</version>
     </parent>
-    <artifactId>framework-service-websocket</artifactId>
+    <artifactId>framework-service-job</artifactId>
     <version>0.0.1</version>
-    <name>framework-service-websocket</name>
-    <description>framework-service-websocket</description>
+    <name>framework-service-job</name>
+    <description>framework-service-job</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -19,16 +19,13 @@
     <dependencies>
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-security</artifactId>
+            <artifactId>framework-xxl-job</artifactId>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
 
         <dependency>
@@ -45,11 +42,6 @@
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
         </dependency>
     </dependencies>
 

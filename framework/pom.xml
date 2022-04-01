@@ -18,6 +18,7 @@
         <module>framework-object</module>
         <module>framework-config</module>
         <module>framework-basic</module>
+        <module>framework-xxl-job</module>
     </modules>
 
 </project>
