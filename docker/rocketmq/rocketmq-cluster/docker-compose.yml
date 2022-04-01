@@ -1,0 +1,58 @@
+version: '3'
+services:
+  namesrv:
+    image: apacherocketmq/rocketmq:${ROCKETMQ_VERSION}
+    container_name: rmqnamesrv
+    restart: always
+    ports:
+      - 9876:9876
+    volumes:
+      - ./data/namesrv/logs:/home/rocketmq/logs
+    command: sh mqnamesrv
+
+  broker1:
+    image: apacherocketmq/rocketmq:${ROCKETMQ_VERSION}
+    container_name: rmqbroker-a
+    restart: always
+    ports:
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    environment:
+      - NAMESRV_ADDR=namesrv:9876
+    volumes:
+      - ./data1/broker/logs:/home/rocketmq/logs
+      - ./data1/broker/store:/home/rocketmq/store
+      - ./data1/broker/conf/broker.conf:/home/rocketmq/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
+    command: sh mqbroker -c ../conf/broker.conf
+    depends_on:
+      - namesrv
+
+  broker2:
+    image: apacherocketmq/rocketmq:${ROCKETMQ_VERSION}
+    container_name: rmqbroker-b
+    restart: always
+    ports:
+      - 10919:10909
+      - 10921:10911
+      - 10922:10912
+    environment:
+      - NAMESRV_ADDR=namesrv:9876
+    volumes:
+      - ./data2/broker/logs:/home/rocketmq/logs
+      - ./data2/broker/store:/home/rocketmq/store
+      - ./data2/broker/conf/broker.conf:/home/rocketmq/rocketmq-${ROCKETMQ_VERSION}/conf/broker.conf
+    command: sh mqbroker -c ../conf/broker.conf
+    depends_on:
+      - namesrv
+
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:1.0.0
+    container_name: rocketmq-dashboard
+    restart: always
+    ports:
+      - 8882:8080
+    environment:
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
+    depends_on:
+      - namesrv

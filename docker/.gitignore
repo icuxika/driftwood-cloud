@@ -1,0 +1,21 @@
+.DS_Store
+
+### basic ###
+/basic/etc/nginx/log
+/basic/etc/mysql/data
+/basic/etc/redis/data
+/basic/etc/mongo/db
+/basic/etc/mongo/logs
+/basic/etc/rabbitmq/data
+
+### nacos ###
+/nacos/standalone-logs
+
+### rocketmq ###
+/rocketmq/**/logs
+/rocketmq/**/store
+
+### seata ###
+
+### xxl-job-admin ###
+/xxl-job-admin/tmp
