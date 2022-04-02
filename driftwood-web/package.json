@@ -1,0 +1,44 @@
+{
+  "name": "driftwood-web",
+  "version": "0.0.1",
+  "author": "icuxika",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@milkdown/core": "^4.11.1",
+    "@milkdown/plugin-listener": "^4.12.0",
+    "@milkdown/preset-commonmark": "^4.11.1",
+    "@milkdown/theme-nord": "^4.11.1",
+    "@milkdown/vue": "^4.11.1",
+    "axios": "^0.21.4",
+    "codemirror": "^5.62.3",
+    "github-markdown-css": "^4.0.0",
+    "marked": "^2.1.3",
+    "naive-ui": "^2.25.2",
+    "prismjs": "^1.24.1",
+    "resize-observer-polyfill": "^1.5.1",
+    "vfonts": "^0.1.0",
+    "vue": "^3.2.31",
+    "vue-router": "4.0.8",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/codemirror": "^5.60.2",
+    "@types/marked": "^3.0.1",
+    "@types/node": "^16.9.1",
+    "@types/sass": "^1.16.1",
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "@vitejs/plugin-vue": "^2.3.1",
+    "@vitejs/plugin-vue-jsx": "^1.3.9",
+    "eslint": "^8.12.0",
+    "eslint-plugin-vue": "^8.5.0",
+    "sass": "^1.49.11",
+    "typescript": "^4.6.3",
+    "vite": "^2.9.1",
+    "vue-tsc": "^0.33.9"
+  }
+}

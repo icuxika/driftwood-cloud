@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    // 目标语言的版本
+    "module": "esnext",
+    // 生成代码的模板标准
+    "moduleResolution": "node",
+    // 模板解析策略
+    "strict": true,
+    // 开启所有严格的类型检查
+    "jsx": "preserve",
+    // TS中使用JSX
+    "sourceMap": true,
+    // 生成目标文件的sourceMap文件
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    // 跳过第三方库的检查
+    "experimentalDecorators": true,
+    "esModuleInterop": true,
+    // 允许export=导出，由import from导入
+    "lib": [
+      "esnext",
+      "dom"
+    ]
+    // TS需要引用的库
+  },
+  // 指定编译需要编译的文件或目录
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ]
+}
