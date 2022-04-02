@@ -103,10 +103,10 @@ interface BindOneDTO {
 }
 
 export {
-    ApiData,
-    Pageable,
-    Page,
-    HasId,
-    BaseEntity,
-    BindOneDTO
+	ApiData,
+	Pageable,
+	Page,
+	HasId,
+	BaseEntity,
+	BindOneDTO
 };

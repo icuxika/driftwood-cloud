@@ -45,75 +45,75 @@ export interface AuthStateInterface {
 }
 
 function state(): AuthStateInterface {
-    return {
-        accessToken: "",
-        refreshToken: "",
-        expiresIn: 0
-    };
+	return {
+		accessToken: "",
+		refreshToken: "",
+		expiresIn: 0
+	};
 }
 
 const getters: GetterTree<AuthStateInterface, StateInterface> = {};
 
 const mutations: MutationTree<AuthStateInterface> = {
-    setTokenInfo(state, tokenInfo: TokenInfo) {
-        state.accessToken = tokenInfo.access_token;
-        state.refreshToken = tokenInfo.refresh_token;
-        state.expiresIn = tokenInfo.expires_in;
+	setTokenInfo(state, tokenInfo: TokenInfo) {
+		state.accessToken = tokenInfo.access_token;
+		state.refreshToken = tokenInfo.refresh_token;
+		state.expiresIn = tokenInfo.expires_in;
 
-        localStorage.setItem("accessToken", tokenInfo.access_token);
-    }
+		localStorage.setItem("accessToken", tokenInfo.access_token);
+	}
 };
 
 const actions: ActionTree<AuthStateInterface, StateInterface> = {
 
-    /**
+	/**
      * 密码模式登录
      */
-    async loginByPassword({commit}, password: LoginParamPassword) {
-        return new Promise((resolve, reject) => {
-            authService.loginByPassword({
-                grant_type: AuthorizationGrantType.PASSWORD,
-                client_type: CLIENT_TYPE_HTML,
-                username: password.username,
-                password: password.password
-            }).then(response => {
-                const tokenInfo = response.data;
-                commit("setTokenInfo", tokenInfo);
-                resolve(0);
-            }).catch(error => {
-                reject(error);
-            });
-        });
-    },
+	async loginByPassword({commit}, password: LoginParamPassword) {
+		return new Promise((resolve, reject) => {
+			authService.loginByPassword({
+				grant_type: AuthorizationGrantType.PASSWORD,
+				client_type: CLIENT_TYPE_HTML,
+				username: password.username,
+				password: password.password
+			}).then(response => {
+				const tokenInfo = response.data;
+				commit("setTokenInfo", tokenInfo);
+				resolve(0);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	},
 
-    /**
+	/**
      * 短信模式登录
      */
-    async loginByPhone({commit}, phone: LoginParamPhone) {
-        return new Promise((resolve, reject) => {
-            authService.loginByPhone({
-                grant_type: AuthorizationGrantType.PHONE,
-                client_type: CLIENT_TYPE_HTML,
-                phone: phone.phone,
-                code: phone.code
-            }).then(response => {
-                const tokenInfo = response.data;
-                commit("setTokenInfo", tokenInfo);
-                resolve(0);
-            }).catch(error => {
-                reject(error);
-            });
-        });
-    }
+	async loginByPhone({commit}, phone: LoginParamPhone) {
+		return new Promise((resolve, reject) => {
+			authService.loginByPhone({
+				grant_type: AuthorizationGrantType.PHONE,
+				client_type: CLIENT_TYPE_HTML,
+				phone: phone.phone,
+				code: phone.code
+			}).then(response => {
+				const tokenInfo = response.data;
+				commit("setTokenInfo", tokenInfo);
+				resolve(0);
+			}).catch(error => {
+				reject(error);
+			});
+		});
+	}
 
 };
 
 const authModule: Module<AuthStateInterface, StateInterface> = {
-    namespaced: true,
-    state,
-    getters,
-    mutations,
-    actions,
+	namespaced: true,
+	state,
+	getters,
+	mutations,
+	actions,
 };
 
 export default authModule;

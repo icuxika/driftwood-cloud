@@ -33,7 +33,7 @@ import {
 } from "naive-ui";
 
 const naive = create({
-    components: [NSwitch, NInputGroup, NInput, NTabs, NTabPane, NForm, NFormItemRow, NModal, NPagination, NTime, NGrid, NGi, NTimeline, NTimelineItem, NMessageProvider, NDialogProvider, NConfigProvider, NLoadingBarProvider, NButton, NSpace, NCard, NLayout, NLayoutHeader, NLayoutContent, NLayoutFooter]
+	components: [NSwitch, NInputGroup, NInput, NTabs, NTabPane, NForm, NFormItemRow, NModal, NPagination, NTime, NGrid, NGi, NTimeline, NTimelineItem, NMessageProvider, NDialogProvider, NConfigProvider, NLoadingBarProvider, NButton, NSpace, NCard, NLayout, NLayoutHeader, NLayoutContent, NLayoutFooter]
 });
 
 const app = createApp(App);

@@ -39,16 +39,16 @@ import {useLoadingBar} from "naive-ui";
 const store = useStore();
 store.dispatch("user/getUserInfo");
 store.dispatch("user/page", {
-  size: 10,
-  page: 0,
-  sort: "id,desc",
-  phone: "18752065699"
+	size: 10,
+	page: 0,
+	sort: "id,desc",
+	phone: "18752065699"
 });
 
 const loadingBar = useLoadingBar();
 loadingBar.start();
 setTimeout(() => {
-  loadingBar.finish();
+	loadingBar.finish();
 }, 1000);
 </script>
 

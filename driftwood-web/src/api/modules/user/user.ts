@@ -100,34 +100,34 @@ type CreateService = (path: string) => {
 }
 
 const createService: CreateService = (path: string) => {
-    return {
-        getUserInfo() {
-            return AxiosInstance.get<ApiData<UserVO>>(path + "/getUserInfo");
-        },
-        page(pageable: Pageable | User) {
-            return AxiosInstance.get<ApiData<Page<User>>>(path + "/page", {params: pageable});
-        },
-        getById(id: User["id"]) {
-            return AxiosInstance.get<ApiData<User>>(path + "/" + id);
-        },
-        save(user: Omit<Partial<User>, "id">) {
-            return AxiosInstance.post<ApiData<never>>(path, user);
-        },
-        update(user: UserWithId) {
-            return AxiosInstance.put<ApiData<never>>(path, user);
-        },
-        deleteById(id: User["id"]) {
-            return AxiosInstance.delete<ApiData<never>>(path + "/" + id);
-        },
-        bindRoles(bindOneDTO: BindOneDTO) {
-            return AxiosInstance.post<ApiData<never>>(path + "/bindRoles", bindOneDTO);
-        }
-    };
+	return {
+		getUserInfo() {
+			return AxiosInstance.get<ApiData<UserVO>>(path + "/getUserInfo");
+		},
+		page(pageable: Pageable | User) {
+			return AxiosInstance.get<ApiData<Page<User>>>(path + "/page", {params: pageable});
+		},
+		getById(id: User["id"]) {
+			return AxiosInstance.get<ApiData<User>>(path + "/" + id);
+		},
+		save(user: Omit<Partial<User>, "id">) {
+			return AxiosInstance.post<ApiData<never>>(path, user);
+		},
+		update(user: UserWithId) {
+			return AxiosInstance.put<ApiData<never>>(path, user);
+		},
+		deleteById(id: User["id"]) {
+			return AxiosInstance.delete<ApiData<never>>(path + "/" + id);
+		},
+		bindRoles(bindOneDTO: BindOneDTO) {
+			return AxiosInstance.post<ApiData<never>>(path + "/bindRoles", bindOneDTO);
+		}
+	};
 };
 
 const userService = createService("/user/user");
 
 export {
-    userService,
-    User
+	userService,
+	User
 };

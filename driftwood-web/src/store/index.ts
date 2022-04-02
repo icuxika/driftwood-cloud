@@ -19,13 +19,13 @@ export interface StateInterface {
 export const key: InjectionKey<Store<StateInterface>> = Symbol("vuex-key");
 
 export const store = createStore<StateInterface>({
-    modules: {
-        index: indexModule,
-        auth: authModule,
-        user: userModule
-    }
+	modules: {
+		index: indexModule,
+		auth: authModule,
+		user: userModule
+	}
 });
 
 export function useStore() {
-    return vuexUseStore(key);
+	return vuexUseStore(key);
 }

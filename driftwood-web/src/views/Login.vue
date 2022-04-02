@@ -81,45 +81,45 @@ const code = ref("");
 const rememberMe = ref(false);
 
 const submitLogin = () => {
-  switch (loginType) {
-    case LoginType.PASSWORD:
-      console.log(username.value);
-      console.log(password.value);
-      console.log(rememberMe.value);
-      store.dispatch("auth/loginByPassword", {
-        username: username.value,
-        password: password.value
-      }).then(() => {
-        router.replace({path: route.query.redirect as string || "/"});
-      }).catch(error => {
-        console.log(error);
-      });
-      break;
+	switch (loginType) {
+	case LoginType.PASSWORD:
+		console.log(username.value);
+		console.log(password.value);
+		console.log(rememberMe.value);
+		store.dispatch("auth/loginByPassword", {
+			username: username.value,
+			password: password.value
+		}).then(() => {
+			router.replace({path: route.query.redirect as string || "/"});
+		}).catch(error => {
+			console.log(error);
+		});
+		break;
 
-    case LoginType.PHONE:
-      console.log(phone.value);
-      console.log(code.value);
-      console.log(rememberMe.value);
-      store.dispatch("auth/loginByPhone", {
-        phone: phone.value,
-        code: code.value
-      });
-      break;
-  }
+	case LoginType.PHONE:
+		console.log(phone.value);
+		console.log(code.value);
+		console.log(rememberMe.value);
+		store.dispatch("auth/loginByPhone", {
+			phone: phone.value,
+			code: code.value
+		});
+		break;
+	}
 };
 
 const handleBeforeLeave = (tabName: string) => {
-  switch (tabName) {
-    case "login1":
-      message.info("使用密码进行登录", {duration: 500});
-      loginType = LoginType.PASSWORD;
-      break;
-    case "login2":
-      message.info("使用短信进行登录", {duration: 500});
-      loginType = LoginType.PHONE;
-      break;
-  }
-  return true;
+	switch (tabName) {
+	case "login1":
+		message.info("使用密码进行登录", {duration: 500});
+		loginType = LoginType.PASSWORD;
+		break;
+	case "login2":
+		message.info("使用短信进行登录", {duration: 500});
+		loginType = LoginType.PHONE;
+		break;
+	}
+	return true;
 };
 
 const handleUpdateValue = (tabName: string) => {
