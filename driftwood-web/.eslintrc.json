@@ -18,14 +18,10 @@
         "vue",
         "@typescript-eslint"
     ],
+    "root": true,
     "ignorePatterns": [
         "src/**/*.d.ts"
     ],
-    //    "files": [
-    //        "src/**/*.ts",
-    //        "src/**/*.tsx",
-    //        "src/**/*.vue"
-    //    ],
     "rules": {
         "indent": [
             "error",

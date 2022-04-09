@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lint": "eslint -c .eslintrc.json vite.config.ts \"src/**/*.{ts,tsx,vue}\" --fix"
   },
   "dependencies": {
     "@milkdown/core": "^4.11.1",
