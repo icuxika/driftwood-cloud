@@ -66,7 +66,7 @@ const columnList: DataTableColumn[] = [
 		key: "isAccountNonExpired",
 		sorter: false,
 		sortOrder: false,
-		render (rowData: object, rowIndex: number) {
+		render(rowData: object, rowIndex: number) {
 			return h(
 				NTag,
 				{
@@ -83,7 +83,7 @@ const columnList: DataTableColumn[] = [
 		key: "isAccountNonLocked",
 		sorter: false,
 		sortOrder: false,
-		render (rowData: object, rowIndex: number) {
+		render(rowData: object, rowIndex: number) {
 			return h(
 				NTag,
 				{
@@ -100,7 +100,7 @@ const columnList: DataTableColumn[] = [
 		key: "isCredentialsNonExpired",
 		sorter: false,
 		sortOrder: false,
-		render (rowData: object, rowIndex: number) {
+		render(rowData: object, rowIndex: number) {
 			return h(
 				NTag,
 				{
@@ -117,7 +117,7 @@ const columnList: DataTableColumn[] = [
 		key: "isEnabled",
 		sorter: false,
 		sortOrder: false,
-		render (rowData: object, rowIndex: number) {
+		render(rowData: object, rowIndex: number) {
 			return h(
 				NTag,
 				{
@@ -146,7 +146,7 @@ const columnList: DataTableColumn[] = [
 		key: "actions",
 		sorter: false,
 		sortOrder: false,
-		render (rowData: object, rowIndex: number) {
+		render(rowData: object, rowIndex: number) {
 			return h(
 				NDropdown,
 				{
