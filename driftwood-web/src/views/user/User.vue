@@ -20,13 +20,13 @@
 <script setup lang="ts">
 import {h, onMounted, reactive, ref} from "vue";
 import {
-  DataTableBaseColumn,
-  DataTableColumn,
-  DataTableFilterState,
-  DataTableSortState,
-  NDropdown,
-  NTag,
-  PaginationProps
+	DataTableBaseColumn,
+	DataTableColumn,
+	DataTableFilterState,
+	DataTableSortState,
+	NDropdown,
+	NTag,
+	PaginationProps
 } from "naive-ui";
 import {User} from "../../api/modules/user/user";
 
