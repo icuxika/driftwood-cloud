@@ -83,7 +83,7 @@ interface BaseEntity {
     /**
      * 更新用户id
      */
-    updateUserId?: string;
+    updateUserId?: number;
 }
 
 /**

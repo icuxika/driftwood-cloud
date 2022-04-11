@@ -9,6 +9,7 @@
         :data="permissionData"
         @update:checked-keys="updateCheckedKeys"
         @drop="handleDrop"
+        @dragstart="handleDragStart"
         @dragenter="handleDragEnter"
         :node-props="nodeProps"
     />
@@ -22,10 +23,46 @@
         @select="handleSelect"
         @clickoutside="handleClickOutSide"
     />
+    <n-modal v-model:show="showPermissionGroupEditModal">
+      <n-card
+          style="width: 600px"
+          title="编辑权限分组"
+          :bordered="false"
+          size="huge"
+          role="dialog"
+          aria-modal="true"
+      >
+        <n-form
+            :model="permissionGroupEditFormModel"
+            label-placement="left"
+            :label-width="80"
+        >
+          <n-form-item label="名称">
+            <n-input v-model:value="permissionGroupEditFormModel.name"/>
+          </n-form-item>
+          <n-form-item label="描述">
+            <n-input
+                type="textarea"
+                v-model:value="permissionGroupEditFormModel.description"
+            />
+          </n-form-item>
+        </n-form>
+        <template #footer>
+          <n-space justify="end">
+            <n-button type="success">
+              确定
+            </n-button>
+            <n-button type="warning">
+              取消
+            </n-button>
+          </n-space>
+        </template>
+      </n-card>
+    </n-modal>
     <n-modal v-model:show="showPermissionEditModal">
       <n-card
           style="width: 600px"
-          title="编辑"
+          title="编辑权限"
           :bordered="false"
           size="huge"
           role="dialog"
@@ -156,6 +193,7 @@ const permissionList: TreeOption[] = [
 				isGroup: true,
 				prefix: () => renderPrefix(true),
 				suffix: () => renderSuffix(true, ""),
+				children: []
 			},
 			{
 				label: "菜单",
@@ -163,6 +201,7 @@ const permissionList: TreeOption[] = [
 				isGroup: true,
 				prefix: () => renderPrefix(true),
 				suffix: () => renderSuffix(true, ""),
+				children: []
 			},
 		]
 	}
@@ -186,8 +225,12 @@ const findSiblingsAndIndex = (node: TreeOption, nodes?: TreeOption[]): [TreeOpti
 	return [null, null];
 };
 
+const handleDragStart = (data: { node: TreeOption, event: DragEvent }) => {
+	// 暂无法通过DragEvent相关api来决定是否接受此次拖拽
+};
+
 const handleDragEnter = (data: { node: TreeOption, event: DragEvent }) => {
-	// console.log("拖拽时经过的节点：", JSON.stringify(data));
+	// 暂无法通过DragEvent相关api来决定是否接受此次拖拽
 };
 
 // 由于权限数据tree实际由权限分组数据和权限数据两部分组成，所以有以下情况：
@@ -273,7 +316,7 @@ const nodeProps = ({option}: { option: TreeOption }) => {
 						key: "edit->" + option.key,
 						props: {
 							onClick: () => {
-								showPermissionEditModal.value = true;
+								showPermissionGroupEditModal.value = true;
 							}
 						}
 					}
@@ -299,11 +342,16 @@ const nodeProps = ({option}: { option: TreeOption }) => {
 	};
 };
 
-// 是否展示权限编辑模态框
-const showPermissionEditModal = ref(false);
 // 是否展示权限分组编辑模态框
 const showPermissionGroupEditModal = ref(false);
+// 权限分组数据model
+const permissionGroupEditFormModel = ref({
+	name: "新增",
+	description: "描述"
+});
 
+// 是否展示权限编辑模态框
+const showPermissionEditModal = ref(false);
 // 权限类型
 const permissionTypeDict = [
 	{
@@ -315,7 +363,6 @@ const permissionTypeDict = [
 		value: "2"
 	}
 ];
-
 // 权限数据model
 const permissionEditFormModel = ref({
 	name: "新增",

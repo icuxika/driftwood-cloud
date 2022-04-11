@@ -129,5 +129,6 @@ const userService = createService("/user/user");
 
 export {
 	userService,
-	User
+	User,
+	Role
 };
