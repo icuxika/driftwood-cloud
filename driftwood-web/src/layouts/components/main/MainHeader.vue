@@ -1,6 +1,6 @@
 <template>
   <n-space>
-    <draggable
+    <Draggable
         :list="tabList" item-key="id"
         @start="dragging = true"
         @end="dragging =false"
@@ -20,11 +20,12 @@
           </n-icon>
         </div>
       </template>
-    </draggable>
+    </Draggable>
   </n-space>
 </template>
 
 <script setup lang="ts">
+import Draggable from "vuedraggable";
 import {CloseOutline as CloseIcon} from "@vicons/ionicons5";
 import {ref} from "vue";
 
