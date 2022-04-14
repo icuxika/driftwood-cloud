@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "../views/Login.vue";
 import Home from "../views/Home.vue";
@@ -25,36 +25,36 @@ const router = createRouter({
 			name: "Home",
 			component: Home,
 			meta: {
-				requiresAuth: true
+				requiresAuth: true,
 			},
 			children: [
 				{
 					path: "client",
 					name: "Oauth2RegisteredClient",
-					component: Oauth2RegisteredClient
+					component: Oauth2RegisteredClient,
 				},
 				{
 					path: "user",
 					name: "User",
-					component: User
+					component: User,
 				},
 				{
 					path: "role",
 					name: "Role",
-					component: Role
+					component: Role,
 				},
 				{
 					path: "permission",
 					name: "Permission",
-					component: Permission
+					component: Permission,
 				},
 				{
 					path: "menu",
 					name: "Menu",
-					component: Menu
+					component: Menu,
 				},
-			]
-		}
+			],
+		},
 	],
 });
 
@@ -63,15 +63,15 @@ router.beforeEach((to, from, next) => {
 		console.log("Route------------->");
 		console.log(to.fullPath);
 		console.log("Route------------->");
-		if (typeof (to.query.redirect) === "undefined") {
+		if (typeof to.query.redirect === "undefined") {
 			next({
 				name: "Login",
-				query: {redirect: to.fullPath}
+				query: { redirect: to.fullPath },
 			});
 		} else {
 			next({
 				name: "Login",
-				query: {redirect: to.fullPath}
+				query: { redirect: to.fullPath },
 			});
 		}
 	} else {

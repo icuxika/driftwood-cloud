@@ -1,7 +1,7 @@
-import {createApp} from "vue";
+import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router/index";
-import {key, store} from "./store";
+import { key, store } from "./store";
 
 import {
 	create,
@@ -38,11 +38,46 @@ import {
 	NTime,
 	NTimeline,
 	NTimelineItem,
-	NTree
+	NTree,
 } from "naive-ui";
 
 const naive = create({
-	components: [NDataTable, NSelect, NFormItem, NDropdown, NTree, NTag, NIcon, NMenu, NLayoutSider, NSwitch, NInputGroup, NInput, NTabs, NTabPane, NForm, NFormItemRow, NModal, NPagination, NTime, NGrid, NGi, NTimeline, NTimelineItem, NMessageProvider, NDialogProvider, NConfigProvider, NLoadingBarProvider, NButton, NSpace, NCard, NLayout, NLayoutHeader, NLayoutContent, NLayoutFooter]
+	components: [
+		NDataTable,
+		NSelect,
+		NFormItem,
+		NDropdown,
+		NTree,
+		NTag,
+		NIcon,
+		NMenu,
+		NLayoutSider,
+		NSwitch,
+		NInputGroup,
+		NInput,
+		NTabs,
+		NTabPane,
+		NForm,
+		NFormItemRow,
+		NModal,
+		NPagination,
+		NTime,
+		NGrid,
+		NGi,
+		NTimeline,
+		NTimelineItem,
+		NMessageProvider,
+		NDialogProvider,
+		NConfigProvider,
+		NLoadingBarProvider,
+		NButton,
+		NSpace,
+		NCard,
+		NLayout,
+		NLayoutHeader,
+		NLayoutContent,
+		NLayoutFooter,
+	],
 });
 
 const app = createApp(App);

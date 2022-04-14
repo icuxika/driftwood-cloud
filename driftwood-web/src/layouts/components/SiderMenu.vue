@@ -1,38 +1,38 @@
 <template>
-  <n-layout-sider
-      bordered
-      collapse-mode="width"
-      :collapsed-width="64"
-      :width="240"
-      :collapsed="collapsed"
-      show-trigger
-      @collapse="collapsed = true"
-      @expand="collapsed = false"
-  >
-    <n-button @click="test">测试</n-button>
-    <n-menu
-        :collapsed="collapsed"
-        :default-expand-all="true"
-        :collapsed-width="64"
-        :collapsed-icon-size="22"
-        :options="menuOptions"
-        key-field="key"
-        label-field="label"
-        children-field="children"
-        @update:value="handleUpdateValue"
-    />
-  </n-layout-sider>
+	<n-layout-sider
+		bordered
+		collapse-mode="width"
+		:collapsed-width="64"
+		:width="240"
+		:collapsed="collapsed"
+		show-trigger
+		@collapse="collapsed = true"
+		@expand="collapsed = false"
+	>
+		<n-button @click="test">测试</n-button>
+		<n-menu
+			:collapsed="collapsed"
+			:default-expand-all="true"
+			:collapsed-width="64"
+			:collapsed-icon-size="22"
+			:options="menuOptions"
+			key-field="key"
+			label-field="label"
+			children-field="children"
+			@update:value="handleUpdateValue"
+		/>
+	</n-layout-sider>
 </template>
 
 <script setup lang="ts">
-import {Component, h, ref} from "vue";
-import type {MenuOption} from "naive-ui";
-import {NIcon} from "naive-ui";
-import {BookOutline as BookIcon} from "@vicons/ionicons5";
-import {RouterLink} from "vue-router";
+import { Component, h, ref } from "vue";
+import type { MenuOption } from "naive-ui";
+import { NIcon } from "naive-ui";
+import { BookOutline as BookIcon } from "@vicons/ionicons5";
+import { RouterLink } from "vue-router";
 
 const renderIcon = (icon: Component) => {
-	return () => h(NIcon, null, {default: () => h(icon)});
+	return () => h(NIcon, null, { default: () => h(icon) });
 };
 
 const collapsed = ref(false);
@@ -50,17 +50,20 @@ const menuOptions: MenuOption[] = [
 				key: "admin-service",
 				children: [
 					{
-						label: () => h(
-							RouterLink, {
-								to: {
-									name: "Oauth2RegisteredClient"
-								}
-							},
-							{default: () => "客户端管理"}),
+						label: () =>
+							h(
+								RouterLink,
+								{
+									to: {
+										name: "Oauth2RegisteredClient",
+									},
+								},
+								{ default: () => "客户端管理" }
+							),
 						key: "client",
 						icon: renderIcon(BookIcon),
-					}
-				]
+					},
+				],
 			},
 			{
 				type: "group",
@@ -68,53 +71,65 @@ const menuOptions: MenuOption[] = [
 				key: "user-service",
 				children: [
 					{
-						label: () => h(
-							RouterLink, {
-								to: {
-									name: "User"
-								}
-							},
-							{default: () => "用户管理"}),
+						label: () =>
+							h(
+								RouterLink,
+								{
+									to: {
+										name: "User",
+									},
+								},
+								{ default: () => "用户管理" }
+							),
 						key: "user",
 						icon: renderIcon(BookIcon),
 					},
 					{
-						label: () => h(
-							RouterLink, {
-								to: {
-									name: "Role"
-								}
-							},
-							{default: () => "角色管理"}),
+						label: () =>
+							h(
+								RouterLink,
+								{
+									to: {
+										name: "Role",
+									},
+								},
+								{ default: () => "角色管理" }
+							),
 						key: "role",
 						icon: renderIcon(BookIcon),
 					},
 					{
-						label: () => h(
-							RouterLink, {
-								to: {
-									name: "Permission"
-								}
-							},
-							{default: () => "权限管理"}),
+						label: () =>
+							h(
+								RouterLink,
+								{
+									to: {
+										name: "Permission",
+									},
+								},
+								{ default: () => "权限管理" }
+							),
 						key: "permission",
 						icon: renderIcon(BookIcon),
 					},
 					{
-						label: () => h(
-							RouterLink, {
-								to: {
-									name: "Menu"
-								}
-							},
-							{default: () => "菜单管理"}),
+						label: () =>
+							h(
+								RouterLink,
+								{
+									to: {
+										name: "Menu",
+									},
+								},
+								{ default: () => "菜单管理" }
+							),
 						key: "menu",
 						icon: renderIcon(BookIcon),
 					},
-				]
-			}
-		]
-	}
+				],
+			},
+		],
+	},
 ];
 
 const test = () => {
@@ -127,6 +142,4 @@ const handleUpdateValue = (key: string, item: MenuOption) => {
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

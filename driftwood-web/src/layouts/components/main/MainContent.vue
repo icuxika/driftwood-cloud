@@ -1,10 +1,5 @@
-<template>
-  <RouterView></RouterView>
-</template>
+<template><RouterView></RouterView></template>
 
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

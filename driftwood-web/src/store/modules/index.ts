@@ -1,8 +1,16 @@
-import {ActionTree, GetterTree, Module, MutationTree} from "vuex";
-import {StateInterface} from "../index";
-import {BuiltInGlobalTheme} from "naive-ui/es/themes/interface";
-import {lightTheme} from "naive-ui/es/themes/light";
-import {darkTheme, dateEnUS, dateZhCN, enUS, NDateLocale, NLocale, zhCN} from "naive-ui";
+import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
+import { StateInterface } from "../index";
+import { BuiltInGlobalTheme } from "naive-ui/es/themes/interface";
+import { lightTheme } from "naive-ui/es/themes/light";
+import {
+	darkTheme,
+	dateEnUS,
+	dateZhCN,
+	enUS,
+	NDateLocale,
+	NLocale,
+	zhCN,
+} from "naive-ui";
 
 export interface IndexStateInterface {
 	naiveUITheme: BuiltInGlobalTheme;
@@ -14,7 +22,7 @@ function state(): IndexStateInterface {
 	return {
 		naiveUITheme: lightTheme,
 		naiveUILocale: zhCN,
-		naiveUIDateLocale: dateZhCN
+		naiveUIDateLocale: dateZhCN,
 	};
 }
 
@@ -29,31 +37,31 @@ const mutations: MutationTree<IndexStateInterface> = {
 	},
 	setDateLocale(state, dateLocale) {
 		state.naiveUIDateLocale = dateLocale;
-	}
+	},
 };
 
 const actions: ActionTree<IndexStateInterface, StateInterface> = {
-	setEnableDarkTheme({commit}, enable: boolean) {
+	setEnableDarkTheme({ commit }, enable: boolean) {
 		if (enable) {
 			commit("setTheme", darkTheme);
 		} else {
 			commit("setTheme", lightTheme);
 		}
 	},
-	setEnableEnLocal({commit}, enable: boolean) {
+	setEnableEnLocal({ commit }, enable: boolean) {
 		if (enable) {
 			commit("setLocale", enUS);
 		} else {
 			commit("setLocale", zhCN);
 		}
 	},
-	setEnableEnDateLocal({commit}, enable: boolean) {
+	setEnableEnDateLocal({ commit }, enable: boolean) {
 		if (enable) {
 			commit("setDateLocale", dateEnUS);
 		} else {
 			commit("setDateLocale", dateZhCN);
 		}
-	}
+	},
 };
 
 const indexModule: Module<IndexStateInterface, StateInterface> = {

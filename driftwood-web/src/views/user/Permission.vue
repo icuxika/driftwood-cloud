@@ -1,120 +1,128 @@
 <template>
-  <div>
-    <h1>权限管理</h1>
-    <n-tree
-        block-line
-        cascade
-        checkable
-        draggable
-        :data="permissionData"
-        @update:checked-keys="updateCheckedKeys"
-        @drop="handleDrop"
-        @dragstart="handleDragStart"
-        @dragenter="handleDragEnter"
-        :node-props="nodeProps"
-    />
-    <n-dropdown
-        trigger="manual"
-        placement="bottom-start"
-        :show="showDropdown"
-        :options="options"
-        :x="contextMenuX"
-        :y="contextMenuY"
-        @select="handleSelect"
-        @clickoutside="handleClickOutSide"
-    />
-    <n-modal v-model:show="showPermissionGroupEditModal">
-      <n-card
-          style="width: 600px"
-          title="编辑权限分组"
-          :bordered="false"
-          size="huge"
-          role="dialog"
-          aria-modal="true"
-      >
-        <n-form
-            :model="permissionGroupEditFormModel"
-            label-placement="left"
-            :label-width="80"
-        >
-          <n-form-item label="名称">
-            <n-input v-model:value="permissionGroupEditFormModel.name"/>
-          </n-form-item>
-          <n-form-item label="描述">
-            <n-input
-                type="textarea"
-                v-model:value="permissionGroupEditFormModel.description"
-            />
-          </n-form-item>
-        </n-form>
-        <template #footer>
-          <n-space justify="end">
-            <n-button type="success">
-              确定
-            </n-button>
-            <n-button type="warning">
-              取消
-            </n-button>
-          </n-space>
-        </template>
-      </n-card>
-    </n-modal>
-    <n-modal v-model:show="showPermissionEditModal">
-      <n-card
-          style="width: 600px"
-          title="编辑权限"
-          :bordered="false"
-          size="huge"
-          role="dialog"
-          aria-modal="true"
-      >
-        <n-form
-            :model="permissionEditFormModel"
-            label-placement="left"
-            :label-width="80"
-        >
-          <n-form-item label="名称">
-            <n-input v-model:value="permissionEditFormModel.name"/>
-          </n-form-item>
-          <n-form-item label="权限">
-            <n-input v-model:value="permissionEditFormModel.authority"/>
-          </n-form-item>
-          <n-form-item label="权限类型">
-            <n-select v-model:value="permissionEditFormModel.type" :options="permissionTypeDict"/>
-          </n-form-item>
-          <n-form-item label="描述">
-            <n-input
-                type="textarea"
-                v-model:value="permissionEditFormModel.description"
-            />
-          </n-form-item>
-        </n-form>
-        <template #footer>
-          <n-space justify="end">
-            <n-button type="success">
-              确定
-            </n-button>
-            <n-button type="warning">
-              取消
-            </n-button>
-          </n-space>
-        </template>
-      </n-card>
-    </n-modal>
-  </div>
+	<div>
+		<h1>权限管理</h1>
+		<n-tree
+			block-line
+			cascade
+			checkable
+			draggable
+			:data="permissionData"
+			@update:checked-keys="updateCheckedKeys"
+			@drop="handleDrop"
+			@dragstart="handleDragStart"
+			@dragenter="handleDragEnter"
+			:node-props="nodeProps"
+		/>
+		<n-dropdown
+			trigger="manual"
+			placement="bottom-start"
+			:show="showDropdown"
+			:options="options"
+			:x="contextMenuX"
+			:y="contextMenuY"
+			@select="handleSelect"
+			@clickoutside="handleClickOutSide"
+		/>
+		<n-modal v-model:show="showPermissionGroupEditModal">
+			<n-card
+				style="width: 600px"
+				title="编辑权限分组"
+				:bordered="false"
+				size="huge"
+				role="dialog"
+				aria-modal="true"
+			>
+				<n-form
+					:model="permissionGroupEditFormModel"
+					label-placement="left"
+					:label-width="80"
+				>
+					<n-form-item label="名称">
+						<n-input
+							v-model:value="permissionGroupEditFormModel.name"
+						/>
+					</n-form-item>
+					<n-form-item label="描述">
+						<n-input
+							type="textarea"
+							v-model:value="
+								permissionGroupEditFormModel.description
+							"
+						/>
+					</n-form-item>
+				</n-form>
+				<template #footer>
+					<n-space justify="end">
+						<n-button type="success"> 确定</n-button>
+						<n-button type="warning"> 取消</n-button>
+					</n-space>
+				</template>
+			</n-card>
+		</n-modal>
+		<n-modal v-model:show="showPermissionEditModal">
+			<n-card
+				style="width: 600px"
+				title="编辑权限"
+				:bordered="false"
+				size="huge"
+				role="dialog"
+				aria-modal="true"
+			>
+				<n-form
+					:model="permissionEditFormModel"
+					label-placement="left"
+					:label-width="80"
+				>
+					<n-form-item label="名称">
+						<n-input v-model:value="permissionEditFormModel.name" />
+					</n-form-item>
+					<n-form-item label="权限">
+						<n-input
+							v-model:value="permissionEditFormModel.authority"
+						/>
+					</n-form-item>
+					<n-form-item label="权限类型">
+						<n-select
+							v-model:value="permissionEditFormModel.type"
+							:options="permissionTypeDict"
+						/>
+					</n-form-item>
+					<n-form-item label="描述">
+						<n-input
+							type="textarea"
+							v-model:value="permissionEditFormModel.description"
+						/>
+					</n-form-item>
+				</n-form>
+				<template #footer>
+					<n-space justify="end">
+						<n-button type="success"> 确定</n-button>
+						<n-button type="warning"> 取消</n-button>
+					</n-space>
+				</template>
+			</n-card>
+		</n-modal>
+	</div>
 </template>
 
 <script setup lang="ts">
-import {DropdownOption, NButton, NTag, TreeDropInfo, TreeOption, useMessage} from "naive-ui";
-import {h, ref} from "vue";
+import {
+	DropdownOption,
+	NButton,
+	NTag,
+	TreeDropInfo,
+	TreeOption,
+	useMessage,
+} from "naive-ui";
+import { h, ref } from "vue";
 
 const message = useMessage();
 
 const renderPrefix = (isGroup: boolean) => {
 	return h(
 		NTag,
-		{type: isGroup ? "info" : "warning"},
-		{default: () => isGroup ? "权限分组" : "权限"}
+		{ type: isGroup ? "info" : "warning" },
+		{ default: () => (isGroup ? "权限分组" : "权限") }
 	);
 };
 
@@ -122,11 +130,7 @@ const renderSuffix = (isGroup: boolean, authority: string) => {
 	if (isGroup) {
 		return null;
 	}
-	return h(
-		NTag,
-		{type: "success"},
-		{default: () => authority}
-	);
+	return h(NTag, { type: "success" }, { default: () => authority });
 };
 
 const permissionList: TreeOption[] = [
@@ -145,8 +149,8 @@ const permissionList: TreeOption[] = [
 				isGroup: true,
 				prefix: () => renderPrefix(true),
 				suffix: () => renderSuffix(true, ""),
-			}
-		]
+			},
+		],
 	},
 	{
 		label: "用户服务",
@@ -168,8 +172,8 @@ const permissionList: TreeOption[] = [
 						isGroup: false,
 						prefix: () => renderPrefix(false),
 						suffix: () => renderSuffix(false, "user:user:add"),
-					}
-				]
+					},
+				],
 			},
 			{
 				label: "角色",
@@ -184,8 +188,8 @@ const permissionList: TreeOption[] = [
 						isGroup: false,
 						prefix: () => renderPrefix(false),
 						suffix: () => renderSuffix(false, "user:role:add"),
-					}
-				]
+					},
+				],
 			},
 			{
 				label: "权限",
@@ -193,7 +197,7 @@ const permissionList: TreeOption[] = [
 				isGroup: true,
 				prefix: () => renderPrefix(true),
 				suffix: () => renderSuffix(true, ""),
-				children: []
+				children: [],
 			},
 			{
 				label: "菜单",
@@ -201,10 +205,10 @@ const permissionList: TreeOption[] = [
 				isGroup: true,
 				prefix: () => renderPrefix(true),
 				suffix: () => renderSuffix(true, ""),
-				children: []
+				children: [],
 			},
-		]
-	}
+		],
+	},
 ];
 
 const permissionData = ref(permissionList);
@@ -214,22 +218,28 @@ const updateCheckedKeys = (checkedKeys: string[]) => {
 };
 
 // 查找节点在tree中的与其同级的所有节点和其在这些节点中的索引
-const findSiblingsAndIndex = (node: TreeOption, nodes?: TreeOption[]): [TreeOption[], number] | [null, null] => {
+const findSiblingsAndIndex = (
+	node: TreeOption,
+	nodes?: TreeOption[]
+): [TreeOption[], number] | [null, null] => {
 	if (!nodes) return [null, null];
 	for (let i = 0; i < nodes.length; ++i) {
 		const siblingNode = nodes[i];
 		if (siblingNode.key === node.key) return [nodes, i];
-		const [siblings, index] = findSiblingsAndIndex(node, siblingNode.children);
+		const [siblings, index] = findSiblingsAndIndex(
+			node,
+			siblingNode.children
+		);
 		if (siblings && index !== null) return [siblings, index];
 	}
 	return [null, null];
 };
 
-const handleDragStart = (data: { node: TreeOption, event: DragEvent }) => {
+const handleDragStart = (data: { node: TreeOption; event: DragEvent }) => {
 	// 暂无法通过DragEvent相关api来决定是否接受此次拖拽
 };
 
-const handleDragEnter = (data: { node: TreeOption, event: DragEvent }) => {
+const handleDragEnter = (data: { node: TreeOption; event: DragEvent }) => {
 	// 暂无法通过DragEvent相关api来决定是否接受此次拖拽
 };
 
@@ -240,10 +250,13 @@ const handleDragEnter = (data: { node: TreeOption, event: DragEvent }) => {
 //     2、变换分组：改变被拖拽权限的权限分组数据关联,目标分组权限数据重新排序，原分组权限数据不需要重新排序
 // 三、权限 -> 权限分组：与二(2)大致相同，不过默认将被拖拽节点放置在目标分组的最后一位
 // 四、权限分组 -> 权限：不允许此种拖拽
-const handleDrop = ({node, dragNode, dropPosition}: TreeDropInfo) => {
+const handleDrop = ({ node, dragNode, dropPosition }: TreeDropInfo) => {
 	console.log("目标位置的节点：", JSON.stringify(node));
 	console.log("被拖拽的节点：", JSON.stringify(dragNode));
-	console.log("被拖拽的节点位于目标位置节点的位置", JSON.stringify(dropPosition));
+	console.log(
+		"被拖拽的节点位于目标位置节点的位置",
+		JSON.stringify(dropPosition)
+	);
 	if (dragNode.isGroup) {
 		// 被拖拽的节点是权限分组
 		if (!node.isGroup) {
@@ -295,14 +308,14 @@ const handleDrop = ({node, dragNode, dropPosition}: TreeDropInfo) => {
 
 // 树节点右键菜单
 const showDropdown = ref(false);
-const handleSelect = () => showDropdown.value = false;
-const handleClickOutSide = () => showDropdown.value = false;
+const handleSelect = () => (showDropdown.value = false);
+const handleClickOutSide = () => (showDropdown.value = false);
 // 右键菜单选项
 const options = ref<DropdownOption[]>([]);
 const contextMenuX = ref(0);
 const contextMenuY = ref(0);
 // 树节点的HTML属性，用来响应左键点击和右键菜单
-const nodeProps = ({option}: { option: TreeOption }) => {
+const nodeProps = ({ option }: { option: TreeOption }) => {
 	return {
 		onClick() {
 			message.info("[Click] " + option.label);
@@ -317,9 +330,9 @@ const nodeProps = ({option}: { option: TreeOption }) => {
 						props: {
 							onClick: () => {
 								showPermissionGroupEditModal.value = true;
-							}
-						}
-					}
+							},
+						},
+					},
 				];
 			} else {
 				options.value = [
@@ -329,16 +342,16 @@ const nodeProps = ({option}: { option: TreeOption }) => {
 						props: {
 							onClick: () => {
 								showPermissionEditModal.value = true;
-							}
-						}
-					}
+							},
+						},
+					},
 				];
 			}
 			showDropdown.value = true;
 			contextMenuX.value = e.clientX;
 			contextMenuY.value = e.clientY;
 			e.preventDefault();
-		}
+		},
 	};
 };
 
@@ -347,7 +360,7 @@ const showPermissionGroupEditModal = ref(false);
 // 权限分组数据model
 const permissionGroupEditFormModel = ref({
 	name: "新增",
-	description: "描述"
+	description: "描述",
 });
 
 // 是否展示权限编辑模态框
@@ -356,12 +369,12 @@ const showPermissionEditModal = ref(false);
 const permissionTypeDict = [
 	{
 		label: "功能服务",
-		value: "1"
+		value: "1",
 	},
 	{
 		label: "界面元素",
-		value: "2"
-	}
+		value: "2",
+	},
 ];
 // 权限数据model
 const permissionEditFormModel = ref({
@@ -369,10 +382,8 @@ const permissionEditFormModel = ref({
 	authority: "user:user:add",
 	type: "1",
 	groupId: 0,
-	description: "描述"
+	description: "描述",
 });
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
