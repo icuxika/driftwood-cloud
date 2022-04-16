@@ -7,11 +7,11 @@
 			checkable
 			draggable
 			:data="permissionData"
+			:node-props="nodeProps"
 			@update:checked-keys="updateCheckedKeys"
 			@drop="handleDrop"
 			@dragstart="handleDragStart"
 			@dragenter="handleDragEnter"
-			:node-props="nodeProps"
 		/>
 		<n-dropdown
 			trigger="manual"
@@ -44,10 +44,10 @@
 					</n-form-item>
 					<n-form-item label="描述">
 						<n-input
-							type="textarea"
 							v-model:value="
 								permissionGroupEditFormModel.description
 							"
+							type="textarea"
 						/>
 					</n-form-item>
 				</n-form>
@@ -89,8 +89,8 @@
 					</n-form-item>
 					<n-form-item label="描述">
 						<n-input
-							type="textarea"
 							v-model:value="permissionEditFormModel.description"
+							type="textarea"
 						/>
 					</n-form-item>
 				</n-form>

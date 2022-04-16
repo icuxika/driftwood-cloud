@@ -20,6 +20,7 @@
 			</div>
 		</n-layout-header>
 		<n-layout-content>
+			<VBanner />
 			<n-button>naive-ui</n-button>
 			<n-card>
 				<n-space>
@@ -56,6 +57,7 @@ import { useLoadingBar, useMessage } from "naive-ui";
 import SiderMenu from "../layouts/components/SiderMenu.vue";
 import MainHeader from "../layouts/components/main/MainHeader.vue";
 import MainContent from "../layouts/components/main/MainContent.vue";
+import { VBanner } from "@icuxika/vue-scaffold-ui";
 
 const message = useMessage();
 

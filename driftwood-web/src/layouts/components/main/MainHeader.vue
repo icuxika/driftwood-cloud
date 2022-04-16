@@ -1,13 +1,13 @@
 <template>
 	<n-space>
 		<Draggable
+			v-model="tabList"
 			class="draggable-container"
 			tag="transition-group"
 			:component-data="{
 				tag: 'div',
 				name: !dragging ? 'flip-list' : null,
 			}"
-			v-model="tabList"
 			v-bind="dragOptions"
 			item-key="id"
 			@start="dragging = true"
@@ -23,8 +23,8 @@
 				>
 					<span>{{ element.title }}</span>
 					<n-icon
-						size="16"
 						v-if="!element.fixed"
+						size="16"
 						@click.stop="closeTab(element)"
 					>
 						<CloseIcon />

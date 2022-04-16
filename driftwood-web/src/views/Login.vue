@@ -3,10 +3,10 @@
 		<n-card title="登录">
 			<n-tabs
 				default-value="login1"
-				@before-leave="handleBeforeLeave"
-				@update:value="handleUpdateValue"
 				size="large"
 				justify-content="space-evenly"
+				@before-leave="handleBeforeLeave"
+				@update:value="handleUpdateValue"
 			>
 				<n-tab-pane name="login1" tab="密码">
 					<n-form>
@@ -15,11 +15,11 @@
 						</n-form-item-row>
 						<n-form-item-row label="密码">
 							<n-input
+								v-model:value="password"
 								type="password"
 								show-password-on="mousedown"
 								placeholder="密码"
 								:maxlength="64"
-								v-model:value="password"
 							/>
 						</n-form-item-row>
 						<n-form-item-row label="记住我">

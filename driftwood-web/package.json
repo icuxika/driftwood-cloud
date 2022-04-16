@@ -9,6 +9,7 @@
 		"lint": "eslint -c .eslintrc.json vite.config.ts \"src/**/*.{ts,tsx,vue}\" --fix"
 	},
 	"dependencies": {
+		"@icuxika/vue-scaffold-ui": "^0.1.0",
 		"@milkdown/core": "^4.11.1",
 		"@milkdown/plugin-listener": "^4.12.0",
 		"@milkdown/preset-commonmark": "^4.11.1",
