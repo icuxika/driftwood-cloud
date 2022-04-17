@@ -9,7 +9,7 @@
 		"lint": "eslint -c .eslintrc.json vite.config.ts \"src/**/*.{ts,tsx,vue}\" --fix"
 	},
 	"dependencies": {
-		"@icuxika/vue-scaffold-ui": "^0.1.0",
+		"@icuxika/vue-scaffold-ui": "^0.2.0",
 		"@milkdown/core": "^4.11.1",
 		"@milkdown/plugin-listener": "^4.12.0",
 		"@milkdown/preset-commonmark": "^4.11.1",
@@ -23,7 +23,7 @@
 		"prismjs": "^1.24.1",
 		"resize-observer-polyfill": "^1.5.1",
 		"vfonts": "^0.1.0",
-		"vue": "^3.2.31",
+		"vue": "3.2.31",
 		"vue-router": "4.0.8",
 		"vuedraggable": "^4.1.0",
 		"vuex": "^4.0.2"
