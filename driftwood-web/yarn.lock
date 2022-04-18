@@ -399,10 +399,10 @@
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-1.2.1.tgz"
   integrity sha512-ZnQMnLV4e7hDlUvw8H+U8ASL02SS2Gn6+9Ac3wGGLIe7+je2AeAOxPY+izIPJDfFDb7eDjev0Us8MO1iFRN8hA==
 
-"@icuxika/vue-scaffold-ui@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.npmjs.org/@icuxika/vue-scaffold-ui/-/vue-scaffold-ui-0.2.0.tgz#71af7ed2668f6df5ab47e04d31f82257f44d81fe"
-  integrity sha512-zyqyT4/vx/Xw9slEwDPLOGhYasUoMOB8ujS2ntvwl9AnpeW2zVIzdKo3xrTljtUoMeGhmT5N8C4705TSZEUMNQ==
+"@icuxika/vue-scaffold-ui@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.npmjs.org/@icuxika/vue-scaffold-ui/-/vue-scaffold-ui-0.2.1.tgz#d8fa0c4a3ce4e8af2212fd489b6b39bb0ef448a9"
+  integrity sha512-ipuR9YPmgVeKrd6slFKNAhVgwHUWGQdSm1EICzw/vC5iBXh8HOSl7GGzlye31cR+W6ovV9VQj/2m+YNXAS8GIw==
 
 "@jridgewell/resolve-uri@^3.0.3":
   version "3.0.5"
