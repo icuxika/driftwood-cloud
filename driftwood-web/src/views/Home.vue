@@ -20,8 +20,8 @@
 			</div>
 		</n-layout-header>
 		<n-layout-content>
-			<VBanner />
-			<VButton loading>naive-ui</VButton>
+			<v-banner></v-banner>
+			<v-button loading>Vue Scaffold UI</v-button>
 			<n-card>
 				<n-space>
 					<n-button
@@ -57,8 +57,6 @@ import { useLoadingBar, useMessage } from "naive-ui";
 import SiderMenu from "../layouts/components/SiderMenu.vue";
 import MainHeader from "../layouts/components/main/MainHeader.vue";
 import MainContent from "../layouts/components/main/MainContent.vue";
-import { VBanner, VButton } from "@icuxika/vue-scaffold-ui";
-import "@icuxika/vue-scaffold-ui/style.css";
 
 const message = useMessage();
 

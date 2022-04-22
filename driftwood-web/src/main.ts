@@ -80,8 +80,20 @@ const naive = create({
 	],
 });
 
+import {
+	create as createVUI,
+	VBanner,
+	VButton,
+} from "@icuxika/vue-scaffold-ui";
+import "@icuxika/vue-scaffold-ui/style.css";
+
+const vueScaffoldUI = createVUI({
+	components: [VBanner, VButton],
+});
+
 const app = createApp(App);
 app.use(router);
 app.use(store, key);
 app.use(naive);
+app.use(vueScaffoldUI);
 app.mount("#app");
