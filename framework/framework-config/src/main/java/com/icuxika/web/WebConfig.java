@@ -6,21 +6,33 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.icuxika.handler.ApiReturnHandler;
+import com.icuxika.resolver.JsonClipResolver;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 @Configuration
-public class WebConfig implements WebMvcConfigurer {
+public class WebConfig implements WebMvcConfigurer, InitializingBean {
+
+    @Autowired
+    private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
 
     private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
     private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
@@ -58,5 +70,20 @@ public class WebConfig implements WebMvcConfigurer {
                     new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN))
             );
         };
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new JsonClipResolver());
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        List<HandlerMethodReturnValueHandler> returnValueHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
+        if (returnValueHandlers != null) {
+            List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>(returnValueHandlers);
+            handlers.add(0, new ApiReturnHandler(requestMappingHandlerAdapter.getMessageConverters()));
+            requestMappingHandlerAdapter.setReturnValueHandlers(handlers);
+        }
     }
 }
