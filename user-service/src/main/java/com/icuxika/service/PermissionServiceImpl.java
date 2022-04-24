@@ -1,7 +1,7 @@
 package com.icuxika.service;
 
+import com.icuxika.modules.user.entity.Permission;
 import com.icuxika.repository.PermissionRepository;
-import com.icuxika.user.entity.Permission;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;

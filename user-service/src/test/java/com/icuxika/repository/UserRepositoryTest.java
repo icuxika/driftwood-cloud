@@ -1,7 +1,7 @@
 package com.icuxika.repository;
 
 import com.icuxika.constant.SystemConstant;
-import com.icuxika.user.entity.User;
+import com.icuxika.modules.user.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

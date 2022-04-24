@@ -1,4 +1,4 @@
-package com.icuxika.user.entity;
+package com.icuxika.modules.user.entity;
 
 import com.icuxika.common.BaseEntity;
 
@@ -6,15 +6,15 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Table(name = "role_permission")
+@Table(name = "menu_permission")
 @Entity
-public class RolePermission extends BaseEntity {
+public class MenuPermission extends BaseEntity {
 
     /**
-     * 角色id
+     * 菜单id
      */
     @Column(nullable = false)
-    private Long roleId;
+    private Long menuId;
 
     /**
      * 权限id
@@ -22,12 +22,12 @@ public class RolePermission extends BaseEntity {
     @Column(nullable = false)
     private Long permissionId;
 
-    public Long getRoleId() {
-        return roleId;
+    public Long getMenuId() {
+        return menuId;
     }
 
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setMenuId(Long menuId) {
+        this.menuId = menuId;
     }
 
     public Long getPermissionId() {

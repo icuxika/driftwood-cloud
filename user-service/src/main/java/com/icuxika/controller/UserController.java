@@ -1,11 +1,11 @@
 package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
+import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.entity.User;
+import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.service.UserService;
-import com.icuxika.user.dto.BindOneDTO;
-import com.icuxika.user.entity.User;
-import com.icuxika.user.vo.UserAuthVO;
-import com.icuxika.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

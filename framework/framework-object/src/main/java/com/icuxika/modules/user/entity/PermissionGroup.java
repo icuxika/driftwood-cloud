@@ -1,4 +1,4 @@
-package com.icuxika.user.entity;
+package com.icuxika.modules.user.entity;
 
 import com.icuxika.common.BaseEntity;
 
@@ -6,24 +6,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Table(name = "role")
+@Table(name = "permission_group")
 @Entity
-public class Role extends BaseEntity {
+public class PermissionGroup extends BaseEntity {
 
     /**
-     * 角色名称
+     * 权限组名称
      */
     @Column(nullable = false)
     private String name;
 
     /**
-     * 角色
+     * 父权限组id
      */
     @Column(nullable = false)
-    private String role;
+    private Long parentId;
 
     /**
-     * 角色描述
+     * 描述
      */
     @Column()
     private String description;
@@ -36,12 +36,12 @@ public class Role extends BaseEntity {
         this.name = name;
     }
 
-    public String getRole() {
-        return role;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 
     public String getDescription() {

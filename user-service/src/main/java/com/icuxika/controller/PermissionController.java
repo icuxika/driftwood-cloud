@@ -1,8 +1,8 @@
 package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
+import com.icuxika.modules.user.entity.Permission;
 import com.icuxika.service.PermissionService;
-import com.icuxika.user.entity.Permission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

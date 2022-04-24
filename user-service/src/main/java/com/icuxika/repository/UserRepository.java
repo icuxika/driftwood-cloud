@@ -1,6 +1,6 @@
 package com.icuxika.repository;
 
-import com.icuxika.user.entity.User;
+import com.icuxika.modules.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

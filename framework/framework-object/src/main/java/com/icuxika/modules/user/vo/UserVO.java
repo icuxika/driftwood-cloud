@@ -1,8 +1,8 @@
-package com.icuxika.user.vo;
+package com.icuxika.modules.user.vo;
 
-import com.icuxika.user.entity.Menu;
-import com.icuxika.user.entity.Permission;
-import com.icuxika.user.entity.Role;
+import com.icuxika.modules.user.entity.Menu;
+import com.icuxika.modules.user.entity.Permission;
+import com.icuxika.modules.user.entity.Role;
 
 import java.util.List;
 

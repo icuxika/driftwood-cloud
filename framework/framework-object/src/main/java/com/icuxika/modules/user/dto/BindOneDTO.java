@@ -1,4 +1,4 @@
-package com.icuxika.user.dto;
+package com.icuxika.modules.user.dto;
 
 import java.util.List;
 

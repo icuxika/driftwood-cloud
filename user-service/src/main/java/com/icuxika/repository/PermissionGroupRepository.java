@@ -1,6 +1,6 @@
 package com.icuxika.repository;
 
-import com.icuxika.user.entity.PermissionGroup;
+import com.icuxika.modules.user.entity.PermissionGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 

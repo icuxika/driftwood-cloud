@@ -3,8 +3,8 @@ package com.icuxika.config.phone;
 import com.icuxika.common.ApiData;
 import com.icuxika.config.common.CommonUserService;
 import com.icuxika.exception.FeignFallbackException;
-import com.icuxika.user.feign.UserClient;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.feign.UserClient;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class PhoneUserDetailsServiceImpl implements PhoneUserDetailsService, Com
     private static final Logger L = LoggerFactory.getLogger(PhoneUserDetailsServiceImpl.class);
 
     @Autowired
-    @Qualifier("com.icuxika.user.feign.UserClient")
+    @Qualifier("com.icuxika.modules.user.feign.UserClient")
     private UserClient userClient;
 
     @Autowired

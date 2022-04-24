@@ -1,10 +1,10 @@
 package com.icuxika.service;
 
+import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.entity.Menu;
+import com.icuxika.modules.user.entity.MenuPermission;
 import com.icuxika.repository.MenuPermissionRepository;
 import com.icuxika.repository.MenuRepository;
-import com.icuxika.user.dto.BindOneDTO;
-import com.icuxika.user.entity.Menu;
-import com.icuxika.user.entity.MenuPermission;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;

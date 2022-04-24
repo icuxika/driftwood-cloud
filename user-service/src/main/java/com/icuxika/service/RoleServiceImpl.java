@@ -1,11 +1,11 @@
 package com.icuxika.service;
 
+import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.entity.Role;
+import com.icuxika.modules.user.entity.RolePermission;
 import com.icuxika.repository.PermissionRepository;
 import com.icuxika.repository.RolePermissionRepository;
 import com.icuxika.repository.RoleRepository;
-import com.icuxika.user.dto.BindOneDTO;
-import com.icuxika.user.entity.Role;
-import com.icuxika.user.entity.RolePermission;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;

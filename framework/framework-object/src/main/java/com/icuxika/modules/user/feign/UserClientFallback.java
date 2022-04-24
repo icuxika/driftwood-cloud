@@ -1,7 +1,7 @@
-package com.icuxika.user.feign;
+package com.icuxika.modules.user.feign;
 
 import com.icuxika.common.ApiData;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

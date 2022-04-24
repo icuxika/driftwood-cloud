@@ -1,4 +1,4 @@
-package com.icuxika.user.entity;
+package com.icuxika.modules.user.entity;
 
 import com.icuxika.common.BaseEntity;
 

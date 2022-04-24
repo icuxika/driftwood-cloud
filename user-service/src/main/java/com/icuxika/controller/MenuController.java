@@ -1,9 +1,9 @@
 package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
+import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.entity.Menu;
 import com.icuxika.service.MenuService;
-import com.icuxika.user.dto.BindOneDTO;
-import com.icuxika.user.entity.Menu;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;

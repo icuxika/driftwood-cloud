@@ -1,10 +1,10 @@
 package com.icuxika.service;
 
+import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.entity.*;
+import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.repository.*;
-import com.icuxika.user.dto.BindOneDTO;
-import com.icuxika.user.entity.*;
-import com.icuxika.user.vo.UserAuthVO;
-import com.icuxika.user.vo.UserVO;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;

@@ -1,6 +1,6 @@
 package com.icuxika.repository;
 
-import com.icuxika.user.entity.MenuPermission;
+import com.icuxika.modules.user.entity.MenuPermission;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 

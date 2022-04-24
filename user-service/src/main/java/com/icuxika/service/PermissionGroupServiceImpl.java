@@ -1,8 +1,8 @@
 package com.icuxika.service;
 
 import com.icuxika.constant.SystemConstant;
+import com.icuxika.modules.user.entity.PermissionGroup;
 import com.icuxika.repository.PermissionGroupRepository;
-import com.icuxika.user.entity.PermissionGroup;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import com.icuxika.util.TreeNode;

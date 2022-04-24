@@ -1,6 +1,6 @@
 package com.icuxika.service;
 
-import com.icuxika.user.entity.PermissionGroup;
+import com.icuxika.modules.user.entity.PermissionGroup;
 import com.icuxika.util.TreeNode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

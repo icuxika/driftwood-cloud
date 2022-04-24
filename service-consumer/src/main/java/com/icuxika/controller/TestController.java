@@ -3,8 +3,8 @@ package com.icuxika.controller;
 import com.icuxika.common.ApiData;
 import com.icuxika.feign.OrderClient;
 import com.icuxika.feign.StorageClient;
-import com.icuxika.user.feign.UserClient;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.feign.UserClient;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import io.seata.core.context.RootContext;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
@@ -23,7 +23,7 @@ public class TestController {
     private static final Logger L = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
-    @Qualifier("com.icuxika.user.feign.UserClient")
+    @Qualifier("com.icuxika.modules.user.feign.UserClient")
     private UserClient userClient;
 
     @Autowired

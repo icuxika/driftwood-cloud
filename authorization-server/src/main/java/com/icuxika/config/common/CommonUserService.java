@@ -1,7 +1,7 @@
 package com.icuxika.config.common;
 
 import com.icuxika.config.UserDetailsImpl;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

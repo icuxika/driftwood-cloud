@@ -1,7 +1,7 @@
-package com.icuxika.user.feign;
+package com.icuxika.modules.user.feign;
 
 import com.icuxika.common.ApiData;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

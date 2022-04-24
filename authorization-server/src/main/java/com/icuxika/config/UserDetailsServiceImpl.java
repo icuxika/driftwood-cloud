@@ -2,8 +2,8 @@ package com.icuxika.config;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.config.common.CommonUserService;
-import com.icuxika.user.feign.UserClient;
-import com.icuxika.user.vo.UserAuthVO;
+import com.icuxika.modules.user.feign.UserClient;
+import com.icuxika.modules.user.vo.UserAuthVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,8 +14,8 @@ import org.springframework.stereotype.Service;
 @Service(value = "userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService, CommonUserService {
 
-    @Qualifier("com.icuxika.user.feign.UserClient")
     @Autowired
+    @Qualifier("com.icuxika.modules.user.feign.UserClient")
     private UserClient userClient;
 
     @Override
