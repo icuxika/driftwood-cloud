@@ -1,6 +1,5 @@
 package com.icuxika.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icuxika.annotation.ApiReturn;
 import com.icuxika.common.ApiData;
 import org.springframework.core.MethodParameter;
@@ -16,11 +15,8 @@ import java.util.List;
 
 public class ApiReturnHandler extends RequestResponseBodyMethodProcessor {
 
-    private final ObjectMapper objectMapper;
-
-    public ApiReturnHandler(List<HttpMessageConverter<?>> converters, ObjectMapper objectMapper) {
+    public ApiReturnHandler(List<HttpMessageConverter<?>> converters) {
         super(converters);
-        this.objectMapper = objectMapper;
     }
 
     @Override

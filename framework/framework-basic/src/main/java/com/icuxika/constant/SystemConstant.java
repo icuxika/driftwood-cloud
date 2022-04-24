@@ -50,4 +50,9 @@ public class SystemConstant {
      */
     public final static String OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE = "clientType";
 
+    /**
+     * MinIO 存储空间名称
+     */
+    public final static String MINIO_BUCKET_NAME = "driftwood";
+
 }

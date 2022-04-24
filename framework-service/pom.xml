@@ -16,5 +16,6 @@
         <module>framework-service-flowable</module>
         <module>framework-service-websocket</module>
         <module>framework-service-job</module>
+        <module>framework-service-minio</module>
     </modules>
 </project>
