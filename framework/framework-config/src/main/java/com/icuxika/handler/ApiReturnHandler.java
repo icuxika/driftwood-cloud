@@ -16,10 +16,11 @@ import java.util.List;
 
 public class ApiReturnHandler extends RequestResponseBodyMethodProcessor {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
-    public ApiReturnHandler(List<HttpMessageConverter<?>> converters) {
+    public ApiReturnHandler(List<HttpMessageConverter<?>> converters, ObjectMapper objectMapper) {
         super(converters);
+        this.objectMapper = objectMapper;
     }
 
     @Override

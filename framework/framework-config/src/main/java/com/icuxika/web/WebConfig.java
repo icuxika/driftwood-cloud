@@ -1,5 +1,6 @@
 package com.icuxika.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -30,6 +31,9 @@ import java.util.TimeZone;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer, InitializingBean {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     private RequestMappingHandlerAdapter requestMappingHandlerAdapter;
@@ -74,7 +78,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new JsonClipResolver());
+        resolvers.add(new JsonClipResolver(objectMapper));
     }
 
     @Override
@@ -82,7 +86,7 @@ public class WebConfig implements WebMvcConfigurer, InitializingBean {
         List<HandlerMethodReturnValueHandler> returnValueHandlers = requestMappingHandlerAdapter.getReturnValueHandlers();
         if (returnValueHandlers != null) {
             List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>(returnValueHandlers);
-            handlers.add(0, new ApiReturnHandler(requestMappingHandlerAdapter.getMessageConverters()));
+            handlers.add(0, new ApiReturnHandler(requestMappingHandlerAdapter.getMessageConverters(), objectMapper));
             requestMappingHandlerAdapter.setReturnValueHandlers(handlers);
         }
     }

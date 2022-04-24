@@ -23,7 +23,11 @@ import java.lang.reflect.Constructor;
 
 public class JsonClipResolver implements HandlerMethodArgumentResolver {
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
+
+    public JsonClipResolver(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
