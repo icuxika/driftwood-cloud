@@ -10,4 +10,6 @@ public interface FileService {
     MinioFileVO uploadFile(MultipartFile file, String path);
 
     List<MinioFileVO> uploadFileList(List<MultipartFile> fileList, String path);
+
+    String getPreSignedFileUrlById(Long id);
 }

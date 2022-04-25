@@ -1,11 +1,9 @@
 package com.icuxika.util;
 
 import com.icuxika.modules.file.bo.FileUploadBO;
-import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import io.minio.errors.*;
+import io.minio.http.Method;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -18,6 +16,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MinioUtil {
@@ -63,22 +62,57 @@ public class MinioUtil {
             String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
             // 文件名
             fileName = bucketName + "_" + DigestUtils.md5Hex(file.getInputStream()) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
+            // 格式化文件路径
+            path = formatPath(path);
+            String objectName = path + fileName;
             minioClient.putObject(
                     PutObjectArgs
                             .builder()
                             .bucket(bucketName)
-                            .object(path + fileName)
+                            .object(objectName)
                             .stream(file.getInputStream(), file.getSize(), -1)
                             .contentType(file.getContentType())
                             .build()
             );
-        } catch (ServerException | InsufficientDataException | ErrorResponseException | IOException | NoSuchAlgorithmException | InvalidKeyException | InvalidResponseException | XmlParserException | InternalException e) {
+            fileUploadBO.setFilePath("/" + bucketName + "/" + objectName);
+            fileUploadBO.setFileStoreName(objectName);
+            return fileUploadBO;
+        } catch (Exception e) {
             L.error("文件上传失败：" + e.getMessage());
             return fileUploadBO;
         }
-        fileUploadBO.setFilePath("/" + bucketName + "/" + path + fileName);
-        fileUploadBO.setFileStoreName(fileName);
-        return fileUploadBO;
     }
 
+    /**
+     * 格式化文件路径，使之满足 ABC/
+     *
+     * @param path 文件路径
+     * @return 文件路径
+     */
+    private String formatPath(String path) {
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+        if (!path.endsWith("/")) {
+            path = path + "/";
+        }
+        return path;
+    }
+
+    public String getPreSignedObjectUrl(String bucketName, String objectName) {
+        try {
+            return minioClient.getPresignedObjectUrl(
+                    GetPresignedObjectUrlArgs.builder()
+                            .method(Method.GET)
+                            .bucket(bucketName)
+                            .object(objectName)
+                            // 30 分钟有消息
+                            .expiry(30, TimeUnit.MINUTES)
+                            .build()
+            );
+        } catch (Exception e) {
+            L.error("获取文件下载链接失败：" + e.getMessage());
+            return null;
+        }
+    }
 }

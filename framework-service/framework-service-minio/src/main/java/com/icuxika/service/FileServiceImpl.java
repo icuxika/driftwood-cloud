@@ -53,7 +53,7 @@ public class FileServiceImpl implements FileService {
             return minioFileVO;
         }
 
-        FileUploadBO fileUploadBO = minioUtil.upload(SystemConstant.MINIO_BUCKET_NAME, formatPath(path), file);
+        FileUploadBO fileUploadBO = minioUtil.upload(SystemConstant.MINIO_BUCKET_NAME, path, file);
         if (fileUploadBO.getFilePath() == null) {
             throw new GlobalServiceException("上传失败");
         }
@@ -80,19 +80,15 @@ public class FileServiceImpl implements FileService {
         return fileList.stream().map(file -> uploadFile(file, path)).collect(Collectors.toList());
     }
 
-    /**
-     * 格式化文件路径，使之满足 ABC/
-     *
-     * @param path 文件路径
-     * @return 文件路径
-     */
-    private String formatPath(String path) {
-        if (path.startsWith("/")) {
-            path = path.substring(1);
+    @Override
+    public String getPreSignedFileUrlById(Long id) {
+        Optional<MinioFile> minioFileOptional = fileRepository.findById(id);
+        if (minioFileOptional.isPresent()) {
+            MinioFile minioFile = minioFileOptional.get();
+            if (minioFile.getFileStoreName() != null) {
+                return minioUtil.getPreSignedObjectUrl(SystemConstant.MINIO_BUCKET_NAME, minioFile.getFileStoreName());
+            }
         }
-        if (!path.endsWith("/")) {
-            path = path + "/";
-        }
-        return path;
+        return null;
     }
 }

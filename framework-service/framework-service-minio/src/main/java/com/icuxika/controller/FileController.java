@@ -41,4 +41,16 @@ public class FileController {
         List<MinioFileVO> minioFileVOList = fileService.uploadFileList(fileList, path);
         return ApiData.ok(minioFileVOList);
     }
+
+    /**
+     * 获取文件下载链接
+     *
+     * @param id 文件id
+     * @return ApiData
+     */
+    @GetMapping("/preSignedFileUrl/{id}")
+    public ApiData<String> getPreSignedFileUrlById(@PathVariable("id") Long id) {
+        String url = fileService.getPreSignedFileUrlById(id);
+        return ApiData.ok(url);
+    }
 }
