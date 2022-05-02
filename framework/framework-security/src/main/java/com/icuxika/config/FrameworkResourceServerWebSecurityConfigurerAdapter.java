@@ -6,7 +6,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 
+import java.util.List;
+
 public class FrameworkResourceServerWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+
+    /**
+     * 允许匿名访问的资源
+     */
+    private final List<String> anonymousPathList;
+
+    public FrameworkResourceServerWebSecurityConfigurerAdapter(List<String> anonymousPathList) {
+        this.anonymousPathList = anonymousPathList;
+    }
 
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
@@ -25,6 +36,7 @@ public class FrameworkResourceServerWebSecurityConfigurerAdapter extends WebSecu
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         // flowable-ui -> modeler
                         .antMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
+                        .antMatchers(anonymousPathList.toArray(new String[0])).permitAll()
                         .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
                         .anyRequest().authenticated()
                 )
