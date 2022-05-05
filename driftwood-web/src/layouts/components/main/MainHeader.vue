@@ -47,7 +47,7 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
-const navRouteList = computed({
+const navRouteList = computed<_RouteLocationBase[]>({
 	get() {
 		return store.state.nav.navRouteList;
 	},
