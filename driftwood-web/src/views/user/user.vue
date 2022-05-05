@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>角色管理</h1>
+		<h1>用户管理</h1>
 		<n-data-table
 			remote
 			striped
@@ -12,7 +12,7 @@
 			@update:sorter="handleSorterChange"
 			@update:filters="handleFiltersChange"
 			@update:page="handlePageChange"
-			@update:pageSize="handlePageSizeChange"
+			@update:page-size="handlePageSizeChange"
 		/>
 	</div>
 </template>
@@ -25,9 +25,10 @@ import {
 	DataTableFilterState,
 	DataTableSortState,
 	NDropdown,
+	NTag,
 	PaginationProps,
 } from "naive-ui";
-import { Role } from "../../api/modules/user/user";
+import { User } from "../../api/modules/user/user";
 
 const columnList: DataTableColumn[] = [
 	{
@@ -37,22 +38,99 @@ const columnList: DataTableColumn[] = [
 		sortOrder: "ascend",
 	},
 	{
-		title: "角色名称",
-		key: "name",
+		title: "用户名",
+		key: "username",
 		sorter: false,
 		sortOrder: false,
 	},
 	{
-		title: "角色",
-		key: "role",
+		title: "密码",
+		key: "password",
 		sorter: false,
 		sortOrder: false,
 	},
 	{
-		title: "角色描述",
-		key: "description",
+		title: "手机号",
+		key: "phone",
 		sorter: false,
 		sortOrder: false,
+	},
+	{
+		title: "昵称",
+		key: "nickname",
+		sorter: false,
+		sortOrder: false,
+	},
+	{
+		title: "账户是否没有过期",
+		key: "isAccountNonExpired",
+		sorter: false,
+		sortOrder: false,
+		render(rowData: object, rowIndex: number) {
+			return h(
+				NTag,
+				{
+					type: "info",
+				},
+				{
+					default: () =>
+						(rowData as User).isAccountNonExpired ? "是" : "否",
+				}
+			);
+		},
+	},
+	{
+		title: "账户是否没有冻结",
+		key: "isAccountNonLocked",
+		sorter: false,
+		sortOrder: false,
+		render(rowData: object, rowIndex: number) {
+			return h(
+				NTag,
+				{
+					type: "info",
+				},
+				{
+					default: () =>
+						(rowData as User).isAccountNonLocked ? "是" : "否",
+				}
+			);
+		},
+	},
+	{
+		title: "账户凭证是否没有过期",
+		key: "isCredentialsNonExpired",
+		sorter: false,
+		sortOrder: false,
+		render(rowData: object, rowIndex: number) {
+			return h(
+				NTag,
+				{
+					type: "info",
+				},
+				{
+					default: () =>
+						(rowData as User).isCredentialsNonExpired ? "是" : "否",
+				}
+			);
+		},
+	},
+	{
+		title: "账户是否启用",
+		key: "isEnabled",
+		sorter: false,
+		sortOrder: false,
+		render(rowData: object, rowIndex: number) {
+			return h(
+				NTag,
+				{
+					type: "info",
+				},
+				{
+					default: () => ((rowData as User).isEnabled ? "是" : "否"),
+				}
+			);
+		},
 	},
 	{
 		title: "创建时间",
@@ -98,7 +176,7 @@ const columnList: DataTableColumn[] = [
 ];
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
-const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
+const userData: User[] = Array.apply(null, Array.from({ length: 987 })).map(
 	(_, index) => {
 		return {
 			id: index,
@@ -106,14 +184,19 @@ const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
 			createUserId: 0,
 			updateTime: "2022-04-08",
 			updateUserId: 0,
-			name: "u_" + index,
-			role: "p_" + index,
-			description: "12345678910",
+			username: "u_" + index,
+			password: "p_" + index,
+			phone: "12345678910",
+			nickname: "icuxika",
+			isAccountNonExpired: true,
+			isAccountNonLocked: true,
+			isCredentialsNonExpired: true,
+			isEnabled: true,
 		};
 	}
 );
 
-const data = ref<Role[]>([]);
+const data = ref<User[]>([]);
 const loading = ref(true);
 const columns = ref(columnList);
 const pagination = reactive({
@@ -127,13 +210,13 @@ const pagination = reactive({
 		return `总数：${itemCount}`;
 	},
 });
-const rowKey = (rowData: Role) => {
+const rowKey = (rowData: User) => {
 	return rowData.id;
 };
 
 interface QueryData {
 	pageCount: number;
-	data: Role[];
+	data: User[];
 	total: number;
 }
 
@@ -144,11 +227,11 @@ const query = (
 	filterValues = []
 ): Promise<QueryData> => {
 	return new Promise((resolve) => {
-		const pagedData = roleData.slice(
+		const pagedData = userData.slice(
 			(page - 1) * pageSize,
 			page * pageSize
 		);
-		const total = roleData.length;
+		const total = userData.length;
 		const pageCount = Math.ceil(total / pageSize);
 		setTimeout(() => {
 			resolve({

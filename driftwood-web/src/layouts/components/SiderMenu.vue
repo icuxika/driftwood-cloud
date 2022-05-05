@@ -137,8 +137,8 @@ const test = () => {
 };
 
 const handleUpdateValue = (key: string, item: MenuOption) => {
-	console.log(JSON.stringify(key));
-	console.log(JSON.stringify(item));
+	// console.log(JSON.stringify(key));
+	// console.log(JSON.stringify(item));
 };
 </script>
 

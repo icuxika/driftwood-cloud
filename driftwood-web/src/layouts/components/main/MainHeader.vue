@@ -1,7 +1,7 @@
 <template>
 	<n-space>
 		<Draggable
-			v-model="tabList"
+			v-model="navRouteList"
 			class="draggable-container"
 			tag="transition-group"
 			:component-data="{
@@ -9,7 +9,7 @@
 				name: !dragging ? 'flip-list' : null,
 			}"
 			v-bind="dragOptions"
-			item-key="id"
+			item-key="path"
 			@start="dragging = true"
 			@end="dragging = false"
 		>
@@ -17,13 +17,14 @@
 				<div
 					class="draggable-container-item"
 					:class="{
-						'draggable-container-item-active': element.id === 1,
+						'draggable-container-item-active':
+							element.path === activePath,
 					}"
 					@click.stop="goto(element)"
 				>
-					<span>{{ element.title }}</span>
+					<span>{{ element.meta.title }}</span>
 					<n-icon
-						v-if="!element.fixed"
+						v-if="!element.meta.fixed"
 						size="16"
 						@click.stop="closeTab(element)"
 					>
@@ -38,46 +39,62 @@
 <script setup lang="ts">
 import Draggable from "vuedraggable";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
-import { ref } from "vue";
+import { computed, ref, watch } from "vue";
+import { useStore } from "../../../store";
+import { _RouteLocationBase, useRoute, useRouter } from "vue-router";
 
-interface TabItem {
-	id: number;
-	title: string;
-	fixed: boolean;
-}
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 
-const tabList = ref<TabItem[]>([
-	{
-		id: 1,
-		title: "首页",
-		fixed: true,
+const navRouteList = computed({
+	get() {
+		return store.state.nav.navRouteList;
 	},
-	{
-		id: 2,
-		title: "客户端管理",
-		fixed: false,
+	set(value) {
+		store.dispatch("nav/initNavRoute", value);
 	},
-	{
-		id: 3,
-		title: "用户管理",
-		fixed: false,
+});
+
+const getRouteLocationBase = (
+	route: _RouteLocationBase
+): _RouteLocationBase => {
+	const { path, fullPath, query, hash, name, params, redirectedFrom, meta } =
+		route;
+	return {
+		path,
+		fullPath,
+		query,
+		hash,
+		name,
+		params,
+		redirectedFrom,
+		meta,
+	};
+};
+
+// 当前激活的导航标签
+const activePath = ref(route.path);
+// 初始化首页标签
+let initNavRouteList = router
+	.getRoutes()
+	.filter((item) => item.path === "/index");
+store.dispatch("nav/initNavRoute", initNavRouteList);
+
+const excludedPath: string[] = ["Login"];
+
+// 观察路由变化，从而改变当前激活标签并添加导航标签
+watch(
+	() => route.path,
+	(to) => {
+		if (excludedPath.includes(route.name as string)) {
+			return;
+		}
+		activePath.value = to;
+		store.dispatch("nav/addNavRoute", getRouteLocationBase(route));
 	},
-	{
-		id: 4,
-		title: "角色管理",
-		fixed: false,
-	},
-	{
-		id: 5,
-		title: "权限管理",
-		fixed: false,
-	},
-	{
-		id: 6,
-		title: "菜单管理",
-		fixed: false,
-	},
-]);
+	{ immediate: true }
+);
 
 // 传递给vue.draggable.next(https://github.com/SortableJS/vue.draggable.next)依赖的Sortable(https://github.com/SortableJS/Sortable)的参数
 const dragOptions = {
@@ -90,13 +107,23 @@ const dragOptions = {
 // 是否处于拖拽，此判断影响是否给<transition-group>指定name属性，目前来自于vue.draggable.next的示例(https://github.com/SortableJS/vue.draggable.next/blob/master/example/components/transition-example-2.vue)
 // 实际测试，不使用列表的移动过渡(.flip-list-move),底层的Sortable似乎已经提供应有的效果了，待后期测试
 const dragging = ref(false);
-const goto = (item: TabItem) => {
-	console.log("goto: ", JSON.stringify(item));
+
+// 导航
+const goto = (item: _RouteLocationBase) => {
+	if (item.path === activePath.value) return;
+	activePath.value = item.path;
+	router.push(item);
 };
 
 // 关闭标签
-const closeTab = (item: TabItem) => {
-	console.log(item);
+const closeTab = (item: _RouteLocationBase) => {
+	store.dispatch("nav/removeNavRoute", item.path);
+	if (activePath.value === item.path) {
+		const newRoute =
+			navRouteList.value[Math.max(0, navRouteList.value.length - 1)];
+		activePath.value = newRoute.path;
+		router.push(newRoute);
+	}
 };
 </script>
 
