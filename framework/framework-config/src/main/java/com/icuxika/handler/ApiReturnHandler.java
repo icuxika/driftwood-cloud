@@ -2,6 +2,7 @@ package com.icuxika.handler;
 
 import com.icuxika.annotation.ApiReturn;
 import com.icuxika.common.ApiData;
+import com.icuxika.common.ApiStatusCode;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.HttpMessageNotWritableException;
@@ -38,8 +39,9 @@ public class ApiReturnHandler extends RequestResponseBodyMethodProcessor {
             super.handleReturnValue(returnValue, returnType, mavContainer, webRequest);
         } else {
             ApiData<Object> result = new ApiData<>();
-            result.setCode(200);
+            result.setCode(ApiStatusCode.SUCCESS.getCode());
             result.setData(returnValue);
+            result.setMsg(ApiStatusCode.SUCCESS.getMsg());
             super.handleReturnValue(result, returnType, mavContainer, webRequest);
         }
     }
