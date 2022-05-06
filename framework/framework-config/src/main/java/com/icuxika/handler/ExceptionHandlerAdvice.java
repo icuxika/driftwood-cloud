@@ -1,8 +1,8 @@
 package com.icuxika.handler;
 
 import com.icuxika.common.ApiData;
+import com.icuxika.common.ApiStatusCode;
 import com.icuxika.exception.GlobalServiceException;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -25,7 +25,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(Exception.class)
     public ApiData<Void> handleException(Exception e) {
         ApiData<Void> apiData = new ApiData<>();
-        apiData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiData.setCode(ApiStatusCode.EXCEPTION.getCode());
         apiData.setMsg(e.getMessage());
         return apiData;
     }
@@ -47,7 +47,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ApiData<Void> handleException(MissingServletRequestParameterException e) {
         ApiData<Void> apiData = new ApiData<>();
-        apiData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiData.setCode(ApiStatusCode.PARAMETER_ERROR.getCode());
         apiData.setMsg(MessageFormat.format("缺少参数{0}，类型[{1}]", e.getParameterName(), e.getParameterType()));
         return apiData;
     }
@@ -58,7 +58,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public ApiData<Void> handleException(ConstraintViolationException e) {
         ApiData<Void> apiData = new ApiData<>();
-        apiData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiData.setCode(ApiStatusCode.PARAMETER_ERROR.getCode());
         apiData.setMsg(e.getMessage());
         return apiData;
     }
@@ -69,7 +69,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(BindException.class)
     public ApiData<Void> handleException(BindException e) {
         ApiData<Void> apiData = new ApiData<>();
-        apiData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiData.setCode(ApiStatusCode.PARAMETER_ERROR.getCode());
         apiData.setMsg(parseErrors(e.getBindingResult()).toString());
         return apiData;
     }
@@ -80,7 +80,7 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ApiData<Void> handleException(MethodArgumentNotValidException e) {
         ApiData<Void> apiData = new ApiData<>();
-        apiData.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        apiData.setCode(ApiStatusCode.PARAMETER_ERROR.getCode());
         apiData.setMsg(parseErrors(e.getBindingResult()).toString());
         return apiData;
     }
