@@ -28,7 +28,11 @@ import {
 	NTag,
 	PaginationProps,
 } from "naive-ui";
-import { User } from "../../api/modules/user/user";
+import { User } from "@/api/modules/user/user";
+import { useStore } from "@/store";
+import { ApiData, Page } from "@/api";
+
+const store = useStore();
 
 const columnList: DataTableColumn[] = [
 	{
@@ -227,19 +231,24 @@ const query = (
 	filterValues = []
 ): Promise<QueryData> => {
 	return new Promise((resolve) => {
-		const pagedData = userData.slice(
-			(page - 1) * pageSize,
-			page * pageSize
-		);
-		const total = userData.length;
-		const pageCount = Math.ceil(total / pageSize);
-		setTimeout(() => {
-			resolve({
-				pageCount,
-				data: pagedData,
-				total,
+		store
+			.dispatch("user/page", {
+				sort: "id,desc",
+				page: page - 1,
+				size: pageSize,
+			})
+			.then((apiData: ApiData<Page<User>>) => {
+				setTimeout(() => {
+					resolve({
+						pageCount: apiData.data.totalPages,
+						data: apiData.data.content,
+						total: apiData.data.totalElements,
+					});
+				}, 500);
+			})
+			.catch((error) => {
+				console.log(error);
 			});
-		}, 500);
 	});
 };
 

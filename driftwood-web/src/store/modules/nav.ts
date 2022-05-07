@@ -1,5 +1,5 @@
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
-import { StateInterface } from "../index";
+import { StateInterface } from "@/store";
 import { _RouteLocationBase } from "vue-router";
 
 export interface NavStateInterface {

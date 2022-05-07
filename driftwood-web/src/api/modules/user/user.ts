@@ -1,13 +1,6 @@
 import { AxiosResponse } from "axios";
-import AxiosInstance from "../../axios";
-import {
-	ApiData,
-	BaseEntity,
-	BindOneDTO,
-	HasId,
-	Page,
-	Pageable,
-} from "../../index";
+import AxiosInstance from "@/api/axios";
+import { ApiData, BaseEntity, BindOneDTO, HasId, Page, Pageable } from "@/api";
 
 /**
  * 用户数据

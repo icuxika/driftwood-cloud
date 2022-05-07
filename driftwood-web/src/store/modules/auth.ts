@@ -1,11 +1,11 @@
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
-import { StateInterface } from "../index";
+import { StateInterface } from "@/store";
 import {
 	authService,
 	LoginParamPassword,
 	LoginParamPhone,
 	TokenInfo,
-} from "../../api/modules/auth";
+} from "@/api/modules/auth";
 
 /**
  * 授权模式

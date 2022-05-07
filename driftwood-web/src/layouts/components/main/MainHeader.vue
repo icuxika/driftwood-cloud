@@ -40,7 +40,7 @@
 import Draggable from "vuedraggable";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
 import { computed, ref, watch } from "vue";
-import { useStore } from "../../../store";
+import { useStore } from "@/store";
 import { _RouteLocationBase, useRoute, useRouter } from "vue-router";
 
 const store = useStore();

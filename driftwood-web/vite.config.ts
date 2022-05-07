@@ -1,6 +1,7 @@
 import { defineConfig, loadEnv } from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
+import * as path from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -10,6 +11,11 @@ export default defineConfig(({ command, mode }) => {
 		// dev,serve命令下执行
 		return {
 			plugins: [vue(), vueJsx({})],
+			resolve: {
+				alias: {
+					"@": path.resolve(__dirname, "./src"),
+				},
+			},
 			server: {
 				proxy: {
 					"/api": {
@@ -24,6 +30,11 @@ export default defineConfig(({ command, mode }) => {
 		// build 命令下执行
 		return {
 			plugins: [vue(), vueJsx({})],
+			resolve: {
+				alias: {
+					"@": path.resolve(__dirname, "./src"),
+				},
+			},
 			server: {
 				proxy: {
 					"/api": {

@@ -1,7 +1,7 @@
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
-import { StateInterface } from "../../index";
-import { User, userService } from "../../../api/modules/user/user";
-import { Pageable } from "../../../api";
+import { StateInterface } from "@/store";
+import { User, userService } from "@/api/modules/user/user";
+import { Pageable } from "@/api";
 
 export interface UserStateInterface {}
 
@@ -34,16 +34,16 @@ const actions: ActionTree<UserStateInterface, StateInterface> = {
 	 * 获取用户分页数据
 	 */
 	async page({ commit }, pageable: Pageable | User) {
-		userService
-			.page(pageable)
-			.then((response) => {
-				console.log("获取用户分页数据成功");
-				console.log(response.data.data);
-			})
-			.catch((error) => {
-				console.log(error);
-				console.log("获取用户分页数据失败");
-			});
+		return new Promise((resolve, reject) => {
+			userService
+				.page(pageable)
+				.then((response) => {
+					resolve(response.data);
+				})
+				.catch((error) => {
+					reject(error);
+				});
+		});
 	},
 };
 

@@ -1,19 +1,19 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import Login from "../views/login.vue";
-import Home from "../views/home.vue";
+import Login from "@/views/login.vue";
+import Home from "@/views/home.vue";
 
 // index
-import Index from "../views/index/index.vue";
+import Index from "@/views/index/index.vue";
 
 // admin
-import Oauth2RegisteredClient from "../views/admin/oauth2-registered-client.vue";
+import Oauth2RegisteredClient from "@/views/admin/oauth2-registered-client.vue";
 
 // user
-import User from "../views/user/user.vue";
-import Role from "../views/user/role.vue";
-import Permission from "../views/user/permission.vue";
-import Menu from "../views/user/menu.vue";
+import User from "@/views/user/user.vue";
+import Role from "@/views/user/role.vue";
+import Permission from "@/views/user/permission.vue";
+import Menu from "@/views/user/menu.vue";
 
 const router = createRouter({
 	history: createWebHistory(),

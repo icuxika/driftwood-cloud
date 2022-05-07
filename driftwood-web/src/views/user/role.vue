@@ -27,7 +27,7 @@ import {
 	NDropdown,
 	PaginationProps,
 } from "naive-ui";
-import { Role } from "../../api/modules/user/user";
+import { Role } from "@/api/modules/user/user";
 
 const columnList: DataTableColumn[] = [
 	{

@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import router from "../router/index";
+import router from "@/router/index";
 
 const instance = axios.create({
 	// baseURL: import.meta.env.VITE_APP_BASE_URL,

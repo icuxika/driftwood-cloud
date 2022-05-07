@@ -44,7 +44,7 @@
 						<n-form-item-row label="验证码">
 							<n-input-group>
 								<n-input v-model:value="code" />
-								<n-button type="primary"> 发送验证码 </n-button>
+								<n-button type="primary"> 发送验证码</n-button>
 							</n-input-group>
 						</n-form-item-row>
 						<n-form-item-row label="记住我">
@@ -69,7 +69,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useMessage } from "naive-ui";
-import { useStore } from "../store";
+import { useStore } from "@/store";
 import { useRoute, useRouter } from "vue-router";
 
 const message = useMessage();
@@ -84,8 +84,8 @@ enum LoginType {
 
 let loginType = LoginType.PASSWORD;
 // 密码登录
-const username = ref("");
-const password = ref("");
+const username = ref("icuxika");
+const password = ref("rbj549232512");
 // 短信登录
 const phone = ref("");
 const code = ref("");

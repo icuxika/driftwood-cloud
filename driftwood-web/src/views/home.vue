@@ -10,6 +10,13 @@
 				</li>
 			</ul>
 			<div class="extra">
+				<n-switch
+					:rail-style="railStyle"
+					@update:value="handleUpdateValue"
+				>
+					<template #checked> 深色</template>
+					<template #unchecked> 浅色</template>
+				</n-switch>
 				<a class="search" href="#">
 					<svg class="icon" aria-hidden="true">
 						<use xlink:href="#icon-search"></use>
@@ -20,29 +27,13 @@
 			</div>
 		</n-layout-header>
 		<n-layout-content>
-			<v-banner></v-banner>
-			<v-button loading>Vue Scaffold UI</v-button>
-			<n-card>
-				<n-space>
-					<n-button
-						@click="
-							store.dispatch('index/setEnableDarkTheme', true)
-						"
-						>深色</n-button
-					>
-					<n-button
-						@click="
-							store.dispatch('index/setEnableDarkTheme', false)
-						"
-						>浅色</n-button
-					>
-				</n-space>
-			</n-card>
 			<n-layout has-sider class="basic-wrapper">
-				<SiderMenu />
 				<!-- 侧栏菜单 -->
+				<SiderMenu />
 				<n-layout>
+					<!-- 导航 -->
 					<MainHeader />
+					<!-- 内容 -->
 					<MainContent />
 				</n-layout>
 			</n-layout>
@@ -52,28 +43,48 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from "../store";
+import { useStore } from "@/store";
 import { useLoadingBar, useMessage } from "naive-ui";
-import SiderMenu from "../layouts/components/SiderMenu.vue";
-import MainHeader from "../layouts/components/main/MainHeader.vue";
-import MainContent from "../layouts/components/main/MainContent.vue";
+import SiderMenu from "@/layouts/components/SiderMenu.vue";
+import MainHeader from "@/layouts/components/main/MainHeader.vue";
+import MainContent from "@/layouts/components/main/MainContent.vue";
+import { CSSProperties } from "vue";
 
 const message = useMessage();
 
 const store = useStore();
-// store.dispatch("user/getUserInfo");
-// store.dispatch("user/page", {
-// 	size: 10,
-// 	page: 0,
-// 	sort: "id,desc",
-// 	phone: "18752065699"
-// });
 
 const loadingBar = useLoadingBar();
 loadingBar.start();
 setTimeout(() => {
 	loadingBar.finish();
 }, 1000);
+
+const railStyle = ({
+	focused,
+	checked,
+}: {
+	focused: boolean;
+	checked: boolean;
+}) => {
+	const style: CSSProperties = {};
+	if (checked) {
+		style.background = "#d03050";
+		if (focused) {
+			style.boxShadow = "0 0 0 2px #d0305040";
+		}
+	} else {
+		style.background = "#2080f0";
+		if (focused) {
+			style.boxShadow = "0 0 0 2px #2080f040";
+		}
+	}
+	return style;
+};
+
+const handleUpdateValue = (value: boolean) => {
+	store.dispatch("index/setEnableDarkTheme", value);
+};
 </script>
 
 <style lang="scss" scoped>

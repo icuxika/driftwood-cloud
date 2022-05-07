@@ -1,9 +1,9 @@
 import { InjectionKey } from "vue";
 import { createStore, Store, useStore as vuexUseStore } from "vuex";
-import indexModule, { IndexStateInterface } from "./modules";
-import authModule, { AuthStateInterface } from "./modules/auth";
-import userModule, { UserStateInterface } from "./modules/user/user";
-import navModule, { NavStateInterface } from "./modules/nav";
+import indexModule, { IndexStateInterface } from "@/store/modules";
+import authModule, { AuthStateInterface } from "@/store/modules/auth";
+import userModule, { UserStateInterface } from "@/store/modules/user/user";
+import navModule, { NavStateInterface } from "@/store/modules/nav";
 
 declare module "@vue/runtime-core" {
 	interface ComponentCustomProperties {

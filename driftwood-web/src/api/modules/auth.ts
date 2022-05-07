@@ -1,5 +1,5 @@
 import { AxiosResponse } from "axios";
-import AxiosInstance from "../axios";
+import AxiosInstance from "@/api/axios";
 
 /**
  * 登录参数
