@@ -22,8 +22,6 @@
 						<use xlink:href="#icon-search"></use>
 					</svg>
 				</a>
-				<router-link class="sign-in" to="/login">Sign in</router-link>
-				<a class="sign-up" href="#">Sign up</a>
 			</div>
 		</n-layout-header>
 		<n-layout-content>
@@ -124,21 +122,7 @@ const handleUpdateValue = (value: boolean) => {
 		margin-left: auto;
 
 		& a {
-			margin-right: 16px;
-		}
-
-		& .sign-in {
-			background-color: #ea7d9f;
-			padding: 8px 16px;
-			border-radius: 8px;
-			color: white;
-		}
-
-		& .sign-up {
-			background-color: #ea7d9f;
-			padding: 8px 16px;
-			border-radius: 8px;
-			color: white;
+			margin-left: 16px;
 		}
 	}
 }
