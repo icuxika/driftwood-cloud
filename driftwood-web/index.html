@@ -30,7 +30,7 @@
           animation: lds-spinner 1.2s linear infinite;
       }
 
-      .lds-spinner div:after {
+      .lds-spinner div::after {
           content: " ";
           display: block;
           position: absolute;
@@ -39,7 +39,7 @@
           width: 6px;
           height: 18px;
           border-radius: 20%;
-          background: dodgerblue linear-gradient(
+          background: linear-gradient(
                   -225deg,
                   #ffd3a5 0%,
                   #fd6585 29%,
