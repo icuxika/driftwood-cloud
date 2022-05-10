@@ -20,7 +20,6 @@ declare module "vue-router" {
 		/**
 		 * 需要登录
 		 */
-
 		requiresAuth?: boolean;
 
 		/**
