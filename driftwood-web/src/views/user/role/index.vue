@@ -26,7 +26,7 @@ import {
 	PaginationProps,
 } from "naive-ui";
 import { Role } from "@/api/modules/user/user";
-import { roleColumnList } from "@/views/user/role/data";
+import { defineRoleColumnList } from "@/views/user/role/data";
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
@@ -46,7 +46,20 @@ const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
 
 const data = ref<Role[]>([]);
 const loading = ref(true);
-const columns = ref(roleColumnList);
+const columns = ref(
+	defineRoleColumnList({
+		handleDropdownClick(
+			optionKey: string | number,
+			rowData: object,
+			rowIndex: number
+		) {
+			console.log(optionKey);
+			console.log((rowData as Role).name);
+			console.log(rowIndex);
+		},
+	})
+);
+
 const pagination = reactive({
 	page: 1,
 	pageSize: 10,
