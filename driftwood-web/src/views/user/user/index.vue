@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<h1>角色管理</h1>
+		<h1>用户管理</h1>
 		<n-data-table
 			remote
 			striped
@@ -18,104 +18,23 @@
 </template>
 
 <script setup lang="ts">
-import { h, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import {
 	DataTableBaseColumn,
-	DataTableColumn,
 	DataTableFilterState,
 	DataTableSortState,
-	NDropdown,
 	PaginationProps,
 } from "naive-ui";
-import { Role } from "@/api/modules/user/user";
+import { User } from "@/api/modules/user/user";
+import { useStore } from "@/store";
+import { ApiData, Page } from "@/api";
+import { userColumnList } from "@/views/user/user/data";
 
-const columnList: DataTableColumn[] = [
-	{
-		title: "ID",
-		key: "id",
-		sorter: true,
-		sortOrder: "ascend",
-	},
-	{
-		title: "角色名称",
-		key: "name",
-		sorter: false,
-		sortOrder: false,
-	},
-	{
-		title: "角色",
-		key: "role",
-		sorter: false,
-		sortOrder: false,
-	},
-	{
-		title: "角色描述",
-		key: "description",
-		sorter: false,
-		sortOrder: false,
-	},
-	{
-		title: "创建时间",
-		key: "createTime",
-		sorter: false,
-		sortOrder: false,
-	},
-	{
-		title: "更新时间",
-		key: "updateTime",
-		sorter: false,
-		sortOrder: false,
-	},
-	{
-		title: "操作",
-		key: "actions",
-		sorter: false,
-		sortOrder: false,
-		render(rowData: object, rowIndex: number) {
-			return h(
-				NDropdown,
-				{
-					options: [
-						{
-							label: "编辑",
-							key: "edit",
-						},
-						{
-							label: "删除",
-							key: "delete",
-						},
-					],
-					onSelect: (key: string | number) => {
-						console.log(key);
-					},
-				},
-				{
-					default: () => "编辑",
-				}
-			);
-		},
-	},
-];
+const store = useStore();
 
-// 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
-const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
-	(_, index) => {
-		return {
-			id: index,
-			createTime: "2022-04-08",
-			createUserId: 0,
-			updateTime: "2022-04-08",
-			updateUserId: 0,
-			name: "u_" + index,
-			role: "p_" + index,
-			description: "12345678910",
-		};
-	}
-);
-
-const data = ref<Role[]>([]);
+const data = ref<User[]>([]);
 const loading = ref(true);
-const columns = ref(columnList);
+const columns = ref(userColumnList);
 const pagination = reactive({
 	page: 1,
 	pageSize: 10,
@@ -127,13 +46,13 @@ const pagination = reactive({
 		return `总数：${itemCount}`;
 	},
 });
-const rowKey = (rowData: Role) => {
+const rowKey = (rowData: User) => {
 	return rowData.id;
 };
 
 interface QueryData {
 	pageCount: number;
-	data: Role[];
+	data: User[];
 	total: number;
 }
 
@@ -144,19 +63,24 @@ const query = (
 	filterValues = []
 ): Promise<QueryData> => {
 	return new Promise((resolve) => {
-		const pagedData = roleData.slice(
-			(page - 1) * pageSize,
-			page * pageSize
-		);
-		const total = roleData.length;
-		const pageCount = Math.ceil(total / pageSize);
-		setTimeout(() => {
-			resolve({
-				pageCount,
-				data: pagedData,
-				total,
+		store
+			.dispatch("user/page", {
+				sort: "id,desc",
+				page: page - 1,
+				size: pageSize,
+			})
+			.then((apiData: ApiData<Page<User>>) => {
+				setTimeout(() => {
+					resolve({
+						pageCount: apiData.data.totalPages,
+						data: apiData.data.content,
+						total: apiData.data.totalElements,
+					});
+				}, 500);
+			})
+			.catch((error) => {
+				console.log(error);
 			});
-		}, 500);
 	});
 };
 
