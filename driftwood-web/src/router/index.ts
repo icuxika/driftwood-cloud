@@ -15,6 +15,26 @@ import Role from "@/views/user/role.vue";
 import Permission from "@/views/user/permission.vue";
 import Menu from "@/views/user/menu.vue";
 
+declare module "vue-router" {
+	interface RouteMeta {
+		/**
+		 * 需要登录
+		 */
+
+		requiresAuth?: boolean;
+
+		/**
+		 * 标题
+		 */
+		title?: string;
+
+		/**
+		 * 是否固定
+		 */
+		fixed?: boolean;
+	}
+}
+
 const router = createRouter({
 	history: createWebHistory(),
 	routes: [
