@@ -40,19 +40,20 @@
 import Draggable from "vuedraggable";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
 import { computed, ref, watch } from "vue";
-import { useStore } from "@/store";
 import { _RouteLocationBase, useRoute, useRouter } from "vue-router";
+import { NavRoute, useNavStore } from "@/store/pinia/nav";
 
-const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
-const navRouteList = computed<_RouteLocationBase[]>({
+const navStore = useNavStore();
+
+const navRouteList = computed<NavRoute[]>({
 	get() {
-		return store.state.nav.navRouteList;
+		return navStore.navRouteList;
 	},
 	set(value) {
-		store.dispatch("nav/initNavRoute", value);
+		navStore.initNavRoute(value);
 	},
 });
 
@@ -79,7 +80,7 @@ const activePath = ref(route.path);
 let initNavRouteList = router
 	.getRoutes()
 	.filter((item) => item.path === "/index");
-store.dispatch("nav/initNavRoute", initNavRouteList);
+navStore.initNavRoute(initNavRouteList);
 
 const excludedPath: string[] = ["Login"];
 
@@ -91,7 +92,7 @@ watch(
 			return;
 		}
 		activePath.value = to;
-		store.dispatch("nav/addNavRoute", getRouteLocationBase(route));
+		navStore.addNavRoute(getRouteLocationBase(route));
 	},
 	{ immediate: true }
 );
@@ -117,7 +118,7 @@ const goto = (item: _RouteLocationBase) => {
 
 // 关闭标签
 const closeTab = (item: _RouteLocationBase) => {
-	store.dispatch("nav/removeNavRoute", item.path);
+	navStore.removeNavRoute(item.path);
 	if (activePath.value === item.path) {
 		const newRoute =
 			navRouteList.value[Math.max(0, navRouteList.value.length - 1)];

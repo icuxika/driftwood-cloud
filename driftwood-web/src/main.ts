@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import App from "@/App.vue";
 import router from "@/router";
 import { key, store } from "@/store";
+import { createPinia } from "pinia";
 
 import {
 	create,
@@ -94,6 +95,9 @@ const vueScaffoldUI = createVUI({
 const app = createApp(App);
 app.use(router);
 app.use(store, key);
+app.use(createPinia());
 app.use(naive);
 app.use(vueScaffoldUI);
-app.mount("#app");
+router.isReady().then(() => {
+	app.mount("#app");
+});
