@@ -29,7 +29,7 @@ import { User } from "@/api/modules/user/user";
 import { useStore } from "@/store";
 import { ApiData, Page, Pageable } from "@/api";
 import { userColumnList } from "@/views/user/user/data";
-import { usePage } from "@/hooks/usePage";
+import { PartialPageable, usePage } from "@/hooks/usePage";
 
 const store = useStore();
 
@@ -54,13 +54,9 @@ const rowKey = (rowData: User) => {
 
 // 非数据表属性直接对应的参数
 interface UserQuery extends User {}
+interface UserResult extends User {}
 
-const query = (
-	pageable: Partial<Pageable & User> & {
-		size: number;
-		page: number;
-	}
-): Promise<Page<User>> => {
+const query = (pageable: PartialPageable<User>): Promise<Page<User>> => {
 	return new Promise((resolve) => {
 		store
 			.dispatch("user/page", {
@@ -85,7 +81,12 @@ const query = (
 	});
 };
 
-const { refreshPage } = usePage(query, data, loading, pagination);
+const { refreshPage } = usePage<UserQuery, UserResult>(
+	query,
+	data,
+	loading,
+	pagination
+);
 
 const handleSorterChange = (options: DataTableSortState) => {
 	console.log("sort");
@@ -105,21 +106,21 @@ const handleFiltersChange = (
 };
 
 const handlePageChange = (page: number) => {
-	refreshPage<UserQuery>({
+	refreshPage({
 		size: pagination.pageSize,
 		page: page,
 	});
 };
 
 const handlePageSizeChange = (pageSize: number) => {
-	refreshPage<UserQuery>({
+	refreshPage({
 		size: pageSize,
 		page: pagination.page,
 	});
 };
 
 onMounted(() => {
-	refreshPage<UserQuery>({
+	refreshPage({
 		size: pagination.pageSize,
 		page: pagination.page,
 	});

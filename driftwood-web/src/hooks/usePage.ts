@@ -1,6 +1,18 @@
 import { Ref, UnwrapNestedRefs } from "vue";
 import { Page, Pageable } from "@/api";
 
+export type PartialPageable<T> = Partial<Pageable & T> & {
+	/**
+	 * 第几页（从 1 开始）
+	 */
+	size: number;
+
+	/**
+	 * 每页条数
+	 */
+	page: number;
+};
+
 /**
  * 分页查询封装
  * @param query 分页查询
@@ -8,14 +20,9 @@ import { Page, Pageable } from "@/api";
  * @param loading 数据表加载状态引用
  * @param pagination 数据表分页参数引用
  */
-export const usePage = <T>(
-	query: (
-		pageable: Partial<Pageable & T> & {
-			size: number;
-			page: number;
-		}
-	) => Promise<Page<T>>,
-	data: Ref<T[]>,
+export const usePage = <P, R>(
+	query: (pageable: PartialPageable<P>) => Promise<Page<R>>,
+	data: Ref<R[]>,
 	loading: Ref<boolean>,
 	pagination: UnwrapNestedRefs<{
 		page: number;
@@ -25,7 +32,7 @@ export const usePage = <T>(
 	}>
 ) => {
 	// 加载分页查询结果
-	const loadPage = (page: number, pageSize: number, pageResult: Page<T>) => {
+	const loadPage = (page: number, pageSize: number, pageResult: Page<R>) => {
 		data.value = pageResult.content;
 		pagination.page = page;
 		pagination.pageSize = pageSize;
@@ -34,12 +41,7 @@ export const usePage = <T>(
 	};
 
 	// 刷新分页
-	const refreshPage = <U extends T>(
-		pageable: Partial<Pageable & U> & {
-			size: number;
-			page: number;
-		}
-	) => {
+	const refreshPage = (pageable: PartialPageable<P>) => {
 		if (!loading.value) {
 			loading.value = true;
 		}

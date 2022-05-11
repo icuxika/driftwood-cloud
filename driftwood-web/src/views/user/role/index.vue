@@ -27,8 +27,8 @@ import {
 } from "naive-ui";
 import { Role } from "@/api/modules/user/user";
 import { defineRoleColumnList } from "@/views/user/role/data";
-import { Page, Pageable } from "@/api";
-import { usePage } from "@/hooks/usePage";
+import { Page } from "@/api";
+import { PartialPageable, usePage } from "@/hooks/usePage";
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
@@ -80,13 +80,9 @@ const rowKey = (rowData: Role) => {
 
 // 非数据表属性直接对应的参数
 interface RoleQuery extends Role {}
+interface RoleResult extends Role {}
 
-const query = (
-	pageable: Partial<Pageable & Role> & {
-		size: number;
-		page: number;
-	}
-): Promise<Page<Role>> => {
+const query = (pageable: PartialPageable<Role>): Promise<Page<Role>> => {
 	return new Promise((resolve) => {
 		const pagedData = roleData.slice(
 			(pageable.page - 1) * pageable.size,
@@ -106,7 +102,12 @@ const query = (
 	});
 };
 
-const { refreshPage } = usePage(query, data, loading, pagination);
+const { refreshPage } = usePage<RoleQuery, RoleResult>(
+	query,
+	data,
+	loading,
+	pagination
+);
 
 const handleSorterChange = (options: DataTableSortState) => {
 	console.log("sort");
@@ -126,21 +127,21 @@ const handleFiltersChange = (
 };
 
 const handlePageChange = (page: number) => {
-	refreshPage<RoleQuery>({
+	refreshPage({
 		size: pagination.pageSize,
 		page: page,
 	});
 };
 
 const handlePageSizeChange = (pageSize: number) => {
-	refreshPage<RoleQuery>({
+	refreshPage({
 		size: pageSize,
 		page: pagination.page,
 	});
 };
 
 onMounted(() => {
-	refreshPage<RoleQuery>({
+	refreshPage({
 		size: pagination.pageSize,
 		page: pagination.page,
 	});
