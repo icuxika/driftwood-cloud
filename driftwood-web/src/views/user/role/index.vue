@@ -27,6 +27,8 @@ import {
 } from "naive-ui";
 import { Role } from "@/api/modules/user/user";
 import { defineRoleColumnList } from "@/views/user/role/data";
+import { Page, Pageable } from "@/api";
+import { usePage } from "@/hooks/usePage";
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
@@ -71,38 +73,40 @@ const pagination = reactive({
 		return `总数：${itemCount}`;
 	},
 });
+
 const rowKey = (rowData: Role) => {
 	return rowData.id;
 };
 
-interface QueryData {
-	pageCount: number;
-	data: Role[];
-	total: number;
-}
+// 非数据表属性直接对应的参数
+interface RoleQuery extends Role {}
 
 const query = (
-	page: number,
-	pageSize = 10,
-	order = "ascend",
-	filterValues = []
-): Promise<QueryData> => {
+	pageable: Partial<Pageable & Role> & {
+		size: number;
+		page: number;
+	}
+): Promise<Page<Role>> => {
 	return new Promise((resolve) => {
 		const pagedData = roleData.slice(
-			(page - 1) * pageSize,
-			page * pageSize
+			(pageable.page - 1) * pageable.size,
+			pageable.page * pageable.size
 		);
 		const total = roleData.length;
-		const pageCount = Math.ceil(total / pageSize);
+		const pageCount = Math.ceil(total / pageable.size);
 		setTimeout(() => {
 			resolve({
-				pageCount,
-				data: pagedData,
-				total,
+				content: pagedData,
+				totalPages: pageCount,
+				totalElements: total,
+				size: pageable.size,
+				number: pageable.page,
 			});
 		}, 500);
 	});
 };
+
+const { refreshPage } = usePage(query, data, loading, pagination);
 
 const handleSorterChange = (options: DataTableSortState) => {
 	console.log("sort");
@@ -111,6 +115,7 @@ const handleSorterChange = (options: DataTableSortState) => {
 		options.columnKey + "," + (options.order === "ascend" ? "asc" : "desc")
 	);
 };
+
 const handleFiltersChange = (
 	filters: DataTableFilterState,
 	initiatorColumn: DataTableBaseColumn
@@ -119,37 +124,25 @@ const handleFiltersChange = (
 	console.log(JSON.stringify(filters));
 	console.log(JSON.stringify(initiatorColumn));
 };
+
 const handlePageChange = (page: number) => {
-	if (!loading.value) {
-		loading.value = true;
-		query(page, pagination.pageSize).then((queryData) => {
-			data.value = queryData.data;
-			pagination.page = page;
-			pagination.pageCount = queryData.pageCount;
-			pagination.itemCount = queryData.total;
-			loading.value = false;
-		});
-	}
+	refreshPage<RoleQuery>({
+		size: pagination.pageSize,
+		page: page,
+	});
 };
+
 const handlePageSizeChange = (pageSize: number) => {
-	if (!loading.value) {
-		loading.value = true;
-		query(pagination.page, pageSize).then((queryData) => {
-			data.value = queryData.data;
-			pagination.pageSize = pageSize;
-			pagination.pageCount = queryData.pageCount;
-			pagination.itemCount = queryData.total;
-			loading.value = false;
-		});
-	}
+	refreshPage<RoleQuery>({
+		size: pageSize,
+		page: pagination.page,
+	});
 };
 
 onMounted(() => {
-	query(pagination.page, pagination.pageSize).then((queryData) => {
-		data.value = queryData.data;
-		pagination.pageCount = queryData.pageCount;
-		pagination.itemCount = queryData.total;
-		loading.value = false;
+	refreshPage<RoleQuery>({
+		size: pagination.pageSize,
+		page: pagination.page,
 	});
 });
 </script>

@@ -27,8 +27,9 @@ import {
 } from "naive-ui";
 import { User } from "@/api/modules/user/user";
 import { useStore } from "@/store";
-import { ApiData, Page } from "@/api";
+import { ApiData, Page, Pageable } from "@/api";
 import { userColumnList } from "@/views/user/user/data";
+import { usePage } from "@/hooks/usePage";
 
 const store = useStore();
 
@@ -46,35 +47,35 @@ const pagination = reactive({
 		return `总数：${itemCount}`;
 	},
 });
+
 const rowKey = (rowData: User) => {
 	return rowData.id;
 };
 
-interface QueryData {
-	pageCount: number;
-	data: User[];
-	total: number;
-}
+// 非数据表属性直接对应的参数
+interface UserQuery extends User {}
 
 const query = (
-	page: number,
-	pageSize = 10,
-	order = "ascend",
-	filterValues = []
-): Promise<QueryData> => {
+	pageable: Partial<Pageable & User> & {
+		size: number;
+		page: number;
+	}
+): Promise<Page<User>> => {
 	return new Promise((resolve) => {
 		store
 			.dispatch("user/page", {
 				sort: "id,desc",
-				page: page - 1,
-				size: pageSize,
+				page: pageable.page - 1,
+				size: pageable.size,
 			})
 			.then((apiData: ApiData<Page<User>>) => {
 				setTimeout(() => {
 					resolve({
-						pageCount: apiData.data.totalPages,
-						data: apiData.data.content,
-						total: apiData.data.totalElements,
+						content: apiData.data.content,
+						totalPages: apiData.data.totalPages,
+						totalElements: apiData.data.totalElements,
+						size: apiData.data.size,
+						number: apiData.data.number,
 					});
 				}, 500);
 			})
@@ -84,6 +85,8 @@ const query = (
 	});
 };
 
+const { refreshPage } = usePage(query, data, loading, pagination);
+
 const handleSorterChange = (options: DataTableSortState) => {
 	console.log("sort");
 	console.log(JSON.stringify(options));
@@ -91,6 +94,7 @@ const handleSorterChange = (options: DataTableSortState) => {
 		options.columnKey + "," + (options.order === "ascend" ? "asc" : "desc")
 	);
 };
+
 const handleFiltersChange = (
 	filters: DataTableFilterState,
 	initiatorColumn: DataTableBaseColumn
@@ -99,37 +103,25 @@ const handleFiltersChange = (
 	console.log(JSON.stringify(filters));
 	console.log(JSON.stringify(initiatorColumn));
 };
+
 const handlePageChange = (page: number) => {
-	if (!loading.value) {
-		loading.value = true;
-		query(page, pagination.pageSize).then((queryData) => {
-			data.value = queryData.data;
-			pagination.page = page;
-			pagination.pageCount = queryData.pageCount;
-			pagination.itemCount = queryData.total;
-			loading.value = false;
-		});
-	}
+	refreshPage<UserQuery>({
+		size: pagination.pageSize,
+		page: page,
+	});
 };
+
 const handlePageSizeChange = (pageSize: number) => {
-	if (!loading.value) {
-		loading.value = true;
-		query(pagination.page, pageSize).then((queryData) => {
-			data.value = queryData.data;
-			pagination.pageSize = pageSize;
-			pagination.pageCount = queryData.pageCount;
-			pagination.itemCount = queryData.total;
-			loading.value = false;
-		});
-	}
+	refreshPage<UserQuery>({
+		size: pageSize,
+		page: pagination.page,
+	});
 };
 
 onMounted(() => {
-	query(pagination.page, pagination.pageSize).then((queryData) => {
-		data.value = queryData.data;
-		pagination.pageCount = queryData.pageCount;
-		pagination.itemCount = queryData.total;
-		loading.value = false;
+	refreshPage<UserQuery>({
+		size: pagination.pageSize,
+		page: pagination.page,
 	});
 });
 </script>
