@@ -1,6 +1,9 @@
 import { AxiosResponse } from "axios";
 import AxiosInstance from "@/api/axios";
 import { ApiData, BaseEntity, BindOneDTO, HasId, Page, Pageable } from "@/api";
+import { Role } from "@/api/modules/user/role";
+import { Permission } from "@/api/modules/user/permission";
+import { Menu } from "@/api/modules/user/menu";
 
 /**
  * 用户数据
@@ -25,38 +28,6 @@ interface UserVO {
 	roleList: Role[];
 	permissionList: Permission[];
 	menuList: Menu[];
-}
-
-/**
- * 角色
- */
-interface Role extends BaseEntity {
-	name: string;
-	role: string;
-}
-
-/**
- * 权限
- */
-interface Permission extends BaseEntity {
-	name: string;
-	authority: string;
-	type: number;
-	groupId: number;
-	description: string;
-}
-
-/**
- * 菜单
- */
-interface Menu extends BaseEntity {
-	parentId: number;
-	type: number;
-	name: string;
-	icon: string;
-	path: string;
-	sort: number;
-	status: number;
 }
 
 type UserWithId = User & HasId;
@@ -137,4 +108,4 @@ const createService: CreateService = (path: string) => {
 
 const userService = createService("/user/user");
 
-export { userService, User, Role };
+export { userService, User };

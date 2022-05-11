@@ -25,10 +25,10 @@ import {
 	DataTableSortState,
 	PaginationProps,
 } from "naive-ui";
-import { Role } from "@/api/modules/user/user";
 import { defineRoleColumnList } from "@/views/user/role/data";
 import { Page } from "@/api";
 import { PartialPageable, usePage } from "@/hooks/usePage";
+import { Role } from "@/api/modules/user/role";
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
