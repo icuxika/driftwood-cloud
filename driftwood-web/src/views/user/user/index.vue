@@ -27,15 +27,28 @@ import {
 } from "naive-ui";
 import { User } from "@/api/modules/user/user";
 import { useStore } from "@/store";
-import { ApiData, Page, Pageable } from "@/api";
-import { userColumnList } from "@/views/user/user/data";
+import { ApiData, Page } from "@/api";
+import { defineUserColumnList } from "@/views/user/user/data";
 import { PartialPageable, usePage } from "@/hooks/usePage";
 
 const store = useStore();
 
 const data = ref<User[]>([]);
 const loading = ref(true);
-const columns = ref(userColumnList);
+const columns = ref(
+	defineUserColumnList({
+		handleDropdownClick(
+			optionKey: string | number,
+			rowData: object,
+			rowIndex: number
+		) {
+			console.log(optionKey);
+			console.log((rowData as User).nickname);
+			console.log(rowIndex);
+		},
+	})
+);
+
 const pagination = reactive({
 	page: 1,
 	pageSize: 10,
