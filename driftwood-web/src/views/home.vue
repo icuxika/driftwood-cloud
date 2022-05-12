@@ -41,16 +41,16 @@
 </template>
 
 <script setup lang="ts">
-import { useStore } from "@/store";
 import { useLoadingBar, useMessage } from "naive-ui";
 import SiderMenu from "@/layouts/components/SiderMenu.vue";
 import MainHeader from "@/layouts/components/main/MainHeader.vue";
 import MainContent from "@/layouts/components/main/MainContent.vue";
 import { CSSProperties } from "vue";
+import { useSystemStore } from "@/store/pinia/system";
 
 const message = useMessage();
 
-const store = useStore();
+const systemStore = useSystemStore();
 
 const loadingBar = useLoadingBar();
 loadingBar.start();
@@ -81,7 +81,7 @@ const railStyle = ({
 };
 
 const handleUpdateValue = (value: boolean) => {
-	store.dispatch("index/setEnableDarkTheme", value);
+	systemStore.setDarkThemeEnable(value);
 };
 </script>
 
