@@ -16,6 +16,12 @@ interface ApiData<T> {
 	 * 消息
 	 */
 	msg: string;
+
+	/**
+	 * 业务状态码 [10000, 20000) 代表请求成功
+	 * 应确保后端报错返回的状态码大于20000
+	 */
+	success: boolean;
 }
 
 /**

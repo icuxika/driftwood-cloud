@@ -41,8 +41,8 @@ type CreateService = (path: string) => {
 	/**
 	 * 用户分页查询
 	 */
-	page: (
-		pageable: Pageable | User
+	page: <T extends User>(
+		pageable: Partial<Pageable & T>
 	) => Promise<AxiosResponse<ApiData<Page<User>>>>;
 
 	/**
@@ -80,7 +80,7 @@ const createService: CreateService = (path: string) => {
 		getUserInfo() {
 			return AxiosInstance.get<ApiData<UserVO>>(path + "/getUserInfo");
 		},
-		page(pageable: Pageable | User) {
+		page<T extends User>(pageable: Partial<Pageable & T>) {
 			return AxiosInstance.get<ApiData<Page<User>>>(path + "/page", {
 				params: pageable,
 			});
@@ -108,4 +108,4 @@ const createService: CreateService = (path: string) => {
 
 const userService = createService("/user/user");
 
-export { userService, User };
+export { userService, User, UserVO };
