@@ -1,6 +1,8 @@
 /**
  * 服务器返回数据包装
  */
+import { AxiosResponse } from "axios";
+
 interface ApiData<T> {
 	/**
 	 * 状态码
@@ -10,7 +12,7 @@ interface ApiData<T> {
 	/**
 	 * 数据
 	 */
-	data: T;
+	data?: T;
 
 	/**
 	 * 消息
@@ -106,4 +108,39 @@ interface BindOneDTO {
 	idList: number[];
 }
 
-export { ApiData, Pageable, Page, HasId, BaseEntity, BindOneDTO };
+/**
+ * 对axios请求返回结果进行解析
+ * @param block 业务请求（返回结果满足ApiData<T>）
+ */
+const resolveAxiosResult = async <T>(
+	block: () => Promise<AxiosResponse<ApiData<T>>>
+): Promise<T | undefined> => {
+	let apiData: ApiData<T>;
+	try {
+		const servicePromise = await block();
+		apiData = servicePromise.data;
+	} catch (error) {
+		// 此处错误已在axios响应拦截器处理过
+		return Promise.reject("系统异常：" + JSON.stringify(error));
+	}
+	if (apiData.success) {
+		return apiData.data;
+	} else {
+		// 业务异常
+		const errorMsg = "错误信息：[" + apiData.code + "]" + apiData.msg;
+		window.$message.error(errorMsg, {
+			duration: 500,
+		});
+		return Promise.reject(errorMsg);
+	}
+};
+
+export {
+	ApiData,
+	Pageable,
+	Page,
+	HasId,
+	BaseEntity,
+	BindOneDTO,
+	resolveAxiosResult,
+};
