@@ -137,8 +137,10 @@ const resolveAxiosResult = async <T>(
 
 /**
  * 类似分页查询，一般情况下ApiData的data不会为null
+ * 注意：不能定义 const NoNullReject = Promise.reject("不应出现此错误")
+ * 定义这样一个const来使用时会产生莫名的未捕获错误，因此通过返回一个函数来使用
  */
-const NoNullReject = Promise.reject("不应出现此错误");
+const NoNullReject = () => Promise.reject("不应出现的数据为空错误");
 
 /**
  * 判断目标是否是 undefined

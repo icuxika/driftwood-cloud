@@ -41,18 +41,18 @@ export const usePage = <P, R>(
 	};
 
 	// 刷新分页
-	const refreshPage = (pageable: PartialPageable<P>) => {
+	const refreshPage = async (pageable: PartialPageable<P>) => {
 		if (!loading.value) {
 			loading.value = true;
 		}
-		query(pageable)
-			.then((pageResult) => {
-				loadPage(pageable.page, pageable.size, pageResult);
-				loading.value = false;
-			})
-			.catch(() => {
-				loading.value = false;
-			});
+		try {
+			const pageResult = await query(pageable);
+			loadPage(pageable.page, pageable.size, pageResult);
+		} catch (error) {
+			console.error("[usePage]", error);
+		} finally {
+			loading.value = false;
+		}
 	};
 
 	return {

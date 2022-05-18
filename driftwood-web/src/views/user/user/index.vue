@@ -85,7 +85,7 @@ const query = async (pageable: PartialPageable<User>): Promise<Page<User>> => {
 			number: userPage.number,
 		};
 	}
-	return NoNullReject;
+	return NoNullReject();
 };
 
 const { refreshPage } = usePage<UserQuery, UserResult>(
