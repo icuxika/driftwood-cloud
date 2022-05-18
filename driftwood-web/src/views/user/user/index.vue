@@ -26,12 +26,12 @@ import {
 	PaginationProps,
 } from "naive-ui";
 import { User } from "@/api/modules/user/user";
-import { useStore } from "@/store";
-import { ApiData, Page } from "@/api";
+import { ApiData, NoNullReject, Page } from "@/api";
 import { defineUserColumnList } from "@/views/user/user/data";
 import { PartialPageable, usePage } from "@/hooks/usePage";
+import { useUserStore } from "@/store/pinia/user/user";
 
-const store = useStore();
+const userStore = useUserStore();
 
 const data = ref<User[]>([]);
 const loading = ref(true);
@@ -69,29 +69,22 @@ const rowKey = (rowData: User) => {
 interface UserQuery extends User {}
 interface UserResult extends User {}
 
-const query = (pageable: PartialPageable<User>): Promise<Page<User>> => {
-	return new Promise((resolve) => {
-		store
-			.dispatch("user/page", {
-				sort: "id,desc",
-				page: pageable.page - 1,
-				size: pageable.size,
-			})
-			.then((apiData: ApiData<Page<User>>) => {
-				setTimeout(() => {
-					resolve({
-						content: apiData.data.content,
-						totalPages: apiData.data.totalPages,
-						totalElements: apiData.data.totalElements,
-						size: apiData.data.size,
-						number: apiData.data.number,
-					});
-				}, 500);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+const query = async (pageable: PartialPageable<User>): Promise<Page<User>> => {
+	const userPage = await userStore.page({
+		sort: "id,desc",
+		page: pageable.page - 1,
+		size: pageable.size,
 	});
+	if (userPage) {
+		return {
+			content: userPage.content,
+			totalPages: userPage.totalPages,
+			totalElements: userPage.totalElements,
+			size: userPage.size,
+			number: userPage.number,
+		};
+	}
+	return NoNullReject;
 };
 
 const { refreshPage } = usePage<UserQuery, UserResult>(

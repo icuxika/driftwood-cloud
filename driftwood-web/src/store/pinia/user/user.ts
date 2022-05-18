@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { User, userService, UserVO } from "@/api/modules/user/user";
-import { ApiData, Page, Pageable } from "@/api";
+import { Page, Pageable, resolveAxiosResult } from "@/api";
 
 interface UserState {
 	currentUser?: UserVO;
@@ -17,27 +17,15 @@ export const useUserStore = defineStore("user", {
 		/**
 		 * 获取用户信息
 		 */
-		async getUserInfo(): Promise<ApiData<UserVO>> {
-			try {
-				const response = await userService.getUserInfo();
-				return response.data;
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
+		getUserInfo: async (): Promise<UserVO | null> =>
+			resolveAxiosResult(userService.getUserInfo),
 
 		/**
 		 * 获取用户分页数据
 		 */
-		async page<T extends User>(
+		page: async <T extends User>(
 			pageable: Partial<Pageable & T>
-		): Promise<ApiData<Page<User>>> {
-			try {
-				const response = await userService.page(pageable);
-				return response.data;
-			} catch (error) {
-				return Promise.reject(error);
-			}
-		},
+		): Promise<Page<User> | null> =>
+			resolveAxiosResult(() => userService.page(pageable)),
 	},
 });

@@ -12,7 +12,7 @@ interface ApiData<T> {
 	/**
 	 * 数据
 	 */
-	data?: T;
+	data: T | null;
 
 	/**
 	 * 消息
@@ -114,7 +114,7 @@ interface BindOneDTO {
  */
 const resolveAxiosResult = async <T>(
 	block: () => Promise<AxiosResponse<ApiData<T>>>
-): Promise<T | undefined> => {
+): Promise<T | null> => {
 	let apiData: ApiData<T>;
 	try {
 		const servicePromise = await block();
@@ -135,6 +135,17 @@ const resolveAxiosResult = async <T>(
 	}
 };
 
+/**
+ * 类似分页查询，一般情况下ApiData的data不会为null
+ */
+const NoNullReject = Promise.reject("不应出现此错误");
+
+/**
+ * 判断目标是否是 undefined
+ */
+const IsUndefined = <T>(target: T | null): boolean =>
+	typeof target === "undefined";
+
 export {
 	ApiData,
 	Pageable,
@@ -143,4 +154,5 @@ export {
 	BaseEntity,
 	BindOneDTO,
 	resolveAxiosResult,
+	NoNullReject,
 };
