@@ -71,6 +71,7 @@ interface UserResult extends User {}
 
 const query = async (pageable: PartialPageable<User>): Promise<Page<User>> => {
 	const userPage = await userStore.page({
+		...pageable, // ...pageable应放在首位，从而后面可以覆盖前面的
 		sort: "id,desc",
 		page: pageable.page - 1,
 		size: pageable.size,
