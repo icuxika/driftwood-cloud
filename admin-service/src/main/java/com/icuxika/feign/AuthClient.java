@@ -24,8 +24,8 @@ public interface AuthClient {
     ResponseEntity<TokenResponse> tokenByPhone(
             @RequestHeader HttpHeaders headers,
             @RequestParam("grant_type") String grantType,
-            @RequestParam("phone") String username,
-            @RequestParam("code") String password,
+            @RequestParam("phone") String phone,
+            @RequestParam("code") String code,
             @RequestParam("client_type") String clientType
     );
 }
