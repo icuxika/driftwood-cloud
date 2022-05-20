@@ -8,6 +8,7 @@ import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -19,29 +20,36 @@ public class AuthClientFallbackFactory implements FallbackFactory<AuthClient> {
 
     @Override
     public AuthClient create(Throwable cause) {
-        FeignException.BadRequest badRequest = (FeignException.BadRequest) cause;
-        String errorJson = badRequest.responseBody().isPresent() ? new String(badRequest.responseBody().get().array()) : null;
-        String error = "";
-        try {
-            JsonNode jsonNode = objectMapper.readTree(errorJson);
-            if (jsonNode.has("error")) {
-                error = jsonNode.get("error").asText();
+        int status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+        String error = cause.getMessage();
+        if (cause instanceof FeignException.BadRequest) {
+            // Spring Authorization Server 授权出错默认会以 HttpStatus.BAD_REQUEST 为状态码返回错误
+            // OAuth2TokenEndpointFilter#sendErrorResponse
+            FeignException.BadRequest badRequest = (FeignException.BadRequest) cause;
+            status = badRequest.status();
+            String errorJson = badRequest.responseBody().isPresent() ? new String(badRequest.responseBody().get().array()) : null;
+            try {
+                JsonNode jsonNode = objectMapper.readTree(errorJson);
+                if (jsonNode.has("error")) {
+                    error = jsonNode.get("error").asText();
+                }
+            } catch (JsonProcessingException e) {
+                // do nothing
             }
-        } catch (JsonProcessingException e) {
-            // do nothing
         }
         TokenResponse tokenResponse = new TokenResponse();
         tokenResponse.setError(error);
 
+        int finalStatus = status;
         return new AuthClient() {
             @Override
             public ResponseEntity<TokenResponse> tokenByPassword(HttpHeaders headers, String grantType, String username, String password, String clientType) {
-                return ResponseEntity.status(badRequest.status()).body(tokenResponse);
+                return ResponseEntity.status(finalStatus).body(tokenResponse);
             }
 
             @Override
             public ResponseEntity<TokenResponse> tokenByPhone(HttpHeaders headers, String grantType, String username, String password, String clientType) {
-                return ResponseEntity.status(badRequest.status()).body(tokenResponse);
+                return ResponseEntity.status(finalStatus).body(tokenResponse);
             }
         };
     }
