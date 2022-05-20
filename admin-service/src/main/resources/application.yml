@@ -1,2 +1,6 @@
 server:
   port: 8902
+
+feign:
+  circuitbreaker:
+    enabled: true
