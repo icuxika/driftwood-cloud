@@ -1,35 +1,12 @@
 import { defineStore } from "pinia";
 import {
-	authService,
-	LoginParamPassword,
-	LoginParamPhone,
+	adminAuthService,
+	AuthorizationGrantType,
+	CLIENT_TYPE_HTML,
 	TokenInfo,
-} from "@/api/modules/auth";
-
-/**
- * 授权模式
- */
-const enum AuthorizationGrantType {
-	/**
-	 * 授权码模式
-	 */
-	AUTHORIZATION_CODE = "authorization_code",
-
-	/**
-	 * 密码模式
-	 */
-	PASSWORD = "password",
-
-	/**
-	 * 短信模式
-	 */
-	PHONE = "phone",
-}
-
-/**
- * 设备类型html
- */
-const CLIENT_TYPE_HTML = 0;
+} from "@/api/modules/admin/auth";
+import { resolveAxiosResult } from "@/api";
+import { userService, UserVO } from "@/api/modules/user/user";
 
 interface AuthState {
 	/**
@@ -57,57 +34,67 @@ export const useAuthStore = defineStore("auth", {
 	getters: {},
 	actions: {
 		setTokenInfo(tokenInfo: TokenInfo) {
-			this.accessToken = tokenInfo.access_token;
-			this.refreshToken = tokenInfo.refresh_token;
-			this.expiresIn = tokenInfo.expires_in;
+			this.accessToken = tokenInfo.accessToken;
+			this.refreshToken = tokenInfo.refreshToken;
+			this.expiresIn = tokenInfo.expiresIn;
 
-			localStorage.setItem("accessToken", tokenInfo.access_token);
+			localStorage.setItem("accessToken", tokenInfo.accessToken);
 		},
 
 		/**
 		 * 密码模式登录
 		 */
-		async loginByPassword(password: LoginParamPassword) {
-			return new Promise((resolve, reject) => {
-				authService
-					.loginByPassword({
-						grant_type: AuthorizationGrantType.PASSWORD,
-						client_type: CLIENT_TYPE_HTML,
-						username: password.username,
-						password: password.password,
+		loginByPassword: async (
+			username: string,
+			password: string
+		): Promise<UserVO | null> => {
+			try {
+				const tokenInfo = await resolveAxiosResult(() =>
+					adminAuthService.login({
+						grantType: AuthorizationGrantType.PASSWORD,
+						clientType: CLIENT_TYPE_HTML,
+						identifier: username,
+						credentials: password,
 					})
-					.then((response) => {
-						const tokenInfo = response.data;
-						this.setTokenInfo(tokenInfo);
-						resolve(0);
-					})
-					.catch((error) => {
-						reject(error);
-					});
-			});
+				);
+				if (tokenInfo) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.setTokenInfo(tokenInfo);
+					return await resolveAxiosResult(userService.getUserInfo);
+				}
+			} catch (error) {
+				return null;
+			}
+			return null;
 		},
 
 		/**
 		 * 短信模式登录
 		 */
-		async loginByPhone(phone: LoginParamPhone) {
-			return new Promise((resolve, reject) => {
-				authService
-					.loginByPhone({
-						grant_type: AuthorizationGrantType.PHONE,
-						client_type: CLIENT_TYPE_HTML,
-						phone: phone.phone,
-						code: phone.code,
+		loginByPhone: async (
+			phone: string,
+			code: string
+		): Promise<UserVO | null> => {
+			try {
+				const tokenInfo = await resolveAxiosResult(() =>
+					adminAuthService.login({
+						grantType: AuthorizationGrantType.PHONE,
+						clientType: CLIENT_TYPE_HTML,
+						identifier: phone,
+						credentials: code,
 					})
-					.then((response) => {
-						const tokenInfo = response.data;
-						this.setTokenInfo(tokenInfo);
-						resolve(0);
-					})
-					.catch((error) => {
-						reject(error);
-					});
-			});
+				);
+				if (tokenInfo) {
+					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+					// @ts-ignore
+					this.setTokenInfo(tokenInfo);
+					return await resolveAxiosResult(userService.getUserInfo);
+				}
+			} catch (error) {
+				return null;
+			}
+			return null;
 		},
 	},
 });
