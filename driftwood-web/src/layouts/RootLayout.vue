@@ -1,14 +1,16 @@
 <template>
 	<n-loading-bar-provider>
-		<n-config-provider
-			:theme="systemStore.naiveUITheme"
-			:locale="systemStore.naiveUILocale"
-			:date-locale="systemStore.naiveUIDateLocale"
-		>
-			<n-dialog-provider>
-				<router-view />
-			</n-dialog-provider>
-		</n-config-provider>
+		<n-notification-provider>
+			<n-config-provider
+				:theme="systemStore.naiveUITheme"
+				:locale="systemStore.naiveUILocale"
+				:date-locale="systemStore.naiveUIDateLocale"
+			>
+				<n-dialog-provider>
+					<router-view />
+				</n-dialog-provider>
+			</n-config-provider>
+		</n-notification-provider>
 	</n-loading-bar-provider>
 </template>
 

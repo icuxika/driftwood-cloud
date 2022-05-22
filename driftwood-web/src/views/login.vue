@@ -34,6 +34,7 @@
 						block
 						secondary
 						strong
+						:loading="loginLoading"
 						@click="submitLogin"
 					>
 						登录
@@ -65,6 +66,7 @@
 						block
 						secondary
 						strong
+						:loading="loginLoading"
 						@click="submitLogin"
 					>
 						登录
@@ -77,18 +79,16 @@
 
 <script setup lang="ts">
 import { h, reactive, ref } from "vue";
-import { NIcon, NSpace, useMessage } from "naive-ui";
-import { useStore } from "@/store";
+import { NSpace, NAvatar, useMessage, useNotification } from "naive-ui";
 import { useRoute, useRouter } from "vue-router";
-import {
-	PasswordOutlined as PasswordIcon,
-	SmsFilled as SmsIcon,
-} from "@vicons/material";
+import { useAuthStore } from "@/store/pinia/auth";
+import { UserVO } from "@/api/modules/user/user";
 
 const message = useMessage();
-const store = useStore();
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
+const notification = useNotification();
 
 const tab1 = h(
 	NSpace,
@@ -118,6 +118,8 @@ const password = ref("rbj549232512");
 const phone = ref("12345678910");
 const code = ref("123456");
 const rememberMe = ref(false);
+
+const loginLoading = ref(false);
 
 interface GetCodeButtonType {
 	disabled: boolean;
@@ -149,35 +151,65 @@ const getCode = () => {
 	message.info("短信已发送", { duration: 500 });
 };
 
+const loginSuccessHandler = (userVO: UserVO) => {
+	router.replace({
+		path: (route.query.redirect as string) || "/",
+	});
+	loginLoading.value = false;
+	notification.create({
+		title: "登录成功",
+		content: `${userVO.nickname}，欢迎回来！`,
+		meta:
+			new Date().toLocaleDateString().replaceAll("/", "-") +
+			" " +
+			new Date().toLocaleTimeString(),
+		avatar: () =>
+			h(NAvatar, {
+				size: "small",
+				round: true,
+				src: "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg",
+			}),
+		onAfterLeave: () => {
+			message.success("开始使用吧");
+		},
+	});
+};
+
 const submitLogin = () => {
+	loginLoading.value = true;
 	switch (loginType) {
 		case LoginType.PASSWORD:
-			console.log(username.value);
-			console.log(password.value);
-			console.log(rememberMe.value);
-			store
-				.dispatch("auth/loginByPassword", {
-					username: username.value,
-					password: password.value,
+			authStore
+				.loginByPassword(username.value, password.value)
+				.then((userVO) => {
+					if (userVO) {
+						loginSuccessHandler(userVO);
+					}
 				})
-				.then(() => {
-					router.replace({
-						path: (route.query.redirect as string) || "/",
+				.catch(() => {
+					loginLoading.value = false;
+					notification["error"]({
+						content: "登录出错",
+						meta: "请检查用户名或者密码是否正确",
 					});
-				})
-				.catch((error) => {
-					console.log(error);
 				});
 			break;
 
 		case LoginType.PHONE:
-			console.log(phone.value);
-			console.log(code.value);
-			console.log(rememberMe.value);
-			store.dispatch("auth/loginByPhone", {
-				phone: phone.value,
-				code: code.value,
-			});
+			authStore
+				.loginByPhone(phone.value, code.value)
+				.then((userVO) => {
+					if (userVO) {
+						loginSuccessHandler(userVO);
+					}
+				})
+				.catch(() => {
+					loginLoading.value = false;
+					notification["error"]({
+						content: "登录出错",
+						meta: "请检查手机号或者验证码是否正确",
+					});
+				});
 			break;
 	}
 };

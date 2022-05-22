@@ -129,7 +129,7 @@ const resolveAxiosResult = async <T>(
 		// 业务异常
 		const errorMsg = "错误信息：[" + apiData.code + "]" + apiData.msg;
 		window.$message.error(errorMsg, {
-			duration: 500,
+			duration: 2500,
 		});
 		return Promise.reject(errorMsg);
 	}

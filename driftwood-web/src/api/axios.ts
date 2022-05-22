@@ -60,7 +60,10 @@ const allowRequest = (requestList: string[], config: AxiosRequestConfig) => {
 instance.interceptors.request.use(
 	(config: AxiosRequestConfig) => {
 		const authorization = config.headers["Authorization"];
-		if (typeof authorization === "undefined") {
+		if (
+			typeof authorization === "undefined" &&
+			config.url?.indexOf("login") == -1
+		) {
 			// config.headers["Authorization"] = "Bearer " + store.state.auth.accessToken
 			config.headers["Authorization"] =
 				"Bearer " + localStorage.getItem("accessToken");

@@ -40,6 +40,8 @@ import {
 	NTimeline,
 	NTimelineItem,
 	NTree,
+	NNotificationProvider,
+	NAvatar,
 } from "naive-ui";
 
 const naive = create({
@@ -78,6 +80,8 @@ const naive = create({
 		NLayoutHeader,
 		NLayoutContent,
 		NLayoutFooter,
+		NNotificationProvider,
+		NAvatar,
 	],
 });
 

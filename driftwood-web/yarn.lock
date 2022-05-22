@@ -279,15 +279,15 @@
     "@babel/helper-validator-identifier" "^7.16.7"
     to-fast-properties "^2.0.0"
 
-"@css-render/plugin-bem@^0.15.8":
-  version "0.15.9"
-  resolved "https://registry.npmjs.org/@css-render/plugin-bem/-/plugin-bem-0.15.9.tgz"
-  integrity sha512-xASEmYIX91Pow7YPzpAZ0eyrRNINVX7j9ITNbLt88gJHRLap3P1dv3hTSLtUZTxYXVHTklZ/SfJQ9FIO3jRahg==
+"@css-render/plugin-bem@^0.15.10":
+  version "0.15.10"
+  resolved "https://registry.npmjs.org/@css-render/plugin-bem/-/plugin-bem-0.15.10.tgz#a42daf1089ad725743f6c77aa3cab969ae41b947"
+  integrity sha512-V7b08sM2PWJlXI7BJiVIa0Sg30H3u/jHay4AclNXfF2yRFwwb4ZJjggsMfzwj3WSihAdNf2WTqvOU5qsOD80Dg==
 
-"@css-render/vue3-ssr@^0.15.7", "@css-render/vue3-ssr@^0.15.8":
-  version "0.15.9"
-  resolved "https://registry.npmjs.org/@css-render/vue3-ssr/-/vue3-ssr-0.15.9.tgz"
-  integrity sha512-b3wvEIZYjToOEAV/oUqVtcg+MPF/iSZB9VmVF7fMAAAfvVTc2kB4TZDhGZCMkGjGZxOUm1jia7q/Z9FJnJGLKw==
+"@css-render/vue3-ssr@^0.15.10":
+  version "0.15.10"
+  resolved "https://registry.npmjs.org/@css-render/vue3-ssr/-/vue3-ssr-0.15.10.tgz#0a5f58e8480b3e125f0667137b33217eee0b8f95"
+  integrity sha512-keGKnkB2nyVGoA8GezMKNsmvTGXEzgLOGGlgshwOTSEzd1dsROyZ2m/khJ9jV5zbzDM4rWeAWbWF0zwHemsJcw==
 
 "@emotion/babel-plugin@^11.7.1":
   version "11.7.2"
@@ -421,6 +421,11 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@juggle/resize-observer@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.npmjs.org/@juggle/resize-observer/-/resize-observer-3.3.1.tgz#b50a781709c81e10701004214340f25475a171a0"
+  integrity sha512-zMM9Ds+SawiUkakS7y94Ymqx+S0ORzpG3frZirN3l+UlXUmSUR7hF4wxCVqW+ei94JzV5kt0uXBcoOEAuiydrw==
 
 "@milkdown/core@^4.11.1":
   version "4.14.2"
@@ -610,17 +615,22 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.11.tgz"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
 
-"@types/lodash-es@^4.17.4":
+"@types/lodash-es@^4.17.6":
   version "4.17.6"
-  resolved "https://registry.npmjs.org/@types/lodash-es/-/lodash-es-4.17.6.tgz"
+  resolved "https://registry.npmjs.org/@types/lodash-es/-/lodash-es-4.17.6.tgz#c2ed4c8320ffa6f11b43eb89e9eaeec65966a0a0"
   integrity sha512-R+zTeVUKDdfoRxpAryaQNRKk3105Rrgx2CFRClIgRGaqDTdjsm8h6IYA8ir584W3ePzkZfst5xIgDwYrlh9HLg==
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash@*", "@types/lodash@^4.14.170":
+"@types/lodash@*":
   version "4.14.181"
   resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.181.tgz"
   integrity sha512-n3tyKthHJbkiWhDZs3DkhkCzt2MexYHXlX0td5iMplyfwketaOeKboEVBqzceH7juqvEg3q5oUoBFxSLu7zFag==
+
+"@types/lodash@^4.14.181":
+  version "4.14.182"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.182.tgz#05301a4d5e62963227eaafe0ce04dd77c54ea5c2"
+  integrity sha512-/THyiqyQAP9AfARo4pF+aCGcyiQ94tX/Is2I7HofNRqoYLgN1PBoOWu2/zTA5zMxzP5EFutMtWtGAFRKUe961Q==
 
 "@types/marked@^3.0.1":
   version "3.0.3"
@@ -1124,10 +1134,10 @@ array-union@^2.1.0:
   resolved "https://registry.npmjs.org/array-union/-/array-union-2.1.0.tgz"
   integrity sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==
 
-async-validator@^4.0.1:
-  version "4.0.7"
-  resolved "https://registry.npmjs.org/async-validator/-/async-validator-4.0.7.tgz"
-  integrity sha512-Pj2IR7u8hmUEDOwB++su6baaRi+QvsgajuFB9j95foM1N2gy5HM4z60hfusIO0fBPG5uLAEl6yCJr1jNSVugEQ==
+async-validator@^4.0.7:
+  version "4.1.1"
+  resolved "https://registry.npmjs.org/async-validator/-/async-validator-4.1.1.tgz#3cd1437faa2de64743f7d56649dd904c946a18fe"
+  integrity sha512-p4DO/JXwjs8klJyJL8Q2oM4ks5fUTze/h5k10oPPKMiLe1fj3G1QMzPHNmN1Py4ycOk7WlO2DcGXv1qiESJCZA==
 
 axios@^0.21.4:
   version "0.21.4"
@@ -1314,10 +1324,10 @@ cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-css-render@^0.15.7, css-render@^0.15.8:
-  version "0.15.9"
-  resolved "https://registry.npmjs.org/css-render/-/css-render-0.15.9.tgz"
-  integrity sha512-FMVcWsVipKEBR/mVf1+pIjCRQdztILVKxbp8TN5/Vf0Q/fdTq0OIb8JRW/pk7PP1eeWnB/ejQ0MNBe7ELjLblg==
+css-render@^0.15.10:
+  version "0.15.10"
+  resolved "https://registry.npmjs.org/css-render/-/css-render-0.15.10.tgz#a0f2c7e119597a47cd0b0c9055a85a78ec313db4"
+  integrity sha512-6j5acvm81sXTHJiF47FNNICtDpF74YoWk1xEK3qQvdqgW6vc+OXrPqflL6m8f5GE6XuFYrbACNEd17kraCSBAQ==
   dependencies:
     "@emotion/hash" "~0.8.0"
     "@types/node" "~17.0.5"
@@ -1333,10 +1343,10 @@ csstype@^3.0.2, csstype@~3.0.5:
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.0.11.tgz"
   integrity sha512-sa6P2wJ+CAbgyy4KFssIb/JNMLxFvKF1pCYCSXS8ZMuqZnMsrxqI2E5sPyoTpxoPU/gVZMzr2zjOfg8GIZOMsw==
 
-date-fns-tz@^1.3.0:
-  version "1.3.3"
-  resolved "https://registry.npmjs.org/date-fns-tz/-/date-fns-tz-1.3.3.tgz"
-  integrity sha512-Gks46gwbSauBQnV3Oofluj1wTm8J0tM7sbSJ9P+cJq/ZnTCpMohTKmmO5Tn+jQ7dyn0+b8G7cY4O2DZ5P/LXcA==
+date-fns-tz@^1.3.3:
+  version "1.3.4"
+  resolved "https://registry.npmjs.org/date-fns-tz/-/date-fns-tz-1.3.4.tgz#8b0e75beb771c7e9f1597aba467dc14431bb5403"
+  integrity sha512-O47vEyz85F2ax/ZdhMBJo187RivZGjH6V0cPjPzpm/yi6YffJg4upD/8ibezO11ezZwP3QYlBHh/t4JhRNx0Ow==
 
 date-fns@^2.28.0:
   version "2.28.0"
@@ -1891,10 +1901,10 @@ hash-sum@^2.0.0:
   resolved "https://registry.npmjs.org/hash-sum/-/hash-sum-2.0.0.tgz"
   integrity sha512-WdZTbAByD+pHfl/g9QSsBIIwy8IT+EsPiKDs0KNX+zSHhdDLFKdZu0BQHljvO+0QI/BasbMSUa8wYNCZTvhslg==
 
-highlight.js@^11.0.1:
-  version "11.5.0"
-  resolved "https://registry.npmjs.org/highlight.js/-/highlight.js-11.5.0.tgz"
-  integrity sha512-SM6WDj5/C+VfIY8pZ6yW6Xa0Fm1tniYVYWYW1Q/DcMnISZFrC3aQAZZZFAAZtybKNrGId3p/DNbFTtcTXXgYBw==
+highlight.js@^11.5.0:
+  version "11.5.1"
+  resolved "https://registry.npmjs.org/highlight.js/-/highlight.js-11.5.1.tgz#027c24e4509e2f4dcd00b4a6dda542ce0a1f7aea"
+  integrity sha512-LKzHqnxr4CrD2YsNoIf/o5nJ09j4yi/GcH5BnYz9UnVpZdS4ucMgvP61TDty5xJcFGRjnH4DpujkS9bHT3hq0Q==
 
 html-tags@^3.1.0:
   version "3.1.0"
@@ -2391,29 +2401,28 @@ ms@2.1.2:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz"
   integrity sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==
 
-naive-ui@^2.25.2:
-  version "2.27.0"
-  resolved "https://registry.npmjs.org/naive-ui/-/naive-ui-2.27.0.tgz"
-  integrity sha512-g9A2uulbQKMuJpUjAyiAqBHQ4xrcbwRPdv+OS2FeNC5u/SrRWFiO64X10YDyMwQNudrwc3VVqKUrw3ZArxtFCg==
+naive-ui@^2.29.0:
+  version "2.29.0"
+  resolved "https://registry.npmjs.org/naive-ui/-/naive-ui-2.29.0.tgz#e72caeefd8afce16dcc4bae4ca6abe7ef32a3f41"
+  integrity sha512-zZ4ka0Y5QakNyqJIPiAoZ5YJG4mCiSw+HzYtreEmOvBmbP14/iUXarRhI9a3XET8g6ix682TcitamlCyqZ/y2Q==
   dependencies:
-    "@css-render/plugin-bem" "^0.15.8"
-    "@css-render/vue3-ssr" "^0.15.8"
-    "@types/lodash" "^4.14.170"
-    "@types/lodash-es" "^4.17.4"
-    async-validator "^4.0.1"
-    css-render "^0.15.8"
+    "@css-render/plugin-bem" "^0.15.10"
+    "@css-render/vue3-ssr" "^0.15.10"
+    "@types/lodash" "^4.14.181"
+    "@types/lodash-es" "^4.17.6"
+    async-validator "^4.0.7"
+    css-render "^0.15.10"
     date-fns "^2.28.0"
-    date-fns-tz "^1.3.0"
+    date-fns-tz "^1.3.3"
     evtd "^0.2.3"
-    highlight.js "^11.0.1"
+    highlight.js "^11.5.0"
     lodash "^4.17.21"
     lodash-es "^4.17.21"
     seemly "^0.3.3"
-    treemate "^0.3.9"
-    vdirs "^0.1.7"
-    vfonts "^0.0.3"
+    treemate "^0.3.11"
+    vdirs "^0.1.8"
     vooks "^0.2.12"
-    vueuc "^0.4.28"
+    vueuc "^0.4.33"
 
 nanoid@^3.1.25, nanoid@^3.3.1:
   version "3.3.2"
@@ -2947,10 +2956,10 @@ token-stream@1.0.0:
   resolved "https://registry.npmjs.org/token-stream/-/token-stream-1.0.0.tgz"
   integrity sha1-zCAOqyYT9BZtJ/+a/HylbUnfbrQ=
 
-treemate@^0.3.9:
-  version "0.3.10"
-  resolved "https://registry.npmjs.org/treemate/-/treemate-0.3.10.tgz"
-  integrity sha512-uxN98H84/zXAkn02rEeip9SNnOR889QIBXfpZnwjaanp8JRElxjdmDaKmVULclrn54J8RcJVCqfeQZsdeMjwow==
+treemate@^0.3.11:
+  version "0.3.11"
+  resolved "https://registry.npmjs.org/treemate/-/treemate-0.3.11.tgz#7d52f8f69ab9ce326f8d139e0a3d1ffb25e48222"
+  integrity sha512-M8RGFoKtZ8dF+iwJfAJTOH/SM4KluKOKRJpjCMhI8bG3qB74zrFoArKZ62ll0Fr3mqkMJiQOmWYkdYgDeITYQg==
 
 trough@^2.0.0:
   version "2.1.0"
@@ -3082,10 +3091,17 @@ v8-compile-cache@^2.0.3:
   resolved "https://registry.npmjs.org/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz"
   integrity sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA==
 
-vdirs@^0.1.4, vdirs@^0.1.7:
+vdirs@^0.1.4:
   version "0.1.7"
   resolved "https://registry.npmjs.org/vdirs/-/vdirs-0.1.7.tgz"
   integrity sha512-MEUaLhV1jJyUqA2Ar4DfvlQx8jWs+PpCZ2dbM0ILelpMWGOybzt8ddL456VxeIbY/tkuDGT/Wzb8GG4LCuLuHw==
+  dependencies:
+    evtd "^0.2.2"
+
+vdirs@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.npmjs.org/vdirs/-/vdirs-0.1.8.tgz#a103bc43baca738f8dea912a7e9737154a19dbc2"
+  integrity sha512-H9V1zGRLQZg9b+GdMk8MXDN2Lva0zx72MPahDKc30v+DtwKjfyOSXWRIX4t2mhDubM1H09gPhWeth/BJWPHGUw==
   dependencies:
     evtd "^0.2.2"
 
@@ -3106,11 +3122,6 @@ vfile@^5.0.0:
     is-buffer "^2.0.0"
     unist-util-stringify-position "^3.0.0"
     vfile-message "^3.0.0"
-
-vfonts@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.npmjs.org/vfonts/-/vfonts-0.0.3.tgz"
-  integrity sha512-nguyw8L6Un8eelg1vQ31vIU2ESxqid7EYmy8V+MDeMaHBqaRSkg3dTBToC1PR00D89UzS/SLkfYPnx0Wf23IQQ==
 
 vfonts@^0.1.0:
   version "0.1.0"
@@ -3206,15 +3217,15 @@ vuedraggable@^4.1.0:
   dependencies:
     sortablejs "1.14.0"
 
-vueuc@^0.4.28:
-  version "0.4.28"
-  resolved "https://registry.npmjs.org/vueuc/-/vueuc-0.4.28.tgz"
-  integrity sha512-Udr1ROwJocHIThA5G+H5qN1QEFI4pskDvl+w/2Ul2XIjaAeIuQ6ygEOKHOXRJqKX5PxcTi1QQUpb7yQWsDw7ww==
+vueuc@^0.4.33:
+  version "0.4.37"
+  resolved "https://registry.npmjs.org/vueuc/-/vueuc-0.4.37.tgz#ec72074d634a4da7fb1832ffd6ca2e0cfe9ed3d6"
+  integrity sha512-NJVeUet0O2ta95aVYs7lNphG0AQFfNEuXxlIL50ZxQ//HTITkua17Rlh0RdyXG3C37HR/TqKAG5be7QJjJT3Fg==
   dependencies:
-    "@css-render/vue3-ssr" "^0.15.7"
-    css-render "^0.15.7"
+    "@css-render/vue3-ssr" "^0.15.10"
+    "@juggle/resize-observer" "^3.3.1"
+    css-render "^0.15.10"
     evtd "^0.2.2"
-    resize-observer-polyfill "^1.5.1"
     seemly "^0.3.1"
     vdirs "^0.1.4"
     vooks "^0.2.4"

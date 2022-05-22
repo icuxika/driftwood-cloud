@@ -44,10 +44,10 @@ export const useAuthStore = defineStore("auth", {
 		/**
 		 * 密码模式登录
 		 */
-		loginByPassword: async (
+		async loginByPassword(
 			username: string,
 			password: string
-		): Promise<UserVO | null> => {
+		): Promise<UserVO | null> {
 			try {
 				const tokenInfo = await resolveAxiosResult(() =>
 					adminAuthService.login({
@@ -58,13 +58,12 @@ export const useAuthStore = defineStore("auth", {
 					})
 				);
 				if (tokenInfo) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
+					// Action 使用箭头函数将会无法获取this，提示TS2532: Object is possibly 'undefined'.
 					this.setTokenInfo(tokenInfo);
 					return await resolveAxiosResult(userService.getUserInfo);
 				}
 			} catch (error) {
-				return null;
+				return Promise.reject(error);
 			}
 			return null;
 		},
@@ -72,10 +71,10 @@ export const useAuthStore = defineStore("auth", {
 		/**
 		 * 短信模式登录
 		 */
-		loginByPhone: async (
+		async loginByPhone(
 			phone: string,
 			code: string
-		): Promise<UserVO | null> => {
+		): Promise<UserVO | null> {
 			try {
 				const tokenInfo = await resolveAxiosResult(() =>
 					adminAuthService.login({
@@ -86,13 +85,11 @@ export const useAuthStore = defineStore("auth", {
 					})
 				);
 				if (tokenInfo) {
-					// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-					// @ts-ignore
 					this.setTokenInfo(tokenInfo);
 					return await resolveAxiosResult(userService.getUserInfo);
 				}
 			} catch (error) {
-				return null;
+				return Promise.reject(error);
 			}
 			return null;
 		},
