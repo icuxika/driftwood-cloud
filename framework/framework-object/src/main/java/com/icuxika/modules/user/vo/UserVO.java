@@ -3,6 +3,7 @@ package com.icuxika.modules.user.vo;
 import com.icuxika.modules.user.entity.Menu;
 import com.icuxika.modules.user.entity.Permission;
 import com.icuxika.modules.user.entity.Role;
+import com.icuxika.modules.user.entity.UserProfile;
 
 import java.util.List;
 
@@ -17,6 +18,11 @@ public class UserVO {
      * 用户昵称
      */
     private String nickname;
+
+    /**
+     * 用户资料
+     */
+    private UserProfile userProfile;
 
     /**
      * 用户具有的角色集合
@@ -47,6 +53,14 @@ public class UserVO {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 
     public List<Role> getRoleList() {

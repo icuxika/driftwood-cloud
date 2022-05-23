@@ -186,6 +186,7 @@ public class UserServiceImpl implements UserService {
             userProfile.setAvatar(minioFileVO.getFullPath());
             userProfileRepository.save(userProfile);
         } else {
+            // TODO 用户资料应在用户新建时进行初始化
             UserProfile newUserProfile = new UserProfile();
             newUserProfile.setUserId(currentUserId);
             newUserProfile.setAvatar(minioFileVO.getFullPath());
@@ -204,6 +205,7 @@ public class UserServiceImpl implements UserService {
         userVO.setUserId(user.getId());
         userVO.setNickname(user.getNickname());
         setUserAuthInfo(user.getId(), userVO::setRoleList, userVO::setPermissionList, userVO::setMenuList);
+        userProfileRepository.findByUserId(user.getId()).ifPresent(userVO::setUserProfile);
         return userVO;
     }
 
