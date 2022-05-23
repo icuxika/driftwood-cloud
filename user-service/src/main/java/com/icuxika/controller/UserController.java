@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -94,5 +95,11 @@ public class UserController {
     public ApiData<Void> bindRoles(@RequestBody BindOneDTO bindOneDTO) {
         userService.bindRoles(bindOneDTO);
         return ApiData.okMsg("绑定成功");
+    }
+
+    @PostMapping("/uploadAvatar")
+    public ApiData<Void> uploadAvatar(@RequestPart("file") MultipartFile file) {
+        userService.uploadAvatar(file);
+        return ApiData.okMsg("头像上传成功");
     }
 }

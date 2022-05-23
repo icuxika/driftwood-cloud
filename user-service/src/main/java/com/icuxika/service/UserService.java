@@ -6,6 +6,7 @@ import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -26,4 +27,6 @@ public interface UserService {
     void deleteById(Long id);
 
     void bindRoles(BindOneDTO bindOneDTO);
+
+    void uploadAvatar(MultipartFile file);
 }

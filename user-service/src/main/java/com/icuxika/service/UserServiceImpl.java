@@ -1,5 +1,9 @@
 package com.icuxika.service;
 
+import com.icuxika.common.ApiData;
+import com.icuxika.exception.GlobalServiceException;
+import com.icuxika.modules.file.feign.FileClient;
+import com.icuxika.modules.file.vo.MinioFileVO;
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.entity.*;
 import com.icuxika.modules.user.vo.UserAuthVO;
@@ -8,6 +12,7 @@ import com.icuxika.repository.*;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -16,10 +21,12 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -29,6 +36,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     private final UserRepository userRepository;
+
+    private final UserProfileRepository userProfileRepository;
 
     private final UserRoleRepository userRoleRepository;
 
@@ -42,14 +51,20 @@ public class UserServiceImpl implements UserService {
 
     private final MenuRepository menuRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository) {
+    private final FileClient fileClient;
+
+    private static final String USER_AVATAR_FILE_PATH_PREFIX = "user/avatar";
+
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, @Qualifier("com.icuxika.modules.file.feign.FileClient") FileClient fileClient) {
         this.userRepository = userRepository;
+        this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
         this.roleRepository = roleRepository;
         this.rolePermissionRepository = rolePermissionRepository;
         this.permissionRepository = permissionRepository;
         this.menuPermissionRepository = menuPermissionRepository;
         this.menuRepository = menuRepository;
+        this.fileClient = fileClient;
     }
 
     @Override
@@ -155,6 +170,27 @@ public class UserServiceImpl implements UserService {
             return userRole;
         }).collect(Collectors.toList());
         userRoleRepository.saveAll(userRoleList);
+    }
+
+    @Override
+    public void uploadAvatar(MultipartFile file) {
+        ApiData<MinioFileVO> minioFileVOApiData = fileClient.uploadFile(file, USER_AVATAR_FILE_PATH_PREFIX);
+        if (!minioFileVOApiData.isSuccess()) {
+            throw new GlobalServiceException("头像上传失败");
+        }
+        MinioFileVO minioFileVO = minioFileVOApiData.getData();
+        long currentUserId = SecurityUtil.getUserId();
+        Optional<UserProfile> userProfileOptional = userProfileRepository.findByUserId(currentUserId);
+        if (userProfileOptional.isPresent()) {
+            UserProfile userProfile = userProfileOptional.get();
+            userProfile.setAvatar(minioFileVO.getFullPath());
+            userProfileRepository.save(userProfile);
+        } else {
+            UserProfile newUserProfile = new UserProfile();
+            newUserProfile.setUserId(currentUserId);
+            newUserProfile.setAvatar(minioFileVO.getFullPath());
+            userProfileRepository.save(newUserProfile);
+        }
     }
 
     /**
