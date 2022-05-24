@@ -5,6 +5,7 @@ import com.icuxika.constant.SystemConstant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 构建树形结构工具类
@@ -90,5 +91,16 @@ public class TreeUtil {
         });
 
         return result;
+    }
+
+    /**
+     * 展平树结构（不适合性能要求高的场景）
+     *
+     * @param tree 使用 {@link TreeUtil#buildTree(List, Function, Function)} 构建的树结构数据
+     * @param <T>  树节点携带的数据
+     * @return 返回的Stream包含所有的树节点在同一级别
+     */
+    public static <T> Stream<TreeNode<T>> flattenTree(List<TreeNode<T>> tree) {
+        return tree.stream().flatMap(TreeNode::flatten);
     }
 }

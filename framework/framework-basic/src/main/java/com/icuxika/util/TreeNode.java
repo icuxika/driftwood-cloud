@@ -1,6 +1,7 @@
 package com.icuxika.util;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * 树节点
@@ -60,5 +61,14 @@ public class TreeNode<T> {
 
     public void setChildren(List<TreeNode<T>> children) {
         this.children = children;
+    }
+
+    /**
+     * 展平树结构以便过滤（不适合性能要求高的场景）
+     *
+     * @return 返回的Stream包含所有的树节点在同一级别
+     */
+    public Stream<TreeNode<T>> flatten() {
+        return Stream.concat(Stream.of(this), children.stream().flatMap(TreeNode::flatten));
     }
 }
