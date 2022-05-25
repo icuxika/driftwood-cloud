@@ -118,7 +118,7 @@ instance.interceptors.response.use(
 					}
 					if (currentPath.indexOf("/login") == -1) {
 						router.push({
-							path: "login",
+							path: "/login",
 							replace: true,
 							query: {
 								redirect: newDirect,
