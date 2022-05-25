@@ -156,6 +156,9 @@ const loginSuccessHandler = (userVO: UserVO) => {
 		path: (route.query.redirect as string) || "/",
 	});
 	loginLoading.value = false;
+	let avatar =
+		userVO?.userProfile?.avatar ??
+		"https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg";
 	notification.create({
 		title: "登录成功",
 		content: `${userVO.nickname}，欢迎回来！`,
@@ -167,7 +170,7 @@ const loginSuccessHandler = (userVO: UserVO) => {
 			h(NAvatar, {
 				size: "small",
 				round: true,
-				src: "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg",
+				src: avatar,
 			}),
 		onAfterLeave: () => {
 			message.success("开始使用吧");

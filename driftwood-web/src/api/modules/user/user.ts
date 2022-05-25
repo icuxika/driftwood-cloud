@@ -20,11 +20,31 @@ interface User extends BaseEntity {
 }
 
 /**
+ * 用户资料
+ */
+interface UserProfile extends BaseEntity {
+	userId: number;
+	avatar: string;
+	nation: string;
+	province: string;
+	city: string;
+	district: string;
+	street: string;
+	streetNumber: string;
+	lastRemoteAddress: string;
+	remoteAddress: string;
+	birthday: string;
+	gender: number;
+	signature: string;
+}
+
+/**
  * 用户数据，包含角色、权限、菜单等信息
  */
 interface UserVO {
 	userId: number;
 	nickname: string;
+	userProfile?: UserProfile;
 	roleList: Role[];
 	permissionList: Permission[];
 	menuList: Menu[];
