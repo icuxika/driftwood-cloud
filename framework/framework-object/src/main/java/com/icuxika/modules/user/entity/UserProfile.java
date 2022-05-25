@@ -14,7 +14,7 @@ public class UserProfile extends BaseEntity {
     /**
      * 用户id
      */
-    @Column(name = "avatar", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     /**

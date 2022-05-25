@@ -184,12 +184,18 @@ public class UserServiceImpl implements UserService {
         if (userProfileOptional.isPresent()) {
             UserProfile userProfile = userProfileOptional.get();
             userProfile.setAvatar(minioFileVO.getFullPath());
+            userProfile.setUpdateTime(LocalDateTime.now());
+            userProfile.setUpdateUserId(currentUserId);
             userProfileRepository.save(userProfile);
         } else {
             // TODO 用户资料应在用户新建时进行初始化
             UserProfile newUserProfile = new UserProfile();
             newUserProfile.setUserId(currentUserId);
             newUserProfile.setAvatar(minioFileVO.getFullPath());
+            newUserProfile.setCreateTime(LocalDateTime.now());
+            newUserProfile.setCreateUserId(currentUserId);
+            newUserProfile.setUpdateTime(LocalDateTime.now());
+            newUserProfile.setUpdateUserId(currentUserId);
             userProfileRepository.save(newUserProfile);
         }
     }
