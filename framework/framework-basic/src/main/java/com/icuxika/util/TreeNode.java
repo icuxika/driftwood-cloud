@@ -1,6 +1,9 @@
 package com.icuxika.util;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -69,6 +72,17 @@ public class TreeNode<T> {
      * @return 返回的Stream包含所有的树节点在同一级别
      */
     public Stream<TreeNode<T>> flatten() {
-        return Stream.concat(Stream.of(this), children.stream().flatMap(TreeNode::flatten));
+        return flatten(t -> true);
+    }
+
+    public Stream<TreeNode<T>> flatten(Predicate<T> predicate) {
+        return Stream.concat(
+                Stream.of(this),
+                childrenStream().filter(treeNode -> predicate.test(treeNode.getData())).flatMap(TreeNode::flatten)
+        );
+    }
+
+    private Stream<TreeNode<T>> childrenStream() {
+        return Optional.ofNullable(children).orElse(Collections.emptyList()).stream();
     }
 }

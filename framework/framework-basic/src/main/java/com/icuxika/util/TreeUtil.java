@@ -4,6 +4,7 @@ import com.icuxika.constant.SystemConstant;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -101,6 +102,10 @@ public class TreeUtil {
      * @return 返回的Stream包含所有的树节点在同一级别
      */
     public static <T> Stream<TreeNode<T>> flattenTree(List<TreeNode<T>> tree) {
-        return tree.stream().flatMap(TreeNode::flatten);
+        return flattenTree(tree, t -> true);
+    }
+
+    public static <T> Stream<TreeNode<T>> flattenTree(List<TreeNode<T>> tree, Predicate<T> predicate) {
+        return tree.stream().flatMap(treeNode -> treeNode.flatten(predicate));
     }
 }
