@@ -108,4 +108,133 @@ public class TreeUtil {
     public static <T> Stream<TreeNode<T>> flattenTree(List<TreeNode<T>> tree, Predicate<T> predicate) {
         return tree.stream().flatMap(treeNode -> treeNode.flatten(predicate));
     }
+
+    /**
+     * 使用Stream来对树进行深度优先遍历并能够提供树节点的深度信息，由 <a href="https://zhuanlan.zhihu.com/p/82508008">从树的深度优先遍历谈谈Stream.iterate的用法</a>
+     * 文中所提供代码改编而来，此函数破坏了原文中保证的完全惰性（只计算必要的节点及其子节点），待完善
+     *
+     * @param treeNodeList 使用 {@link TreeUtil#buildTree(List, Function, Function)} 构建的树结构数据
+     * @param <T>          树节点携带的数据
+     * @return 返回的Stream包含所有的树节点在同一级别
+     */
+    public static <T> Stream<MetaTreeNode<T>> lazyDFSSearch(List<TreeNode<T>> treeNodeList) {
+        Stream<MetaTreeNode<T>> firstDepthStream = treeNode2Meta(treeNodeList);
+        MetaTreeNodeStackHead<T> rootStack = new MetaTreeNodeStackHead<>(new MetaTreeNode<>(0, null), firstDepthStream.iterator(), firstDepthStream, null);
+        return Stream.iterate(
+                rootStack,
+                Objects::nonNull,
+                stack -> {
+                    if (stack.getNode().getDepth() == 0) {
+                        Iterator<MetaTreeNode<T>> iterator = stack.getSiblingIterator();
+                        if (iterator.hasNext()) {
+                            MetaTreeNode<T> next = iterator.next();
+                            next.setDepth(stack.getNode().getDepth() + 1);
+                            next.setParentNode(stack.getNode());
+                            return new MetaTreeNodeStackHead<>(next, iterator, stack.getStream(), stack);
+                        }
+                        return null;
+                    } else {
+                        final Stream<MetaTreeNode<T>> children = treeNode2Meta(stack.getNode().getChildren());
+                        if (children != null) {
+                            final Iterator<MetaTreeNode<T>> iterator = children.iterator();
+                            if (iterator.hasNext()) {
+                                MetaTreeNode<T> next = iterator.next();
+                                next.setDepth(stack.getNode().getDepth() + 1);
+                                next.setParentNode(stack.getNode());
+                                return new MetaTreeNodeStackHead<>(next, iterator, children, stack);
+                            }
+                        }
+                        final Optional<MetaTreeNodeStackHead<T>> nextHead = Stream.iterate(
+                                        stack,
+                                        Objects::nonNull,
+                                        head -> {
+                                            if (head.getSiblingIterator().hasNext()) {
+                                                return head;
+                                            } else {
+                                                head.getStream().close();
+                                                return head.getPreviousHead();
+                                            }
+                                        }
+                                )
+                                .dropWhile(s -> !s.getSiblingIterator().hasNext())
+                                .findFirst();
+                        return nextHead
+                                .map(s -> {
+                                    MetaTreeNode<T> next = s.getSiblingIterator().next();
+                                    next.setDepth(s.getNode().getDepth());
+                                    next.setParentNode(s.getNode().getParentNode());
+                                    return new MetaTreeNodeStackHead<T>(next, s.getSiblingIterator(), s.getStream(), s.getPreviousHead());
+                                })
+                                .orElse(null);
+                    }
+                }
+        ).filter(p -> p.getNode().getDepth() > 0).map(MetaTreeNodeStackHead::getNode);
+    }
+
+    private static <T> Stream<MetaTreeNode<T>> treeNode2Meta(List<TreeNode<T>> treeNodeList) {
+        if (treeNodeList == null) {
+            return null;
+        }
+        return treeNodeList.stream().map(treeNode -> {
+            MetaTreeNode<T> metaTreeNode = new MetaTreeNode<>(-1, null);
+            metaTreeNode.setId(treeNode.getId());
+            metaTreeNode.setParentId(treeNode.getParentId());
+            metaTreeNode.setData(treeNode.getData());
+            metaTreeNode.setChildren(treeNode.getChildren());
+            return metaTreeNode;
+        });
+    }
+
+    private static class MetaTreeNodeStackHead<T> {
+
+        private MetaTreeNode<T> node;
+
+        /**
+         * 包含当前节点的集合迭代器
+         */
+        private Iterator<MetaTreeNode<T>> siblingIterator;
+
+        private Stream<MetaTreeNode<T>> stream;
+
+        private MetaTreeNodeStackHead<T> previousHead;
+
+        public MetaTreeNodeStackHead(MetaTreeNode<T> node, Iterator<MetaTreeNode<T>> siblingIterator, Stream<MetaTreeNode<T>> stream, MetaTreeNodeStackHead<T> previousHead) {
+            this.node = node;
+            this.siblingIterator = siblingIterator;
+            this.stream = stream;
+            this.previousHead = previousHead;
+        }
+
+        public MetaTreeNode<T> getNode() {
+            return node;
+        }
+
+        public void setNode(MetaTreeNode<T> node) {
+            this.node = node;
+        }
+
+        public Iterator<MetaTreeNode<T>> getSiblingIterator() {
+            return siblingIterator;
+        }
+
+        public void setSiblingIterator(Iterator<MetaTreeNode<T>> siblingIterator) {
+            this.siblingIterator = siblingIterator;
+        }
+
+        public Stream<MetaTreeNode<T>> getStream() {
+            return stream;
+        }
+
+        public void setStream(Stream<MetaTreeNode<T>> stream) {
+            this.stream = stream;
+        }
+
+        public MetaTreeNodeStackHead<T> getPreviousHead() {
+            return previousHead;
+        }
+
+        public void setPreviousHead(MetaTreeNodeStackHead<T> previousHead) {
+            this.previousHead = previousHead;
+        }
+    }
 }
