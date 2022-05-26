@@ -3,7 +3,6 @@ package com.icuxika.service;
 import com.icuxika.modules.user.entity.Permission;
 import com.icuxika.repository.PermissionRepository;
 import com.icuxika.util.BeanExUtil;
-import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -11,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -48,11 +46,6 @@ public class PermissionServiceImpl implements PermissionService {
             throw new RuntimeException("权限名已被使用");
         });
 
-        Long currentUserId = SecurityUtil.getUserId();
-        permission.setCreateTime(LocalDateTime.now());
-        permission.setCreateUserId(currentUserId);
-        permission.setUpdateTime(LocalDateTime.now());
-        permission.setUpdateUserId(currentUserId);
         permissionRepository.save(permission);
     }
 
@@ -60,8 +53,6 @@ public class PermissionServiceImpl implements PermissionService {
     public void update(Permission permission) {
         Permission exist = permissionRepository.findById(permission.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
         BeanUtils.copyProperties(permission, exist, BeanExUtil.getIgnorePropertyArray(permission));
-        exist.setUpdateTime(LocalDateTime.now());
-        exist.setUpdateUserId(SecurityUtil.getUserId());
         permissionRepository.save(exist);
     }
 

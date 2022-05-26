@@ -10,5 +10,5 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 512MB # ?????????
-      max-request-size: 512MB # ????????????
+      max-file-size: 512MB # 单个文件的最大上限
+      max-request-size: 512MB # 单个请求的最大上限

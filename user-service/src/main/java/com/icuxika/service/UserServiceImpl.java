@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -106,17 +105,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("手机号已被使用");
         });
 
-        Long currentUserId = SecurityUtil.getUserId();
-
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
-        user.setCreateTime(LocalDateTime.now());
-        user.setCreateUserId(currentUserId);
-        user.setUpdateTime(LocalDateTime.now());
-        user.setUpdateUserId(currentUserId);
         userRepository.save(user);
     }
 
@@ -127,8 +120,6 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.hasText(user.getPassword())) {
             exist.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        exist.setUpdateTime(LocalDateTime.now());
-        exist.setUpdateUserId(SecurityUtil.getUserId());
         userRepository.save(exist);
     }
 
@@ -153,16 +144,8 @@ public class UserServiceImpl implements UserService {
             UserRole userRole = new UserRole();
             userRole.setUserId(bindOneDTO.getId());
             userRole.setRoleId(roleId);
-            userRole.setCreateTime(LocalDateTime.now());
-            userRole.setCreateUserId(currentUserId);
-            userRole.setUpdateTime(LocalDateTime.now());
-            userRole.setUpdateUserId(currentUserId);
             existList.stream().filter(exist -> exist.getUserId().equals(bindOneDTO.getId()) && exist.getRoleId().equals(roleId)).findFirst().ifPresent(exist -> {
                 userRole.setId(exist.getId());
-                userRole.setCreateTime(exist.getCreateTime());
-                userRole.setCreateUserId(exist.getCreateUserId());
-                userRole.setUpdateTime(LocalDateTime.now());
-                userRole.setUpdateUserId(currentUserId);
             });
             return userRole;
         }).collect(Collectors.toList());
@@ -181,18 +164,12 @@ public class UserServiceImpl implements UserService {
         if (userProfileOptional.isPresent()) {
             UserProfile userProfile = userProfileOptional.get();
             userProfile.setAvatar(minioFileVO.getFullPath());
-            userProfile.setUpdateTime(LocalDateTime.now());
-            userProfile.setUpdateUserId(currentUserId);
             userProfileRepository.save(userProfile);
         } else {
             // TODO 用户资料应在用户新建时进行初始化
             UserProfile newUserProfile = new UserProfile();
             newUserProfile.setUserId(currentUserId);
             newUserProfile.setAvatar(minioFileVO.getFullPath());
-            newUserProfile.setCreateTime(LocalDateTime.now());
-            newUserProfile.setCreateUserId(currentUserId);
-            newUserProfile.setUpdateTime(LocalDateTime.now());
-            newUserProfile.setUpdateUserId(currentUserId);
             userProfileRepository.save(newUserProfile);
         }
     }

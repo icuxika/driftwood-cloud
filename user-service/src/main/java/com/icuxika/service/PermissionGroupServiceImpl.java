@@ -4,7 +4,6 @@ import com.icuxika.constant.SystemConstant;
 import com.icuxika.modules.user.entity.PermissionGroup;
 import com.icuxika.repository.PermissionGroupRepository;
 import com.icuxika.util.BeanExUtil;
-import com.icuxika.util.SecurityUtil;
 import com.icuxika.util.TreeNode;
 import com.icuxika.util.TreeUtil;
 import org.springframework.beans.BeanUtils;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,11 +54,6 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
             throw new RuntimeException("Parent PermissionGroup not found");
         }
 
-        Long currentUserId = SecurityUtil.getUserId();
-        permissionGroup.setCreateTime(LocalDateTime.now());
-        permissionGroup.setCreateUserId(currentUserId);
-        permissionGroup.setUpdateTime(LocalDateTime.now());
-        permissionGroup.setUpdateUserId(currentUserId);
         permissionGroupRepository.save(permissionGroup);
     }
 
@@ -73,8 +66,6 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
             }
         }
         BeanUtils.copyProperties(permissionGroup, exist, BeanExUtil.getIgnorePropertyArray(permissionGroup));
-        exist.setUpdateTime(LocalDateTime.now());
-        exist.setUpdateUserId(SecurityUtil.getUserId());
         permissionGroupRepository.save(exist);
     }
 

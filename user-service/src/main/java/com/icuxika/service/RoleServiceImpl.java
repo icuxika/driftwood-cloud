@@ -7,7 +7,6 @@ import com.icuxika.repository.PermissionRepository;
 import com.icuxika.repository.RolePermissionRepository;
 import com.icuxika.repository.RoleRepository;
 import com.icuxika.util.BeanExUtil;
-import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,11 +52,6 @@ public class RoleServiceImpl implements RoleService {
             throw new RuntimeException("角色名已被使用");
         });
 
-        Long currentUserId = SecurityUtil.getUserId();
-        role.setCreateTime(LocalDateTime.now());
-        role.setCreateUserId(currentUserId);
-        role.setUpdateTime(LocalDateTime.now());
-        role.setUpdateUserId(currentUserId);
         roleRepository.save(role);
     }
 
@@ -66,8 +59,6 @@ public class RoleServiceImpl implements RoleService {
     public void update(Role role) {
         Role exist = roleRepository.findById(role.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
         BeanUtils.copyProperties(role, exist, BeanExUtil.getIgnorePropertyArray(role));
-        exist.setUpdateTime(LocalDateTime.now());
-        exist.setUpdateUserId(SecurityUtil.getUserId());
         roleRepository.save(exist);
     }
 
@@ -86,22 +77,13 @@ public class RoleServiceImpl implements RoleService {
         if (permissionRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
             throw new RuntimeException("权限数据不存在");
         }
-        Long currentUserId = SecurityUtil.getUserId();
         List<RolePermission> existList = rolePermissionRepository.findByPermissionIdIn(bindOneDTO.getIdList());
         List<RolePermission> rolePermissionList = bindOneDTO.getIdList().stream().map(permissionId -> {
             RolePermission rolePermission = new RolePermission();
             rolePermission.setRoleId(bindOneDTO.getId());
             rolePermission.setPermissionId(permissionId);
-            rolePermission.setCreateTime(LocalDateTime.now());
-            rolePermission.setCreateUserId(currentUserId);
-            rolePermission.setUpdateTime(LocalDateTime.now());
-            rolePermission.setUpdateUserId(currentUserId);
             existList.stream().filter(exist -> exist.getRoleId().equals(bindOneDTO.getId()) && exist.getPermissionId().equals(permissionId)).findFirst().ifPresent(exist -> {
                 rolePermission.setId(exist.getId());
-                rolePermission.setCreateTime(exist.getCreateTime());
-                rolePermission.setCreateUserId(exist.getCreateUserId());
-                rolePermission.setUpdateTime(LocalDateTime.now());
-                rolePermission.setUpdateUserId(currentUserId);
             });
             return rolePermission;
         }).collect(Collectors.toList());
