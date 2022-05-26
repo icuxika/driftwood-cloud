@@ -1,10 +1,8 @@
 package com.icuxika.config.phone;
 
-import com.icuxika.exception.FeignFallbackException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,10 +29,12 @@ public class PhoneUserDetailsAuthenticationProvider implements AuthenticationPro
         UserDetails userDetails;
         try {
             userDetails = phoneUserDetailsService.loadUserByPhone(phone, code);
-        } catch (UsernameNotFoundException | FeignFallbackException e) {
-            L.error("根据手机号[" + phone + "]查询用户信息失败");
+        } catch (UsernameNotFoundException e) {
+            // Spring Security 默认返回国际化的 "Bad credentials"（密码模式中）
             throw new BadCredentialsException(e.getMessage());
         }
+        // 账户状态检测
+        preAuthenticationCheck(userDetails);
         PhoneVerificationAuthenticationToken result = new PhoneVerificationAuthenticationToken(userDetails, "123456", userDetails.getAuthorities());
         result.setDetails(authentication.getDetails());
         return result;
@@ -43,5 +43,17 @@ public class PhoneUserDetailsAuthenticationProvider implements AuthenticationPro
     @Override
     public boolean supports(Class<?> aClass) {
         return PhoneVerificationAuthenticationToken.class.isAssignableFrom(aClass);
+    }
+
+    private void preAuthenticationCheck(UserDetails user) {
+        if (!user.isAccountNonLocked()) {
+            throw new LockedException("User account is locked");
+        }
+        if (!user.isEnabled()) {
+            throw new DisabledException("User is disabled");
+        }
+        if (!user.isAccountNonExpired()) {
+            throw new AccountExpiredException("User account has expired");
+        }
     }
 }

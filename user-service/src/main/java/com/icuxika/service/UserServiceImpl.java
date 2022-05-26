@@ -69,14 +69,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserAuthVO findByUsername(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("用户不存在"));
-        return buildUserAuthVO(user);
+        return userRepository.findByUsername(username).map(this::buildUserAuthVO).orElse(null);
     }
 
     @Override
     public UserAuthVO findByPhone(String phone) {
-        User user = userRepository.findByPhone(phone).orElseThrow(() -> new RuntimeException("用户不存在"));
-        return buildUserAuthVO(user);
+        return userRepository.findByPhone(phone).map(this::buildUserAuthVO).orElse(null);
     }
 
     @Override
