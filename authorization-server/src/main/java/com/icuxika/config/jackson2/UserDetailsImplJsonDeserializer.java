@@ -1,7 +1,6 @@
 package com.icuxika.config.jackson2;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -16,11 +15,11 @@ import java.util.List;
 
 public class UserDetailsImplJsonDeserializer extends JsonDeserializer<UserDetailsImpl> {
 
-    private final TypeReference<SimpleGrantedAuthority> typeReference = new TypeReference<SimpleGrantedAuthority>() {
+    private final TypeReference<SimpleGrantedAuthority> typeReference = new TypeReference<>() {
     };
 
     @Override
-    public UserDetailsImpl deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+    public UserDetailsImpl deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         ObjectMapper objectMapper = (ObjectMapper) jsonParser.getCodec();
         JsonNode jsonNode = objectMapper.readTree(jsonParser);
         final JsonNode authoritiesNode = jsonNode.get("authorities");

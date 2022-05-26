@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 public interface CommonProviderService {
 
     /**
-     * Copy from {@link org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthenticationProviderUtils#getAuthenticatedClientElseThrowInvalidClient(Authentication)}
+     * Copy from org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthenticationProviderUtils#getAuthenticatedClientElseThrowInvalidClient(Authentication)
      */
     default OAuth2ClientAuthenticationToken getAuthenticatedClientElseThrowInvalidClient(Authentication authentication) {
         OAuth2ClientAuthenticationToken clientPrincipal = null;

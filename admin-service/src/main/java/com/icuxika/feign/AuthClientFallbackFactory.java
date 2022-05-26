@@ -22,10 +22,9 @@ public class AuthClientFallbackFactory implements FallbackFactory<AuthClient> {
     public AuthClient create(Throwable cause) {
         int status = HttpStatus.INTERNAL_SERVER_ERROR.value();
         String error = cause.getMessage();
-        if (cause instanceof FeignException.BadRequest) {
+        if (cause instanceof FeignException.BadRequest badRequest) {
             // Spring Authorization Server 授权出错默认会以 HttpStatus.BAD_REQUEST 为状态码返回错误
             // OAuth2TokenEndpointFilter#sendErrorResponse
-            FeignException.BadRequest badRequest = (FeignException.BadRequest) cause;
             status = badRequest.status();
             String errorJson = badRequest.responseBody().isPresent() ? new String(badRequest.responseBody().get().array()) : null;
             try {

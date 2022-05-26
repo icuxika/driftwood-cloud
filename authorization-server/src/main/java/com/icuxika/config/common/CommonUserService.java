@@ -8,7 +8,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public interface CommonUserService {
 
@@ -22,8 +21,8 @@ public interface CommonUserService {
         UserDetailsImpl userDetails = new UserDetailsImpl();
         BeanUtils.copyProperties(userAuthVO, userDetails);
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.addAll(userAuthVO.getRoleList().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole())).collect(Collectors.toList()));
-        authorities.addAll(userAuthVO.getPermissionList().stream().map(permission -> new SimpleGrantedAuthority(permission.getAuthority())).collect(Collectors.toList()));
+        authorities.addAll(userAuthVO.getRoleList().stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRole())).toList());
+        authorities.addAll(userAuthVO.getPermissionList().stream().map(permission -> new SimpleGrantedAuthority(permission.getAuthority())).toList());
         userDetails.setAuthorities(authorities);
         return userDetails;
     }

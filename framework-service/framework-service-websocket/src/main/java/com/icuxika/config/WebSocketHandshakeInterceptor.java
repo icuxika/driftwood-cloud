@@ -28,7 +28,7 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
     private static final String QUERY_KEY_CLIENT_TYPE = "clientType";
 
     @Override
-    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
+    public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         String bearToken = request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, Collections.singletonList("")).get(0);
         if (!StringUtils.hasText(bearToken)) {
             return false;

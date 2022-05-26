@@ -52,7 +52,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
         permissionGroupRepository.findByName(permissionGroup.getName()).ifPresent(exist -> {
             throw new RuntimeException("PermissionGroup with name " + permissionGroup.getName() + " already exists");
         });
-        if (!SystemConstant.TREE_ROOT_ID.equals(permissionGroup.getParentId()) && !permissionGroupRepository.findById(permissionGroup.getParentId()).isPresent()) {
+        if (!SystemConstant.TREE_ROOT_ID.equals(permissionGroup.getParentId()) && permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
             throw new RuntimeException("Parent PermissionGroup not found");
         }
 
@@ -68,7 +68,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
     public void update(PermissionGroup permissionGroup) {
         PermissionGroup exist = permissionGroupRepository.findById(permissionGroup.getId()).orElseThrow(() -> new RuntimeException("PermissionGroup not found"));
         if (permissionGroup.getParentId() != null && !permissionGroup.getParentId().equals(exist.getParentId())) {
-            if (!permissionGroupRepository.findById(permissionGroup.getParentId()).isPresent()) {
+            if (permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
                 throw new RuntimeException("Parent PermissionGroup not found");
             }
         }

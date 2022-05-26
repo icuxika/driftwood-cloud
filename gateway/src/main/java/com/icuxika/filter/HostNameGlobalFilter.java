@@ -15,8 +15,7 @@ public class HostNameGlobalFilter implements GlobalFilter, Ordered {
         System.out.println("进入过滤器");
         System.out.println("HostName: " + exchange.getRequest().getRemoteAddress().getHostName());
         System.out.println("URI：" + exchange.getRequest().getURI());
-        Mono<Void> result = chain.filter(exchange);
-        return result;
+        return chain.filter(exchange);
     }
 
     @Override

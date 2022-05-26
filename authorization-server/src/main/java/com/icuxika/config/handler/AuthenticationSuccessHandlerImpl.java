@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.util.CollectionUtils;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 自定义AccessToken响应输出，主要代码来自 {@link org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter#sendAccessTokenResponse(HttpServletRequest, HttpServletResponse, Authentication)}
+ * 自定义AccessToken响应输出，主要代码来自 org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter#sendAccessTokenResponse(HttpServletRequest, HttpServletResponse, Authentication)
  */
 @Configuration
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
@@ -36,7 +35,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2AccessTokenAuthenticationToken accessTokenAuthentication =
                 (OAuth2AccessTokenAuthenticationToken) authentication;
 

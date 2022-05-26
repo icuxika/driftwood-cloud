@@ -14,11 +14,6 @@ public class RocketMQConfig {
 
     @Bean
     public Consumer<String> websocketMessageConsumer() {
-        return new Consumer<String>() {
-            @Override
-            public void accept(String s) {
-                L.info("Receive message: " + s);
-            }
-        };
+        return s -> L.info("Receive message: " + s);
     }
 }

@@ -1,10 +1,11 @@
 package com.icuxika.config.jackson2;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.icuxika.config.phone.PhoneVerificationAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,18 +14,18 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Copy from {@link org.springframework.security.jackson2.UsernamePasswordAuthenticationTokenDeserializer}
+ * Copy from org.springframework.security.jackson2.UsernamePasswordAuthenticationTokenDeserializer
  */
 public class PhoneVerificationAuthenticationTokenJsonDeserializer extends JsonDeserializer<PhoneVerificationAuthenticationToken> {
 
-    private static final TypeReference<List<GrantedAuthority>> GRANTED_AUTHORITY_LIST = new TypeReference<List<GrantedAuthority>>() {
+    private static final TypeReference<List<GrantedAuthority>> GRANTED_AUTHORITY_LIST = new TypeReference<>() {
     };
 
-    private static final TypeReference<Object> OBJECT = new TypeReference<Object>() {
+    private static final TypeReference<Object> OBJECT = new TypeReference<>() {
     };
 
     @Override
-    public PhoneVerificationAuthenticationToken deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+    public PhoneVerificationAuthenticationToken deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         ObjectMapper objectMapper = (ObjectMapper) jsonParser.getCodec();
         JsonNode jsonNode = objectMapper.readTree(jsonParser);
         Boolean authenticated = readJsonNode(jsonNode, "authenticated").asBoolean();
@@ -56,7 +57,7 @@ public class PhoneVerificationAuthenticationTokenJsonDeserializer extends JsonDe
     }
 
     private Object getPrincipal(ObjectMapper mapper, JsonNode principalNode)
-            throws IOException, JsonParseException, JsonMappingException {
+            throws IOException {
         if (principalNode.isObject()) {
             return mapper.readValue(principalNode.traverse(mapper), Object.class);
         }

@@ -40,35 +40,27 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenInfo login(LoginDTO loginDTO) {
         Optional<SupportGrantType> supportGrantTypeOptional = EnumSet.allOf(SupportGrantType.class).stream().filter(p -> p.getType().equals(loginDTO.getGrantType())).findFirst();
-        if (!supportGrantTypeOptional.isPresent()) {
+        if (supportGrantTypeOptional.isEmpty()) {
             throw new GlobalServiceException("不支持的登录类型");
         }
         SupportGrantType supportGrantType = supportGrantTypeOptional.get();
         ResponseEntity<TokenResponse> tokenResponseResponseEntity;
         switch (supportGrantType) {
-            case PASSWORD: {
-                tokenResponseResponseEntity = authClient.tokenByPassword(
-                        buildHeaders("id_password", "secret"),
-                        SupportGrantType.PASSWORD.getType(),
-                        loginDTO.getIdentifier(),
-                        loginDTO.getCredentials(),
-                        loginDTO.getClientType()
-                );
-                break;
-            }
-            case PHONE: {
-                tokenResponseResponseEntity = authClient.tokenByPhone(
-                        buildHeaders("id_phone", "secret"),
-                        SupportGrantType.PHONE.getType(),
-                        loginDTO.getIdentifier(),
-                        loginDTO.getCredentials(),
-                        loginDTO.getClientType()
-                );
-                break;
-            }
-            default: {
-                throw new IllegalStateException("[不应出现]不支持的登录类型");
-            }
+            case PASSWORD -> tokenResponseResponseEntity = authClient.tokenByPassword(
+                    buildHeaders("id_password", "secret"),
+                    SupportGrantType.PASSWORD.getType(),
+                    loginDTO.getIdentifier(),
+                    loginDTO.getCredentials(),
+                    loginDTO.getClientType()
+            );
+            case PHONE -> tokenResponseResponseEntity = authClient.tokenByPhone(
+                    buildHeaders("id_phone", "secret"),
+                    SupportGrantType.PHONE.getType(),
+                    loginDTO.getIdentifier(),
+                    loginDTO.getCredentials(),
+                    loginDTO.getClientType()
+            );
+            default -> throw new IllegalStateException("[不应出现]不支持的登录类型");
         }
         if (HttpStatus.OK.equals(tokenResponseResponseEntity.getStatusCode())) {
             TokenResponse tokenResponse = tokenResponseResponseEntity.getBody();
@@ -79,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
             BeanUtils.copyProperties(tokenResponse, tokenInfo);
             return tokenInfo;
         }
-        throw new GlobalServiceException("登录失败：" + tokenResponseResponseEntity.getBody().getError());
+        throw new GlobalServiceException("登录失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
     }
 
     @Override

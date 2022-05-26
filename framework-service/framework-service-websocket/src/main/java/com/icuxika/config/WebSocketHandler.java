@@ -26,22 +26,22 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     }
 
     @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         streamBridge.send("websocketMessageConsumer-out-0", message.getPayload());
     }
 
     @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) {
         // to be considered
     }
 
     @Override
-    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
+    protected void handlePongMessage(WebSocketSession session, PongMessage message) {
         Optional.ofNullable(WebSocketSessionManager.getManageableWebSocketSessionBySession(session)).ifPresent(ManageableWebSocketSession::onPong);
     }
 
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         WebSocketSessionInfo info = (WebSocketSessionInfo) session.getAttributes().get(WebSocketHandshakeInterceptor.ATTRIBUTE_HEADER_INFO);
         WebSocketSessionManager.closeSession(info.getUserId(), session);
     }
