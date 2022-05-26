@@ -7,7 +7,6 @@ import com.icuxika.modules.user.vo.UserAuthVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +18,6 @@ public class UserDetailsServiceImpl implements UserDetailsService, CommonUserSer
     private static final Logger L = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
     @Autowired
-    @Qualifier("com.icuxika.modules.user.feign.UserClient")
     private UserClient userClient;
 
     @Override

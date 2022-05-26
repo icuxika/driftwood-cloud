@@ -10,7 +10,6 @@ import io.seata.spring.annotation.GlobalTransactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +22,6 @@ public class TestController {
     private static final Logger L = LoggerFactory.getLogger(TestController.class);
 
     @Autowired
-    @Qualifier("com.icuxika.modules.user.feign.UserClient")
     private UserClient userClient;
 
     @Autowired

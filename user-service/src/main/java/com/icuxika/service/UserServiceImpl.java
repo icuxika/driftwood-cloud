@@ -12,7 +12,6 @@ import com.icuxika.repository.*;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -55,7 +54,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String USER_AVATAR_FILE_PATH_PREFIX = "user/avatar";
 
-    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, @Qualifier("com.icuxika.modules.file.feign.FileClient") FileClient fileClient) {
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
