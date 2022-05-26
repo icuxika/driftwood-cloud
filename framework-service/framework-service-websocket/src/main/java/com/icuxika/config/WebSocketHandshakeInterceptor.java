@@ -22,11 +22,6 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
 
     public static final String ATTRIBUTE_HEADER_INFO = "websocket-session-info";
 
-    /**
-     * 表示当前客户端类型
-     */
-    private static final String QUERY_KEY_CLIENT_TYPE = "clientType";
-
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         String bearToken = request.getHeaders().getOrDefault(HttpHeaders.AUTHORIZATION, Collections.singletonList("")).get(0);
@@ -37,9 +32,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest httpServletRequest = ((ServletServerHttpRequest) request).getServletRequest();
             L.info("token: " + httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
-            Integer clientType = Integer.valueOf(httpServletRequest.getParameter(QUERY_KEY_CLIENT_TYPE));
             L.info("Current User Id: " + SecurityUtil.getUserId());
-            attributes.put(ATTRIBUTE_HEADER_INFO, new WebSocketSessionInfo(SecurityUtil.getUserId(), clientType));
+            L.info("Current Client Type: " + SecurityUtil.getClientType());
+            attributes.put(ATTRIBUTE_HEADER_INFO, new WebSocketSessionInfo(SecurityUtil.getUserId(), SecurityUtil.getClientType()));
             return true;
         }
         return false;

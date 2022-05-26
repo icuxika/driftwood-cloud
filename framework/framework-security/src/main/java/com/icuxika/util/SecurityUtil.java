@@ -18,11 +18,21 @@ public interface SecurityUtil {
         return value;
     }
 
-    static Long getUserId(Jwt jwt) {
-        return getClaim(jwt, SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, Long.class);
-    }
-
+    /**
+     * 获取登录用户的id
+     *
+     * @return user id
+     */
     static Long getUserId() {
         return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, Long.class);
+    }
+
+    /**
+     * 获取登录用户的设备类型
+     *
+     * @return user id
+     */
+    static Integer getClientType() {
+        return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE, Integer.class);
     }
 }
