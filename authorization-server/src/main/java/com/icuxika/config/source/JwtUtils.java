@@ -1,7 +1,5 @@
 package com.icuxika.config.source;
 
-import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-import org.springframework.security.oauth2.jwt.JoseHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.util.CollectionUtils;
@@ -15,10 +13,6 @@ import java.util.Set;
 public class JwtUtils {
 
     public JwtUtils() {
-    }
-
-    public static JoseHeader.Builder headers() {
-        return JoseHeader.withAlgorithm(SignatureAlgorithm.RS256);
     }
 
     public static org.springframework.security.oauth2.jwt.JwtClaimsSet.Builder accessTokenClaims(RegisteredClient registeredClient, String issuer, String subject, Set<String> authorizedScopes) {
