@@ -1,0 +1,99 @@
+server:
+  port: 8901
+
+spring:
+  application:
+    name: @artifactId@
+
+  profiles:
+    active: @profiles.active@
+    group:
+      dev:
+        - "dev"
+      pro:
+        - "pro"
+
+  sql:
+    init:
+      username: root
+      password: ALLURE_love921
+      schema-locations:
+        - classpath:sql/oauth2-authorization-schema.sql
+        - classpath:sql/oauth2-authorization-consent-schema.sql
+        - classpath:sql/oauth2-registered-client-schema.sql
+      mode: never
+
+logging:
+  level:
+    com.alibaba.nacos.client.*: ERROR
+    com.icuxika.modules.user.feign.UserClient: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: full
+  circuitbreaker:
+    enabled: true
+  sentinel:
+    enabled: false
+    default-rule: default
+    rules:
+      default:
+        - grade: 2
+          count: 1
+          timeWindow: 15
+          statIntervalMs: 3000
+          minRequestAmount: 1
+
+### 开发
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+    import:
+      - nacos:authorization-server-dev.yml?group=DEFAULT_GROUP&refreshEnabled=false
+      - nacos:application-dev.yml?group=DEFAULT_GROUP&refreshEnabled=false
+
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8899
+
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+### 生产
+---
+spring:
+  config:
+    activate:
+      on-profile: pro
+
+    import:
+      - nacos:authorization-server-pro.yml?group=DEFAULT_GROUP&refreshEnabled=false
+      - nacos:application-pro.yml?group=DEFAULT_GROUP&refreshEnabled=false
+
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: 127.0.0.1:8899
+
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+
+      config:
+        group: DEFAULT_GROUP
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
