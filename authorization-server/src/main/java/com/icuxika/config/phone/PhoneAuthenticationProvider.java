@@ -3,7 +3,6 @@ package com.icuxika.config.phone;
 import com.icuxika.config.common.AbstractCommonAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.*;
@@ -124,11 +123,7 @@ public class PhoneAuthenticationProvider extends AbstractCommonAuthenticationPro
             Map<String, Object> tokenAdditionalParameters = new HashMap<>();
             return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, tokenAdditionalParameters);
         } catch (Exception e) {
-            OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR);
-            if (e instanceof BadCredentialsException) {
-                error = new OAuth2Error(e.getMessage());
-            }
-            throw new OAuth2AuthenticationException(error, e);
+            throw buildOAuth2AuthenticationExceptionFromException(e);
         }
     }
 

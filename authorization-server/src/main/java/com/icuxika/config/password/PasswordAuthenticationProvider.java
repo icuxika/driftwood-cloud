@@ -121,7 +121,7 @@ public class PasswordAuthenticationProvider extends AbstractCommonAuthentication
             Map<String, Object> tokenAdditionalParameters = new HashMap<>();
             return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken, tokenAdditionalParameters);
         } catch (Exception e) {
-            throw new OAuth2AuthenticationException(new OAuth2Error(OAuth2ErrorCodes.SERVER_ERROR), e);
+            throw buildOAuth2AuthenticationExceptionFromException(e);
         }
     }
 
