@@ -32,7 +32,7 @@ public class PhoneUserDetailsServiceImpl implements PhoneUserDetailsService, Com
             L.error("当前手机号[" + phone + "]请求的验证码不存在或已失效");
             throw new UsernameNotFoundException("当前手机号请求的验证码不存在或已失效");
         }
-        if (phoneCodeCache.getCreateTime() + phoneCodeCache.getTime() > System.currentTimeMillis()) {
+        if (phoneCodeCache.getCreateTime() + phoneCodeCache.getTime() < System.currentTimeMillis()) {
             L.error("当前手机号[" + phone + "]请求的验证码已过期");
             throw new UsernameNotFoundException("当前手机号请求的验证码已过期");
         }

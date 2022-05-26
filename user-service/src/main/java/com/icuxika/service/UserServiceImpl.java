@@ -138,15 +138,12 @@ public class UserServiceImpl implements UserService {
         if (roleRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
             throw new RuntimeException("角色数据不存在");
         }
-        Long currentUserId = SecurityUtil.getUserId();
         List<UserRole> existList = userRoleRepository.findByRoleIdIn(bindOneDTO.getIdList());
         List<UserRole> userRoleList = bindOneDTO.getIdList().stream().map(roleId -> {
             UserRole userRole = new UserRole();
             userRole.setUserId(bindOneDTO.getId());
             userRole.setRoleId(roleId);
-            existList.stream().filter(exist -> exist.getUserId().equals(bindOneDTO.getId()) && exist.getRoleId().equals(roleId)).findFirst().ifPresent(exist -> {
-                userRole.setId(exist.getId());
-            });
+            existList.stream().filter(exist -> exist.getUserId().equals(bindOneDTO.getId()) && exist.getRoleId().equals(roleId)).findFirst().ifPresent(exist -> userRole.setId(exist.getId()));
             return userRole;
         }).collect(Collectors.toList());
         userRoleRepository.saveAll(userRoleList);

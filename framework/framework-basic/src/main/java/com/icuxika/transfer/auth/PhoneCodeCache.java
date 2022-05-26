@@ -17,7 +17,10 @@ public class PhoneCodeCache implements Serializable {
     /**
      * 创建时间
      */
-    private Long createTime = System.currentTimeMillis();
+    private final Long createTime = System.currentTimeMillis();
+
+    public PhoneCodeCache() {
+    }
 
     public PhoneCodeCache(String code, Long time) {
         this.code = code;
