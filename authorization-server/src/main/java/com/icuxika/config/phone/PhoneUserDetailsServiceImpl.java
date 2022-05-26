@@ -2,8 +2,10 @@ package com.icuxika.config.phone;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.config.common.CommonUserService;
+import com.icuxika.constant.SystemConstant;
 import com.icuxika.modules.user.feign.UserClient;
 import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.transfer.auth.PhoneCodeCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,23 @@ public class PhoneUserDetailsServiceImpl implements PhoneUserDetailsService, Com
     private UserClient userClient;
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public UserDetails loadUserByPhone(String phone, String code) throws UsernameNotFoundException {
-        System.out.println("phone: " + phone + ", code: " + code);
-        System.out.println("REDIS: " + redisTemplate.opsForValue().get(phone));
+        PhoneCodeCache phoneCodeCache = (PhoneCodeCache) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_PHONE_CODE, phone);
+        if (phoneCodeCache == null) {
+            L.error("当前手机号[" + phone + "]请求的验证码不存在或已失效");
+            throw new UsernameNotFoundException("当前手机号请求的验证码不存在或已失效");
+        }
+        if (phoneCodeCache.getCreateTime() + phoneCodeCache.getTime() > System.currentTimeMillis()) {
+            L.error("当前手机号[" + phone + "]请求的验证码已过期");
+            throw new UsernameNotFoundException("当前手机号请求的验证码已过期");
+        }
+        if (!phoneCodeCache.getCode().equals(code)) {
+            L.error("当前手机号[" + phone + "]对应的验证码不正确");
+            throw new UsernameNotFoundException("当前手机号对应的验证码不正确");
+        }
         ApiData<UserAuthVO> userApiData = userClient.findByPhone(phone);
         if (!userApiData.isSuccess()) {
             L.error("根据手机号[" + phone + "]查询用户信息请求未成功");

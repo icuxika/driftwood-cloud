@@ -6,10 +6,7 @@ import com.icuxika.dto.LoginDTO;
 import com.icuxika.service.AuthService;
 import com.icuxika.vo.TokenInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -29,5 +26,18 @@ public class AuthController {
     public ApiData<TokenInfo> login(@RequestBody LoginDTO loginDTO) {
         TokenInfo tokenInfo = authService.login(loginDTO);
         return ApiData.ok(tokenInfo);
+    }
+
+    /**
+     * 获取短信验证码
+     *
+     * @param phone 手机号
+     * @return code
+     */
+    @Anonymous
+    @PostMapping("/code")
+    public ApiData<String> code(@RequestParam("phone") String phone) {
+        String code = authService.generateVerificationCode(phone);
+        return ApiData.ok(code);
     }
 }

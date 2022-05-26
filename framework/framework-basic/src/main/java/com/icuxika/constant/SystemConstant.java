@@ -55,4 +55,8 @@ public class SystemConstant {
      */
     public final static String MINIO_BUCKET_NAME = "driftwood";
 
+    /**
+     * 缓存用户登录时请求的验证码
+     */
+    public final static String REDIS_OAUTH2_PHONE_CODE = "DRIFTWOOD:OAUTH2:PHONE_CODE";
 }
