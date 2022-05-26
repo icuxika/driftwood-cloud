@@ -1,9 +1,16 @@
 package com.icuxika.common;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
     /**
@@ -17,24 +24,28 @@ public class BaseEntity {
     /**
      * 创建时间
      */
+    @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createTime;
 
     /**
      * 创建用户id
      */
+    @CreatedBy
     @Column(nullable = false)
     private Long createUserId;
 
     /**
      * 更新时间
      */
+    @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updateTime;
 
     /**
      * 更新用户id
      */
+    @LastModifiedBy
     @Column(nullable = false)
     private Long updateUserId;
 
