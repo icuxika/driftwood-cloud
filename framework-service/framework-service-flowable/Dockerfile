@@ -8,8 +8,8 @@ RUN apk add tzdata \
     && echo ${TZ} > /etc/timezone \
     && apk del tzdata
 
-ENV JAR_FILE=target/authorization-server.jar
+ENV JAR_FILE=target/framework-service-flowable.jar
 ENV JAVA_OPTS="-Duser.timezone=${TZ} -Xms64m -Xmx256m"
 COPY ${JAR_FILE} app.jar
-EXPOSE 8901
+EXPOSE 8906
 ENTRYPOINT ["java","${JAVA_OPTS}","-jar","/app.jar"]

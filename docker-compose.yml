@@ -1,0 +1,82 @@
+version: "3.0"
+services:
+  gateway:
+    build:
+      context: ./gateway
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/gateway
+    container_name: gateway
+    restart: always
+    ports:
+      - "8900:8900"
+
+  authorization-server:
+    build:
+      context: ./authorization-server
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/authorization-server
+    container_name: authorization-server
+    ports:
+      - "8901:8901"
+
+  admin-service:
+    build:
+      context: ./admin-service
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/admin-service
+    container_name: admin-service
+    ports:
+      - "8902:8902"
+
+  user-service:
+    build:
+      context: ./user-service
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/user-service
+    container_name: user-service
+    ports:
+      - "8904:8904"
+
+  framework-service-flowable:
+    build:
+      context: ./framework-service/framework-service-flowable
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/framework-service-flowable
+    container_name: framework-service-flowable
+    ports:
+      - "8906:8906"
+
+  framework-service-websocket:
+    build:
+      context: ./framework-service/framework-service-websocket
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/framework-service-websocket
+    container_name: framework-service-websocket
+    ports:
+      - "8910:8910"
+
+  framework-service-job:
+    build:
+      context: ./framework-service/framework-service-job
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/framework-service-job
+    container_name: framework-service-job
+    ports:
+      - "8911:8911"
+
+  framework-service-minio:
+    build:
+      context: ./framework-service/framework-service-minio
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/framework-service-minio
+    container_name: framework-service-minio
+    ports:
+      - "8912:8912"

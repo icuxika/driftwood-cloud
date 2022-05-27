@@ -27,3 +27,9 @@
 
 - 目录:
   > /db
+
+### Docker 构建
+
+```shell
+docker-compose build
+```
