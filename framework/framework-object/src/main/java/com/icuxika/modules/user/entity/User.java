@@ -1,6 +1,6 @@
 package com.icuxika.modules.user.entity;
 
-import com.icuxika.common.BaseEntity;
+import com.icuxika.common.DeletableEntity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Table(name = "user")
 @Entity
-public class User extends BaseEntity {
+public class User extends DeletableEntity {
 
     /**
      * 用户名

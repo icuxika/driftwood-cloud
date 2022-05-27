@@ -49,6 +49,12 @@ public class BaseEntity {
     @Column(nullable = false)
     private Long updateUserId;
 
+    /**
+     * 租户id
+     */
+    @Column(columnDefinition = "bigint default 0")
+    private Long tenantId;
+
     public Long getId() {
         return id;
     }
@@ -87,5 +93,13 @@ public class BaseEntity {
 
     public void setUpdateUserId(Long updateUserId) {
         this.updateUserId = updateUserId;
+    }
+
+    public Long getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(Long tenantId) {
+        this.tenantId = tenantId;
     }
 }
