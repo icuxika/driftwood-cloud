@@ -1,6 +1,7 @@
 package com.icuxika.util;
 
 import com.icuxika.constant.SystemConstant;
+import com.icuxika.exception.GlobalServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -34,5 +35,15 @@ public interface SecurityUtil {
      */
     static Integer getClientType() {
         return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE, Integer.class);
+    }
+
+    /**
+     * 获取租户id
+     *
+     * @return tenant id
+     */
+    static String getTenantId() {
+//        return getClaim(getJwt(), "tenantId", String.class);
+        throw new GlobalServiceException("尚不支持");
     }
 }
