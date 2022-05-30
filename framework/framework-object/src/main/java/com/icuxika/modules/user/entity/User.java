@@ -1,6 +1,7 @@
 package com.icuxika.modules.user.entity;
 
 import com.icuxika.common.DeletableEntity;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.Table;
 
 @Table(name = "user")
 @Entity
+@Where(clause = "deleted = 0")
 public class User extends DeletableEntity {
 
     /**
