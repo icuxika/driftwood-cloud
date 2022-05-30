@@ -1,6 +1,7 @@
 package com.icuxika.modules.user.entity;
 
 import com.icuxika.common.BaseEntity;
+import com.icuxika.common.validation.Gender;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -80,6 +81,7 @@ public class UserProfile extends BaseEntity {
     /**
      * 性别
      */
+    @Gender
     @Column(name = "gender", nullable = true)
     private Integer gender;
 
