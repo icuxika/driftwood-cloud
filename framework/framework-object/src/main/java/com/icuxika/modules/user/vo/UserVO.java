@@ -12,7 +12,7 @@ public class UserVO {
     /**
      * 用户id
      */
-    private Long userId;
+    private Long id;
 
     /**
      * 用户昵称
@@ -39,12 +39,12 @@ public class UserVO {
      */
     private List<Menu> menuList;
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNickname() {

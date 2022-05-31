@@ -2,6 +2,7 @@ package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.dto.UserDTO;
 import com.icuxika.modules.user.entity.User;
 import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserVO;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,14 +76,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ApiData<Void> save(@RequestBody User user) {
-        userService.save(user);
+    public ApiData<Void> save(@Validated @RequestBody UserDTO userDTO) {
+        userService.save(userDTO);
         return ApiData.okMsg("新增成功");
     }
 
     @PutMapping
-    public ApiData<Void> update(@RequestBody User user) {
-        userService.update(user);
+    public ApiData<Void> update(@RequestBody UserDTO userDTO) {
+        userService.update(userDTO);
         return ApiData.okMsg("更新成功");
     }
 

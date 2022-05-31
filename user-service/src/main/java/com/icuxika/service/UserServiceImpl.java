@@ -5,6 +5,7 @@ import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.file.feign.FileClient;
 import com.icuxika.modules.file.vo.MinioFileVO;
 import com.icuxika.modules.user.dto.BindOneDTO;
+import com.icuxika.modules.user.dto.UserDTO;
 import com.icuxika.modules.user.entity.*;
 import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserVO;
@@ -19,12 +20,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -77,8 +78,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserVO getUserInfo() {
-        Long currentUserId = SecurityUtil.getUserId();
-        User user = userRepository.findById(currentUserId).orElseThrow(() -> new RuntimeException("用户数据不存在"));
+        User user = userRepository.findById(SecurityUtil.getUserId()).orElseThrow(() -> new GlobalServiceException("用户数据不存在"));
         return buildUserVO(user);
     }
 
@@ -96,48 +96,57 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElse(null);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public void save(User user) {
-        userRepository.findByUsername(user.getUsername()).ifPresent(exist -> {
-            throw new RuntimeException("用户名已被使用");
+    public void save(UserDTO userDTO) {
+        userRepository.findByUsername(userDTO.getUsername()).ifPresent(exist -> {
+            throw new GlobalServiceException("用户名已被使用");
         });
-        userRepository.findByPhone(user.getPhone()).ifPresent(exist -> {
-            throw new RuntimeException("手机号已被使用");
+        userRepository.findByPhone(userDTO.getPhone()).ifPresent(exist -> {
+            throw new GlobalServiceException("手机号已被使用");
         });
-
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user, BeanExUtil.getIgnorePropertyArray(userDTO));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
         user.setEnabled(true);
         userRepository.save(user);
+
+        UserProfile userProfile = new UserProfile();
+        BeanUtils.copyProperties(userDTO, userProfile, BeanExUtil.getIgnorePropertyArray(userDTO));
+        userProfile.setUserId(user.getId());
+        userProfileRepository.save(userProfile);
     }
 
     @Override
-    public void update(User user) {
-        User exist = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
-        BeanUtils.copyProperties(user, exist, BeanExUtil.getIgnorePropertyArray(user));
-        if (StringUtils.hasText(user.getPassword())) {
-            exist.setPassword(passwordEncoder.encode(user.getPassword()));
+    public void update(UserDTO userDTO) {
+        User exist = userRepository.findById(userDTO.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
+        BeanUtils.copyProperties(userDTO, exist, BeanExUtil.getIgnorePropertyArray(userDTO));
+        if (StringUtils.hasText(userDTO.getPassword())) {
+            exist.setPassword(passwordEncoder.encode(userDTO.getPassword()));
         }
         userRepository.save(exist);
+
+        userProfileRepository.findByUserId(userDTO.getId()).ifPresent(userProfile -> {
+            BeanUtils.copyProperties(userDTO, userProfile, BeanExUtil.getIgnorePropertyArray(userDTO));
+            userProfileRepository.save(userProfile);
+        });
     }
 
     @Override
     public void deleteById(Long id) {
-//        if (userRepository.existsById(id)) {
-//            userRepository.deleteById(id);
-//        }
         userRepository.logicDeleteById(id);
     }
 
     @Override
     public void bindRoles(BindOneDTO bindOneDTO) {
         if (!userRepository.existsById(bindOneDTO.getId())) {
-            throw new RuntimeException("用户数据不存在");
+            throw new GlobalServiceException("用户数据不存在");
         }
         if (roleRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
-            throw new RuntimeException("角色数据不存在");
+            throw new GlobalServiceException("角色数据不存在");
         }
         List<UserRole> existList = userRoleRepository.findByRoleIdIn(bindOneDTO.getIdList());
         List<UserRole> userRoleList = bindOneDTO.getIdList().stream().map(roleId -> {
@@ -157,19 +166,10 @@ public class UserServiceImpl implements UserService {
             throw new GlobalServiceException("头像上传失败");
         }
         MinioFileVO minioFileVO = minioFileVOApiData.getData();
-        long currentUserId = SecurityUtil.getUserId();
-        Optional<UserProfile> userProfileOptional = userProfileRepository.findByUserId(currentUserId);
-        if (userProfileOptional.isPresent()) {
-            UserProfile userProfile = userProfileOptional.get();
+        userProfileRepository.findByUserId(SecurityUtil.getUserId()).ifPresent(userProfile -> {
             userProfile.setAvatar(minioFileVO.getFullPath());
             userProfileRepository.save(userProfile);
-        } else {
-            // TODO 用户资料应在用户新建时进行初始化
-            UserProfile newUserProfile = new UserProfile();
-            newUserProfile.setUserId(currentUserId);
-            newUserProfile.setAvatar(minioFileVO.getFullPath());
-            userProfileRepository.save(newUserProfile);
-        }
+        });
     }
 
     /**
@@ -180,7 +180,7 @@ public class UserServiceImpl implements UserService {
      */
     private UserVO buildUserVO(User user) {
         UserVO userVO = new UserVO();
-        userVO.setUserId(user.getId());
+        userVO.setId(user.getId());
         userVO.setNickname(user.getNickname());
         setUserAuthInfo(user.getId(), userVO::setRoleList, userVO::setPermissionList, userVO::setMenuList);
         userProfileRepository.findByUserId(user.getId()).ifPresent(userVO::setUserProfile);
