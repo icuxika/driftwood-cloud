@@ -1,6 +1,9 @@
 package com.icuxika.service;
 
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.querydsl.BlazeJPAQuery;
 import com.icuxika.common.ApiData;
+import com.icuxika.common.BaseEntity;
 import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.file.feign.FileClient;
 import com.icuxika.modules.file.vo.MinioFileVO;
@@ -12,11 +15,14 @@ import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.repository.*;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.PathBuilderFactory;
+import com.querydsl.jpa.JPQLQuery;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,8 +30,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -52,9 +60,13 @@ public class UserServiceImpl implements UserService {
 
     private final FileClient fileClient;
 
+    private final EntityManager entityManager;
+
+    private final CriteriaBuilderFactory criteriaBuilderFactory;
+
     private static final String USER_AVATAR_FILE_PATH_PREFIX = "user/avatar";
 
-    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient) {
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
@@ -64,6 +76,8 @@ public class UserServiceImpl implements UserService {
         this.menuPermissionRepository = menuPermissionRepository;
         this.menuRepository = menuRepository;
         this.fileClient = fileClient;
+        this.entityManager = entityManager;
+        this.criteriaBuilderFactory = criteriaBuilderFactory;
     }
 
     @Override
@@ -83,12 +97,42 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<User> getPage(Pageable pageable, User user) {
-        ExampleMatcher matcher = ExampleMatcher.matching()
-                .withMatcher("username", ExampleMatcher.GenericPropertyMatchers.contains())
-                .withMatcher("nickname", ExampleMatcher.GenericPropertyMatchers.contains());
-        Example<User> example = Example.of(user, matcher);
-        return userRepository.findAll(example, pageable);
+    public Page<UserVO> getPage(Pageable pageable, UserDTO userDTO) {
+        QUser qUser = QUser.user;
+        QUserProfile qUserProfile = QUserProfile.userProfile;
+
+        BlazeJPAQuery<Tuple> query = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory);
+        JPQLQuery<Tuple> jpqlQuery = query.from(qUser).leftJoin(qUserProfile).on(qUser.id.eq(qUserProfile.userId)).select(qUser, qUserProfile);
+
+        if (StringUtils.hasText(userDTO.getPhone())) {
+            jpqlQuery.where(qUser.phone.startsWith(userDTO.getPhone()));
+        }
+        if (StringUtils.hasText(userDTO.getNickname())) {
+            jpqlQuery.where(qUser.nickname.like(userDTO.getNickname()));
+        }
+        if (StringUtils.hasText(userDTO.getNation())) {
+            jpqlQuery.where(qUserProfile.nation.like(userDTO.getNation()));
+        }
+
+        // 获取总数
+        long fetchCount = jpqlQuery.fetchCount();
+
+        // 应用分页（会自动应用相关排序）
+        Querydsl querydsl = new Querydsl(entityManager, (new PathBuilderFactory()).create(User.class));
+        jpqlQuery = querydsl.applyPagination(pageable, jpqlQuery);
+
+        List<Tuple> list = jpqlQuery.fetch();
+        List<UserVO> userVOList = list.stream().map(tuple -> {
+            User user = tuple.get(qUser);
+            UserProfile userProfile = tuple.get(qUserProfile);
+            UserVO userVO = new UserVO();
+            Optional.ofNullable(user).map(BaseEntity::getId).ifPresent(userVO::setId);
+            Optional.ofNullable(user).map(User::getNickname).ifPresent(userVO::setNickname);
+            Optional.ofNullable(userProfile).ifPresent(userVO::setUserProfile);
+            return userVO;
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(userVOList, pageable, fetchCount);
     }
 
     @Override

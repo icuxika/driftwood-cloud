@@ -17,7 +17,7 @@ public interface UserService {
 
     UserVO getUserInfo();
 
-    Page<User> getPage(Pageable pageable, User user);
+    Page<UserVO> getPage(Pageable pageable, UserDTO userDTO);
 
     User getById(Long id);
 

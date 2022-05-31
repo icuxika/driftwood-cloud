@@ -64,8 +64,8 @@ public class UserController {
     }
 
     @GetMapping("/page")
-    public ApiData<Page<User>> getPage(@PageableDefault(sort = "id") Pageable pageable, User user) {
-        Page<User> page = userService.getPage(pageable, user);
+    public ApiData<Page<UserVO>> getPage(@PageableDefault(sort = "id") Pageable pageable, UserDTO userDTO) {
+        Page<UserVO> page = userService.getPage(pageable, userDTO);
         return ApiData.ok(page);
     }
 

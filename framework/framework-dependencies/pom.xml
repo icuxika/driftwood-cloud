@@ -14,6 +14,7 @@
         <!-- spring-boot-dependencies有内定的MySQL版本设置，需在dependencyManagement中将此pom配置它之前，才能覆盖MySQL版本 -->
         <mysql.version>8.0.22</mysql.version>
         <querydsl.version>5.0.0</querydsl.version>
+        <blaze-persistence.version>1.6.6</blaze-persistence.version>
     </properties>
 
     <dependencyManagement>
@@ -89,6 +90,18 @@
                 <groupId>com.querydsl</groupId>
                 <artifactId>querydsl-jpa</artifactId>
                 <version>${querydsl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-integration-querydsl-expressions</artifactId>
+                <version>${blaze-persistence.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.blazebit</groupId>
+                <artifactId>blaze-persistence-integration-hibernate-5.6</artifactId>
+                <version>${blaze-persistence.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
