@@ -42,7 +42,7 @@ interface UserProfile extends BaseEntity {
  * 用户数据，包含角色、权限、菜单等信息
  */
 interface UserVO {
-	userId: number;
+	id: number;
 	nickname: string;
 	userProfile?: UserProfile;
 	roleList: Role[];
