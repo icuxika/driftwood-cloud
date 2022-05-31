@@ -13,6 +13,7 @@
         <!-- Seata 1.4.2版本下，MySQL8.22以上的版本会导致LocalDateTime无法转换异常 -->
         <!-- spring-boot-dependencies有内定的MySQL版本设置，需在dependencyManagement中将此pom配置它之前，才能覆盖MySQL版本 -->
         <mysql.version>8.0.22</mysql.version>
+        <querydsl.version>5.0.0</querydsl.version>
     </properties>
 
     <dependencyManagement>
@@ -73,6 +74,17 @@
                 <version>${mysql.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-apt</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.querydsl</groupId>
+                <artifactId>querydsl-jpa</artifactId>
+                <version>${querydsl.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
