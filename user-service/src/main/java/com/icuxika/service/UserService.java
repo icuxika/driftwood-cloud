@@ -4,6 +4,7 @@ import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
 import com.icuxika.modules.user.entity.User;
 import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserInfoVO;
 import com.icuxika.modules.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,7 @@ public interface UserService {
 
     UserAuthVO findByPhone(String phone);
 
-    UserVO getUserInfo();
+    UserInfoVO getUserInfo();
 
     Page<UserVO> getPage(Pageable pageable, UserDTO userDTO);
 

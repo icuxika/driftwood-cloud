@@ -3,7 +3,6 @@ package com.icuxika.service;
 import com.blazebit.persistence.CriteriaBuilderFactory;
 import com.blazebit.persistence.querydsl.BlazeJPAQuery;
 import com.icuxika.common.ApiData;
-import com.icuxika.common.BaseEntity;
 import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.file.feign.FileClient;
 import com.icuxika.modules.file.vo.MinioFileVO;
@@ -11,6 +10,7 @@ import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
 import com.icuxika.modules.user.entity.*;
 import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserInfoVO;
 import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.repository.*;
 import com.icuxika.util.BeanExUtil;
@@ -91,9 +91,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO getUserInfo() {
+    public UserInfoVO getUserInfo() {
         User user = userRepository.findById(SecurityUtil.getUserId()).orElseThrow(() -> new GlobalServiceException("用户数据不存在"));
-        return buildUserVO(user);
+        return buildUserInfoVO(user);
     }
 
     @Override
@@ -126,8 +126,7 @@ public class UserServiceImpl implements UserService {
             User user = tuple.get(qUser);
             UserProfile userProfile = tuple.get(qUserProfile);
             UserVO userVO = new UserVO();
-            Optional.ofNullable(user).map(BaseEntity::getId).ifPresent(userVO::setId);
-            Optional.ofNullable(user).map(User::getNickname).ifPresent(userVO::setNickname);
+            Optional.ofNullable(user).ifPresent(u -> BeanUtils.copyProperties(u, userVO));
             Optional.ofNullable(userProfile).ifPresent(userVO::setUserProfile);
             return userVO;
         }).collect(Collectors.toList());
@@ -222,13 +221,13 @@ public class UserServiceImpl implements UserService {
      * @param user 用户
      * @return 用户详细信息
      */
-    private UserVO buildUserVO(User user) {
-        UserVO userVO = new UserVO();
-        userVO.setId(user.getId());
-        userVO.setNickname(user.getNickname());
-        setUserAuthInfo(user.getId(), userVO::setRoleList, userVO::setPermissionList, userVO::setMenuList);
-        userProfileRepository.findByUserId(user.getId()).ifPresent(userVO::setUserProfile);
-        return userVO;
+    private UserInfoVO buildUserInfoVO(User user) {
+        UserInfoVO userInfoVO = new UserInfoVO();
+        userInfoVO.setId(user.getId());
+        userInfoVO.setNickname(user.getNickname());
+        setUserAuthInfo(user.getId(), userInfoVO::setRoleList, userInfoVO::setPermissionList, userInfoVO::setMenuList);
+        userProfileRepository.findByUserId(user.getId()).ifPresent(userInfoVO::setUserProfile);
+        return userInfoVO;
     }
 
     /**

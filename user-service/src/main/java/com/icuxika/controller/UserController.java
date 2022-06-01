@@ -5,6 +5,7 @@ import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
 import com.icuxika.modules.user.entity.User;
 import com.icuxika.modules.user.vo.UserAuthVO;
+import com.icuxika.modules.user.vo.UserInfoVO;
 import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.service.UserService;
 import org.springframework.data.domain.Page;
@@ -59,7 +60,7 @@ public class UserController {
      * @return 用户信息
      */
     @GetMapping("getUserInfo")
-    public ApiData<UserVO> getUserInfo() {
+    public ApiData<UserInfoVO> getUserInfo() {
         return ApiData.ok(userService.getUserInfo());
     }
 
