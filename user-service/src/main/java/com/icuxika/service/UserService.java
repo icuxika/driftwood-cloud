@@ -17,6 +17,8 @@ public interface UserService {
 
     UserAuthVO findByPhone(String phone);
 
+    void updateUserIP(Long userId, String ip);
+
     UserInfoVO getUserInfo();
 
     Page<UserVO> getPage(Pageable pageable, UserQueryDTO userQueryDTO);
@@ -32,4 +34,5 @@ public interface UserService {
     void bindRoles(BindOneDTO bindOneDTO);
 
     void uploadAvatar(MultipartFile file);
+
 }

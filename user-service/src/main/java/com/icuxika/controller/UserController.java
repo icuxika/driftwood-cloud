@@ -58,6 +58,20 @@ public class UserController {
     }
 
     /**
+     * 更新用户最近登录ip地址
+     *
+     * @param userId 用户id
+     * @param ip     ip地址
+     * @return void
+     */
+    @PostMapping("updateUserIP")
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    public ApiData<Void> updateUserIP(@RequestParam("userId") Long userId, @RequestParam("ip") String ip, HttpServletRequest request) {
+        userService.updateUserIP(userId, ip);
+        return ApiData.okMsg("操作成功");
+    }
+
+    /**
      * 获取当前登录用户的用户信息
      *
      * @return 用户信息

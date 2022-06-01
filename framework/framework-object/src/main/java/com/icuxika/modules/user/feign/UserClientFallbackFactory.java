@@ -29,6 +29,12 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
                 L.warn("[findByPhone]进入fallback");
                 return ApiData.errorMsg("[findByPhone]进入fallback");
             }
+
+            @Override
+            public ApiData<Void> updateUserIP(Long userId, String ip) {
+                L.warn("更新用户最近登录ip地址失败");
+                return ApiData.errorMsg("[updateUserIP]进入fallback");
+            }
         };
     }
 }

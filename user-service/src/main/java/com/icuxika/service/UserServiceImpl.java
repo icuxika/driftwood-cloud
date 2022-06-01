@@ -97,6 +97,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUserIP(Long userId, String ip) {
+        userProfileRepository.findByUserId(userId).ifPresent(userProfile -> {
+            userProfile.setLastRemoteAddress(userProfile.getRemoteAddress());
+            userProfile.setRemoteAddress(ip);
+            userProfileRepository.save(userProfile);
+        });
+    }
+
+    @Override
     public UserInfoVO getUserInfo() {
         User user = userRepository.findById(SecurityUtil.getUserId()).orElseThrow(() -> new GlobalServiceException("用户数据不存在"));
         return buildUserInfoVO(user);

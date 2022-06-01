@@ -1,6 +1,9 @@
 package com.icuxika.config.handler;
 
+import com.icuxika.async.AsyncWrapper;
 import com.icuxika.constant.SystemConstant;
+import com.icuxika.modules.user.feign.UserClient;
+import com.icuxika.util.IPUtil;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +36,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
+    private UserClient userClient;
+
+    @Autowired
+    private AsyncWrapper asyncWrapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -91,9 +100,22 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             // TODO RefreshToken时判断当前激活的AccessToken集合大小并清理旧的AccessToken，合理的情况应只存在两个有效的AccessToken
             userTokenList.add(token);
             redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_USER_SESSION, key, userTokenList);
+            // 异步更新用户最近登录ip地址
+            asyncWrapper.doAsync("更新用户最近登录ip地址", () -> updateUserIP(request, userId));
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 更新用户最近登录ip地址
+     *
+     * @param request HttpServletRequest
+     * @param userId  用户id
+     */
+    private void updateUserIP(HttpServletRequest request, Long userId) {
+        String ip = IPUtil.getIP(request);
+        userClient.updateUserIP(userId, ip);
     }
 
 }
