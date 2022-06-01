@@ -135,14 +135,6 @@ public class UserServiceImpl implements UserService {
             // 账户是否禁用
             booleanBuilder.and(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
         }
-        // user profile
-        if (userQueryDTO.getUserProfile() != null) {
-            UserProfile userProfile = userQueryDTO.getUserProfile();
-            if (StringUtils.hasText(userProfile.getNation())) {
-                // 国家
-                booleanBuilder.and(qUserProfile.nation.eq(userProfile.getNation()));
-            }
-        }
         // other
         if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
             // 出生日期
