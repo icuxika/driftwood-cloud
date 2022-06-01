@@ -22,11 +22,10 @@ import org.springframework.util.CollectionUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 自定义AccessToken响应输出，主要代码来自 org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter#sendAccessTokenResponse(HttpServletRequest, HttpServletResponse, Authentication)
@@ -101,7 +100,8 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             userTokenList.add(token);
             redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_USER_SESSION, key, userTokenList);
             // 异步更新用户最近登录ip地址
-            asyncWrapper.doAsync("更新用户最近登录ip地址", () -> updateUserIP(request, userId));
+            String ip = Optional.ofNullable(IPUtil.getIP(request)).orElse("127.0.0.1");
+            asyncWrapper.doAsync("更新用户最近登录ip地址", () -> updateUserIP(userId, ip));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -110,12 +110,12 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
     /**
      * 更新用户最近登录ip地址
      *
-     * @param request HttpServletRequest
-     * @param userId  用户id
+     * @param userId 用户id
+     * @param ip     ip地址
      */
-    private void updateUserIP(HttpServletRequest request, Long userId) {
-        String ip = IPUtil.getIP(request);
-        userClient.updateUserIP(userId, ip);
+    private void updateUserIP(Long userId, String ip) {
+        // 将ip地址使用Base64格式化，否则无法直接传输
+        userClient.updateUserIP(userId, Base64.getEncoder().encodeToString(ip.getBytes(StandardCharsets.UTF_8)));
     }
 
 }

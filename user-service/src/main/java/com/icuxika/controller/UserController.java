@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -67,6 +69,8 @@ public class UserController {
     @PostMapping("updateUserIP")
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     public ApiData<Void> updateUserIP(@RequestParam("userId") Long userId, @RequestParam("ip") String ip, HttpServletRequest request) {
+        // Base64解析获取真实ip地址
+        ip = new String(Base64.getDecoder().decode(ip), StandardCharsets.UTF_8);
         userService.updateUserIP(userId, ip);
         return ApiData.okMsg("操作成功");
     }
