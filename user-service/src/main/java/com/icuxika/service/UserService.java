@@ -2,6 +2,7 @@ package com.icuxika.service;
 
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
+import com.icuxika.modules.user.dto.UserQueryDTO;
 import com.icuxika.modules.user.entity.User;
 import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserInfoVO;
@@ -18,7 +19,7 @@ public interface UserService {
 
     UserInfoVO getUserInfo();
 
-    Page<UserVO> getPage(Pageable pageable, UserDTO userDTO);
+    Page<UserVO> getPage(Pageable pageable, UserQueryDTO userQueryDTO);
 
     User getById(Long id);
 

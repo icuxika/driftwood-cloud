@@ -8,6 +8,7 @@ import com.icuxika.modules.file.feign.FileClient;
 import com.icuxika.modules.file.vo.MinioFileVO;
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
+import com.icuxika.modules.user.dto.UserQueryDTO;
 import com.icuxika.modules.user.entity.*;
 import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserInfoVO;
@@ -27,10 +28,14 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -97,21 +102,46 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserVO> getPage(Pageable pageable, UserDTO userDTO) {
+    public Page<UserVO> getPage(Pageable pageable, UserQueryDTO userQueryDTO) {
         QUser qUser = QUser.user;
         QUserProfile qUserProfile = QUserProfile.userProfile;
 
         BlazeJPAQuery<Tuple> query = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory);
-        JPQLQuery<Tuple> jpqlQuery = query.from(qUser).leftJoin(qUserProfile).on(qUser.id.eq(qUserProfile.userId)).select(qUser, qUserProfile);
+        JPQLQuery<Tuple> jpqlQuery = query.select(query, qUserProfile).from(qUser).leftJoin(qUserProfile).on(qUser.id.eq(qUserProfile.userId));
 
-        if (StringUtils.hasText(userDTO.getPhone())) {
-            jpqlQuery.where(qUser.phone.startsWith(userDTO.getPhone()));
+        // 查询条件
+        // user
+        if (StringUtils.hasText(userQueryDTO.getUsername())) {
+            // 用户名
+            jpqlQuery.where(qUser.username.like(userQueryDTO.getUsername()));
         }
-        if (StringUtils.hasText(userDTO.getNickname())) {
-            jpqlQuery.where(qUser.nickname.like(userDTO.getNickname()));
+        if (StringUtils.hasText(userQueryDTO.getPhone())) {
+            // 手机号
+            jpqlQuery.where(qUser.phone.startsWith(userQueryDTO.getPhone()));
         }
-        if (StringUtils.hasText(userDTO.getNation())) {
-            jpqlQuery.where(qUserProfile.nation.like(userDTO.getNation()));
+        if (StringUtils.hasText(userQueryDTO.getNickname())) {
+            // 昵称
+            jpqlQuery.where(qUser.nickname.like(userQueryDTO.getNickname()));
+        }
+        if (userQueryDTO.getEnabled() != null) {
+            // 账户是否禁用
+            jpqlQuery.where(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
+        }
+        // user profile
+        if (userQueryDTO.getUserProfile() != null) {
+            UserProfile userProfile = userQueryDTO.getUserProfile();
+            if (StringUtils.hasText(userProfile.getNation())) {
+                // 国家
+                jpqlQuery.where(qUserProfile.nation.eq(userProfile.getNation()));
+            }
+        }
+        // other
+        if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
+            // 出生日期
+            List<Long> range = userQueryDTO.getBirthdayRange();
+            LocalDate start = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(0)), ZoneId.systemDefault());
+            LocalDate end = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(1)), ZoneId.systemDefault());
+            jpqlQuery.where(qUserProfile.birthday.between(start, end));
         }
 
         // 获取总数

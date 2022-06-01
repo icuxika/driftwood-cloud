@@ -3,6 +3,7 @@ package com.icuxika.controller;
 import com.icuxika.common.ApiData;
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.dto.UserDTO;
+import com.icuxika.modules.user.dto.UserQueryDTO;
 import com.icuxika.modules.user.entity.User;
 import com.icuxika.modules.user.vo.UserAuthVO;
 import com.icuxika.modules.user.vo.UserInfoVO;
@@ -12,11 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -65,8 +68,19 @@ public class UserController {
     }
 
     @GetMapping("/page")
-    public ApiData<Page<UserVO>> getPage(@PageableDefault(sort = "id") Pageable pageable, UserDTO userDTO) {
-        Page<UserVO> page = userService.getPage(pageable, userDTO);
+    public ApiData<Page<UserVO>> getPage(@PageableDefault(sort = "id") Pageable pageable, UserQueryDTO userQueryDTO) {
+        // 参数合理校验
+        if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
+            List<Long> range = userQueryDTO.getBirthdayRange();
+            if (range.size() != 2) {
+                return ApiData.errorMsg("出生日期范围应同时包含开始日期与结束日期");
+            }
+            if (range.get(0) > range.get(1)) {
+                return ApiData.errorMsg("出生日期范围开始日期应小于登录结束日期");
+            }
+        }
+
+        Page<UserVO> page = userService.getPage(pageable, userQueryDTO);
         return ApiData.ok(page);
     }
 
