@@ -106,8 +106,11 @@ public class UserServiceImpl implements UserService {
         QUser qUser = QUser.user;
         QUserProfile qUserProfile = QUserProfile.userProfile;
 
-        BlazeJPAQuery<Tuple> query = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory);
-        JPQLQuery<Tuple> jpqlQuery = query.select(query, qUserProfile).from(qUser).leftJoin(qUserProfile).on(qUser.id.eq(qUserProfile.userId));
+        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
+                .select(qUser, qUserProfile)
+                .from(qUser)
+                .leftJoin(qUserProfile)
+                .on(qUser.id.eq(qUserProfile.userId));
 
         // 查询条件
         // user
@@ -146,7 +149,6 @@ public class UserServiceImpl implements UserService {
 
         // 获取总数
         long fetchCount = jpqlQuery.fetchCount();
-
         // 应用分页（会自动应用相关排序）
         Querydsl querydsl = new Querydsl(entityManager, (new PathBuilderFactory()).create(User.class));
         jpqlQuery = querydsl.applyPagination(pageable, jpqlQuery);
