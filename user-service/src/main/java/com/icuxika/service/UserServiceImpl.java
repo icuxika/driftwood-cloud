@@ -16,6 +16,7 @@ import com.icuxika.modules.user.vo.UserVO;
 import com.icuxika.repository.*;
 import com.icuxika.util.BeanExUtil;
 import com.icuxika.util.SecurityUtil;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
@@ -106,36 +107,31 @@ public class UserServiceImpl implements UserService {
         QUser qUser = QUser.user;
         QUserProfile qUserProfile = QUserProfile.userProfile;
 
-        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
-                .select(qUser, qUserProfile)
-                .from(qUser)
-                .leftJoin(qUserProfile)
-                .on(qUser.id.eq(qUserProfile.userId));
-
         // 查询条件
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
         // user
         if (StringUtils.hasText(userQueryDTO.getUsername())) {
             // 用户名
-            jpqlQuery.where(qUser.username.like(userQueryDTO.getUsername()));
+            booleanBuilder.and(qUser.username.like(userQueryDTO.getUsername()));
         }
         if (StringUtils.hasText(userQueryDTO.getPhone())) {
             // 手机号
-            jpqlQuery.where(qUser.phone.startsWith(userQueryDTO.getPhone()));
+            booleanBuilder.and(qUser.phone.startsWith(userQueryDTO.getPhone()));
         }
         if (StringUtils.hasText(userQueryDTO.getNickname())) {
             // 昵称
-            jpqlQuery.where(qUser.nickname.like(userQueryDTO.getNickname()));
+            booleanBuilder.and(qUser.nickname.like(userQueryDTO.getNickname()));
         }
         if (userQueryDTO.getEnabled() != null) {
             // 账户是否禁用
-            jpqlQuery.where(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
+            booleanBuilder.and(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
         }
         // user profile
         if (userQueryDTO.getUserProfile() != null) {
             UserProfile userProfile = userQueryDTO.getUserProfile();
             if (StringUtils.hasText(userProfile.getNation())) {
                 // 国家
-                jpqlQuery.where(qUserProfile.nation.eq(userProfile.getNation()));
+                booleanBuilder.and(qUserProfile.nation.eq(userProfile.getNation()));
             }
         }
         // other
@@ -144,16 +140,23 @@ public class UserServiceImpl implements UserService {
             List<Long> range = userQueryDTO.getBirthdayRange();
             LocalDate start = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(0)), ZoneId.systemDefault());
             LocalDate end = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(1)), ZoneId.systemDefault());
-            jpqlQuery.where(qUserProfile.birthday.between(start, end));
+            booleanBuilder.and(qUserProfile.birthday.between(start, end));
         }
+
+        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
+                .select(qUser, qUserProfile)
+                .from(qUser)
+                .leftJoin(qUserProfile)
+                .on(qUser.id.eq(qUserProfile.userId))
+                .where(booleanBuilder);
 
         // 获取总数
         long fetchCount = jpqlQuery.fetchCount();
         // 应用分页（会自动应用相关排序）
         Querydsl querydsl = new Querydsl(entityManager, (new PathBuilderFactory()).create(User.class));
         jpqlQuery = querydsl.applyPagination(pageable, jpqlQuery);
-
         List<Tuple> list = jpqlQuery.fetch();
+
         List<UserVO> userVOList = list.stream().map(tuple -> {
             User user = tuple.get(qUser);
             UserProfile userProfile = tuple.get(qUserProfile);
