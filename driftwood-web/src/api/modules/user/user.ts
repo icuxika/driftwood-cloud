@@ -41,7 +41,7 @@ interface UserProfile extends BaseEntity {
 /**
  * 用户数据，包含角色、权限、菜单等信息
  */
-interface UserVO {
+interface UserInfoVO {
 	id: number;
 	nickname: string;
 	userProfile?: UserProfile;
@@ -50,20 +50,27 @@ interface UserVO {
 	menuList: Menu[];
 }
 
+/**
+ * 用户详细数据
+ */
+interface UserVO extends User {
+	userProfile?: UserProfile;
+}
+
 type UserWithId = User & HasId;
 
 type CreateService = (path: string) => {
 	/**
 	 * 获取登录用户信息
 	 */
-	getUserInfo: () => Promise<AxiosResponse<ApiData<UserVO>>>;
+	getUserInfo: () => Promise<AxiosResponse<ApiData<UserInfoVO>>>;
 
 	/**
 	 * 用户分页查询
 	 */
 	page: <T extends User>(
 		pageable: Partial<Pageable & T>
-	) => Promise<AxiosResponse<ApiData<Page<User>>>>;
+	) => Promise<AxiosResponse<ApiData<Page<UserVO>>>>;
 
 	/**
 	 * 根据id查询用户
@@ -98,10 +105,12 @@ type CreateService = (path: string) => {
 const createService: CreateService = (path: string) => {
 	return {
 		getUserInfo() {
-			return AxiosInstance.get<ApiData<UserVO>>(path + "/getUserInfo");
+			return AxiosInstance.get<ApiData<UserInfoVO>>(
+				path + "/getUserInfo"
+			);
 		},
 		page<T extends User>(pageable: Partial<Pageable & T>) {
-			return AxiosInstance.get<ApiData<Page<User>>>(path + "/page", {
+			return AxiosInstance.get<ApiData<Page<UserVO>>>(path + "/page", {
 				params: pageable,
 			});
 		},
@@ -128,4 +137,4 @@ const createService: CreateService = (path: string) => {
 
 const userService = createService("/user/user");
 
-export { userService, User, UserVO };
+export { userService, User, UserInfoVO, UserVO };

@@ -82,7 +82,7 @@ import { h, reactive, ref } from "vue";
 import { NSpace, NAvatar, useMessage, useNotification } from "naive-ui";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/store/pinia/auth";
-import { UserVO } from "@/api/modules/user/user";
+import { UserInfoVO } from "@/api/modules/user/user";
 
 const message = useMessage();
 const route = useRoute();
@@ -151,17 +151,17 @@ const getCode = () => {
 	message.info("短信已发送", { duration: 500 });
 };
 
-const loginSuccessHandler = (userVO: UserVO) => {
+const loginSuccessHandler = (userInfoVO: UserInfoVO) => {
 	router.replace({
 		path: (route.query.redirect as string) || "/",
 	});
 	loginLoading.value = false;
 	let avatar =
-		userVO?.userProfile?.avatar ??
+		userInfoVO?.userProfile?.avatar ??
 		"https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg";
 	notification.create({
 		title: "登录成功",
-		content: `${userVO.nickname}，欢迎回来！`,
+		content: `${userInfoVO.nickname}，欢迎回来！`,
 		meta:
 			new Date().toLocaleDateString().replaceAll("/", "-") +
 			" " +
@@ -184,9 +184,9 @@ const submitLogin = () => {
 		case LoginType.PASSWORD:
 			authStore
 				.loginByPassword(username.value, password.value)
-				.then((userVO) => {
-					if (userVO) {
-						loginSuccessHandler(userVO);
+				.then((userInfoVO) => {
+					if (userInfoVO) {
+						loginSuccessHandler(userInfoVO);
 					}
 				})
 				.catch(() => {
@@ -201,9 +201,9 @@ const submitLogin = () => {
 		case LoginType.PHONE:
 			authStore
 				.loginByPhone(phone.value, code.value)
-				.then((userVO) => {
-					if (userVO) {
-						loginSuccessHandler(userVO);
+				.then((userInfoVO) => {
+					if (userInfoVO) {
+						loginSuccessHandler(userInfoVO);
 					}
 				})
 				.catch(() => {

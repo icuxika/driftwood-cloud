@@ -1,31 +1,33 @@
 import { defineStore } from "pinia";
-import { User, userService, UserVO } from "@/api/modules/user/user";
+import { User, userService, UserInfoVO, UserVO } from "@/api/modules/user/user";
 import { Page, Pageable, resolveAxiosResult } from "@/api";
 
 interface UserState {
-	currentUser?: UserVO;
+	currentUser?: UserInfoVO;
 }
 
 export const useUserStore = defineStore("user", {
 	state: (): UserState => ({}),
 	getters: {},
 	actions: {
-		setCurrentUser(currentUser: UserVO) {
+		setCurrentUser(currentUser: UserInfoVO) {
 			this.currentUser = currentUser;
 		},
 
 		/**
 		 * 获取用户信息
 		 */
-		getUserInfo: async (): Promise<UserVO | null> =>
-			resolveAxiosResult(userService.getUserInfo),
+		async getUserInfo(): Promise<UserInfoVO | null> {
+			return resolveAxiosResult(userService.getUserInfo);
+		},
 
 		/**
 		 * 获取用户分页数据
 		 */
-		page: async <T extends User>(
+		async page<T extends User>(
 			pageable: Partial<Pageable & T>
-		): Promise<Page<User> | null> =>
-			resolveAxiosResult(() => userService.page(pageable)),
+		): Promise<Page<UserVO> | null> {
+			return resolveAxiosResult(() => userService.page(pageable));
+		},
 	},
 });

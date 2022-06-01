@@ -6,7 +6,7 @@ import {
 	TokenInfo,
 } from "@/api/modules/admin/auth";
 import { resolveAxiosResult } from "@/api";
-import { userService, UserVO } from "@/api/modules/user/user";
+import { userService, UserInfoVO } from "@/api/modules/user/user";
 
 interface AuthState {
 	/**
@@ -47,7 +47,7 @@ export const useAuthStore = defineStore("auth", {
 		async loginByPassword(
 			username: string,
 			password: string
-		): Promise<UserVO | null> {
+		): Promise<UserInfoVO | null> {
 			try {
 				const tokenInfo = await resolveAxiosResult(() =>
 					adminAuthService.login({
@@ -74,7 +74,7 @@ export const useAuthStore = defineStore("auth", {
 		async loginByPhone(
 			phone: string,
 			code: string
-		): Promise<UserVO | null> {
+		): Promise<UserInfoVO | null> {
 			try {
 				const tokenInfo = await resolveAxiosResult(() =>
 					adminAuthService.login({
