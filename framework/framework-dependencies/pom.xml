@@ -109,6 +109,12 @@
                 <artifactId>methanol</artifactId>
                 <version>1.7.0</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-logging-slf4j</artifactId>
+                <version>1.8.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
