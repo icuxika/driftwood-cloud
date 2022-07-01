@@ -3,6 +3,10 @@ import App from "@/App.vue";
 import router from "@/router";
 import { key, store } from "@/store";
 import { createPinia } from "pinia";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import uploader from "vue-simple-uploader";
+import "vue-simple-uploader/dist/style.css";
 
 import {
 	create,
@@ -102,6 +106,7 @@ app.use(store, key);
 app.use(createPinia());
 app.use(naive);
 app.use(vueScaffoldUI);
+app.use(uploader);
 router.isReady().then(() => {
 	app.mount("#app");
 });

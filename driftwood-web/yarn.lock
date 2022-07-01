@@ -2863,6 +2863,11 @@ shebang-regex@^3.0.0:
   resolved "https://registry.npmjs.org/shebang-regex/-/shebang-regex-3.0.0.tgz"
   integrity sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==
 
+simple-uploader.js@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/simple-uploader.js/-/simple-uploader.js-0.6.0.tgz#55724264c89ff70df4a9855bcd28eb92f0b88ced"
+  integrity sha512-EXN+o+LD6PVnfzTq/usP8k8yYrI6wKrAx8e+fPcPLVzzttonkyn1KT+Ycx5JnPBSnp6lpiVhNG4JhDJucdPnhA==
+
 slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/slash/-/slash-3.0.0.tgz"
@@ -3191,6 +3196,13 @@ vue-router@4.0.8:
   integrity sha512-42mWSQaH7CCBQDspQTHv63f34VEnZC20g9QNK4WJ/zW8SdIUeT6TQ2i/78fjF/pVBUPLBWrGhvB7uDnaz7O/pA==
   dependencies:
     "@vue/devtools-api" "^6.0.0-beta.10"
+
+vue-simple-uploader@^1.0.0-beta.5:
+  version "1.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/vue-simple-uploader/-/vue-simple-uploader-1.0.0-beta.5.tgz#f30ba8b6fdf7f554692845c923fa1bf0c6fa182c"
+  integrity sha512-VJFQvYTqx8vd4OOAopafcHdRp25iBqUywbBDohpS+nLerUbotAfkH4WsCzaTWFFSF2PRLdbPX1yxijADxv+sGg==
+  dependencies:
+    simple-uploader.js "^0.6.0"
 
 vue-tsc@^0.33.9:
   version "0.33.9"
