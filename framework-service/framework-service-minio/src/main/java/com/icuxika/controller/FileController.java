@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/file")
@@ -17,7 +18,7 @@ public class FileController {
     private FileService fileService;
 
     /**
-     * 上传单个文件
+     * 小文件-上传单个文件
      *
      * @param file 文件
      * @param path 文件路径
@@ -30,7 +31,7 @@ public class FileController {
     }
 
     /**
-     * 上传多个文件
+     * 小文件-上传多个文件
      *
      * @param fileList 文件列表
      * @param path     文件路径
@@ -52,5 +53,31 @@ public class FileController {
     public ApiData<String> getPreSignedFileUrlById(@PathVariable("id") Long id) {
         String url = fileService.getPreSignedFileUrlById(id);
         return ApiData.ok(url);
+    }
+
+    /**
+     * 大文件分片上传-创建分片上传请求
+     *
+     * @param fileName    文件名称
+     * @param chunkNumber 分片数量
+     * @return 分片上传地址、uploadId
+     */
+    @GetMapping("/createMultipartUpload")
+    public ApiData<Map<String, String>> createMultipartUpload(String fileName, Integer chunkNumber) {
+        Map<String, String> upload = fileService.createMultipartUpload(fileName, chunkNumber);
+        return ApiData.ok(upload);
+    }
+
+    /**
+     * 大文件分片上传-合并上传完成的分片文件
+     *
+     * @param fileName 文件名称
+     * @param uploadId 分片数量
+     * @return ApiData
+     */
+    @GetMapping("/completeMultipartUpload")
+    public ApiData<Void> completeMultipartUpload(String fileName, String uploadId) {
+        fileService.completeMultipartUpload(fileName, uploadId);
+        return ApiData.okMsg("文件合并成功");
     }
 }

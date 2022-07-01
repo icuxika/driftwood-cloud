@@ -8,6 +8,10 @@ import com.icuxika.modules.file.entity.MinioFile;
 import com.icuxika.modules.file.vo.MinioFileVO;
 import com.icuxika.repository.FileRepository;
 import com.icuxika.util.MinioUtil;
+import io.minio.CreateMultipartUploadResponse;
+import io.minio.ListPartsResponse;
+import io.minio.ObjectWriteArgs;
+import io.minio.messages.Part;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +20,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -90,5 +96,41 @@ public class FileServiceImpl implements FileService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Map<String, String> createMultipartUpload(String fileName, Integer chunkNumber) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            CreateMultipartUploadResponse response = minioUtil.createMultipartUpload(SystemConstant.MINIO_BUCKET_NAME, null, fileName, null, null);
+            String uploadId = response.result().uploadId();
+            result.put("uploadId", uploadId);
+
+            Map<String, String> reqParams = new HashMap<>();
+            reqParams.put("uploadId", uploadId);
+            for (int i = 1; i <= chunkNumber; i++) {
+                reqParams.put("partNumber", String.valueOf(i));
+                String url = minioUtil.getPreSignedObjectUrlForUploadChunk(SystemConstant.MINIO_BUCKET_NAME, fileName, reqParams);
+                result.put("chunk_" + (i - 1), url);
+            }
+        } catch (Exception e) {
+            throw new GlobalServiceException("创建文件分片上传请求失败：" + e.getMessage());
+        }
+        return result;
+    }
+
+    @Override
+    public void completeMultipartUpload(String fileName, String uploadId) {
+        try {
+            ListPartsResponse response = minioUtil.listParts(SystemConstant.MINIO_BUCKET_NAME, null, fileName, ObjectWriteArgs.MAX_MULTIPART_COUNT, 0, uploadId, null, null);
+            List<Part> partList = response.result().partList();
+            Part[] parts = new Part[partList.size()];
+            for (int i = 0; i < partList.size(); i++) {
+                parts[i] = new Part(i + 1, partList.get(i).etag());
+            }
+            minioUtil.completeMultipartUpload(SystemConstant.MINIO_BUCKET_NAME, null, fileName, uploadId, parts, null, null);
+        } catch (Exception e) {
+            throw new GlobalServiceException("合并分片文件失败：" + e.getMessage());
+        }
     }
 }

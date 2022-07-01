@@ -14,10 +14,11 @@ public class MinioConfig {
     private MinioProperties properties;
 
     @Bean
-    public MinioClient minioClient() {
-        return MinioClient.builder()
+    public PartialMinioClient minioClient() {
+        MinioClient minioClient = MinioClient.builder()
                 .endpoint(properties.getEndpoint())
                 .credentials(properties.getAccessKey(), properties.getSecretKey())
                 .build();
+        return new PartialMinioClient(minioClient);
     }
 }
