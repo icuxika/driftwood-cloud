@@ -65,6 +65,13 @@ spring:
             - StripPrefix=1
             - WebSocket
 
+        - id: framework-service-minio
+          uri: lb://framework-service-minio
+          predicates:
+            - Path=/file/**
+          filters:
+            - StripPrefix=1
+
     sentinel:
       filter:
         enabled: false
