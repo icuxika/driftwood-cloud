@@ -7,25 +7,51 @@ type ChunkUploadUrlMap = {
 };
 
 type CreateService = (path: string) => {
-	createMultipartUpload: () => Promise<
-		AxiosResponse<ApiData<ChunkUploadUrlMap>>
-	>;
+	/**
+	 * 大文件分片上传-创建分片上传请求
+	 */
+	createMultipartUpload: (
+		fileName: string,
+		chunkNumber: number
+	) => Promise<AxiosResponse<ApiData<ChunkUploadUrlMap>>>;
 
-	completeMultipartUpload: () => Promise<AxiosResponse<ApiData<never>>>;
+	/**
+	 * 大文件分片上传-合并上传完成的分片文件
+	 * @param fileName
+	 * @param uploadId
+	 */
+	completeMultipartUpload: (
+		fileName: string,
+		uploadId: string
+	) => Promise<AxiosResponse<ApiData<never>>>;
 };
 
 const createService: CreateService = (path: string) => {
 	return {
-		createMultipartUpload() {
-			return AxiosInstance.get(path + "/createMultipartUpload");
+		createMultipartUpload(fileName: string, chunkNumber: number) {
+			return AxiosInstance.get(
+				path +
+					"/createMultipartUpload" +
+					"?fileName=" +
+					fileName +
+					"&chunkNumber=" +
+					chunkNumber
+			);
 		},
 
-		completeMultipartUpload() {
-			return AxiosInstance.get(path + "/completeMultipartUpload");
+		completeMultipartUpload(fileName: string, uploadId: string) {
+			return AxiosInstance.get(
+				path +
+					"/completeMultipartUpload" +
+					"?fileName=" +
+					fileName +
+					"&uploadId=" +
+					uploadId
+			);
 		},
 	};
 };
 
 const fileService = createService("/file/file");
 
-export { fileService };
+export { fileService, ChunkUploadUrlMap };

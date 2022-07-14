@@ -1,5 +1,11 @@
-<template><h1>客户端</h1></template>
+<template>
+	<div>
+		<MinioPartialFileUploader />
+	</div>
+</template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import MinioPartialFileUploader from "@/components/MinioPartialFileUploader.vue";
+</script>
 
 <style lang="scss" scoped></style>
