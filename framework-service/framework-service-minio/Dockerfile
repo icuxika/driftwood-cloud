@@ -9,7 +9,7 @@ RUN apk add tzdata \
     && apk del tzdata
 
 ENV JAR_FILE=target/framework-service-minio.jar
-ENV JAVA_OPTS="-Duser.timezone=${TZ} -Xms64m -Xmx256m -XX:+ShowCodeDetailsInExceptionMessages"
+ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages"
 COPY ${JAR_FILE} app.jar
 EXPOSE 8912
 ENTRYPOINT ["java","${JAVA_OPTS}","-jar","/app.jar"]

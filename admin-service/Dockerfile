@@ -9,7 +9,7 @@ RUN apk add tzdata \
     && apk del tzdata
 
 ENV JAR_FILE=target/admin-service.jar
-ENV JAVA_OPTS="-Duser.timezone=${TZ} -Xms64m -Xmx256m -XX:+ShowCodeDetailsInExceptionMessages"
+ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages"
 COPY ${JAR_FILE} app.jar
 EXPOSE 8902
 ENTRYPOINT ["java","${JAVA_OPTS}","-jar","/app.jar"]
