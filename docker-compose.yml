@@ -31,6 +31,7 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+      - JAVA_TOOL_OPTIONS=-XX:+PrintCommandLineFlags
     ports:
       - "8901:8901"
 
