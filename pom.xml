@@ -12,6 +12,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <spring-boot.version>2.6.3</spring-boot.version>
         <spring-cloud.version>2021.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>

@@ -12,4 +12,4 @@ ENV JAR_FILE=target/user-service.jar
 ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages"
 COPY ${JAR_FILE} app.jar
 EXPOSE 8904
-ENTRYPOINT ["java","${JAVA_OPTS}","-jar","/app.jar"]
+ENTRYPOINT java ${JAVA_OPTS} -jar /app.jar

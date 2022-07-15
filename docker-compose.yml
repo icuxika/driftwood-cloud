@@ -8,6 +8,12 @@ services:
     image: icuxika.com/driftwood/gateway
     container_name: gateway
     restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8900:8900"
 
@@ -18,6 +24,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/authorization-server
     container_name: authorization-server
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8901:8901"
 
@@ -28,6 +41,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/admin-service
     container_name: admin-service
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8902:8902"
 
@@ -38,6 +58,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/user-service
     container_name: user-service
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8904:8904"
 
@@ -48,6 +75,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/framework-service-flowable
     container_name: framework-service-flowable
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8906:8906"
 
@@ -58,6 +92,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/framework-service-websocket
     container_name: framework-service-websocket
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8910:8910"
 
@@ -68,6 +109,13 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/framework-service-job
     container_name: framework-service-job
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8911:8911"
 
@@ -78,5 +126,12 @@ services:
         buildno: 1
     image: icuxika.com/driftwood/framework-service-minio
     container_name: framework-service-minio
+    restart: always
+    volumes:
+      - ./run-logs:/logs
+    environment:
+      - NACOS_HOST=${NACOS_HOST}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - REDIS_HOST=${REDIS_HOST}
     ports:
       - "8912:8912"

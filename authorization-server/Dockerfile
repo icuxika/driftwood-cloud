@@ -12,4 +12,4 @@ ENV JAR_FILE=target/authorization-server.jar
 ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages"
 COPY ${JAR_FILE} app.jar
 EXPOSE 8901
-ENTRYPOINT ["java","${JAVA_OPTS}","-jar","/app.jar"]
+ENTRYPOINT java ${JAVA_OPTS} -jar /app.jar
