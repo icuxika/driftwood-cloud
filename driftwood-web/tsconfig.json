@@ -1,39 +1,35 @@
 {
-	"compilerOptions": {
-		// 目标语言的版本
-		"target": "esnext",
-		// 生成代码的模板标准
-		"module": "esnext",
-		// 模板解析策略
-		"moduleResolution": "node",
-		// 开启所有严格的类型检查
-		"strict": true,
-		// TS中使用JSX
-		"jsx": "preserve",
-		// 生成目标文件的sourceMap文件
-		"sourceMap": true,
-		"resolveJsonModule": true,
-		// 跳过第三方库的检查
-		"skipLibCheck": true,
-		"experimentalDecorators": true,
-		// 允许export=导出，由import from导入
-		"esModuleInterop": true,
-		// TS需要引用的库
-		"lib": [
-			"esnext",
-			"dom"
-		],
-		"paths": {
-			"@/*": [
-				"./src/*"
-			]
-		}
-	},
-	// 指定编译需要编译的文件或目录
-	"include": [
-		"src/**/*.ts",
-		"src/**/*.d.ts",
-		"src/**/*.tsx",
-		"src/**/*.vue"
-	]
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "lib": [
+      "ESNext",
+      "DOM"
+    ],
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }
