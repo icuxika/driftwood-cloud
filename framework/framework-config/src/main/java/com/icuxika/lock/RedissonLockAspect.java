@@ -44,13 +44,14 @@ public class RedissonLockAspect {
                     result = rLock.tryLock(redissonLock.expireIn(), TimeUnit.MILLISECONDS);
                 }
                 if (result) {
-                    L.info("[" + redissonLock.name() + "]锁获取成功");
+                    L.info("[" + redissonLock.name() + "]Redisson锁获取成功");
                     object = pjp.proceed();
                 } else {
-                    L.error("[" + redissonLock.name() + "]锁获取失败");
+                    L.error("[" + redissonLock.name() + "]Redisson锁获取失败");
                     throw new GlobalServiceException(redissonLock.error());
                 }
             } catch (Throwable e) {
+                L.error("[" + redissonLock.name() + "]Redisson锁获取异常：" + e.getMessage());
                 throw new GlobalServiceException(redissonLock.error());
             } finally {
                 if (result) {
