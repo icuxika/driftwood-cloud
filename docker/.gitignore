@@ -8,6 +8,10 @@
 /basic/etc/mongo/logs
 /basic/etc/rabbitmq/data
 
+### minio ###
+/minio/data/.minio.sys
+/minio/data/driftwood
+
 ### nacos ###
 /nacos/standalone-logs
 
