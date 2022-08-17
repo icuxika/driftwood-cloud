@@ -92,6 +92,11 @@
             <artifactId>sentinel-logging-slf4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.googlecode.aviator</groupId>
+            <artifactId>aviator</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
