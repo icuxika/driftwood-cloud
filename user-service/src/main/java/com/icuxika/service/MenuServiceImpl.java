@@ -1,5 +1,6 @@
 package com.icuxika.service;
 
+import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.entity.Menu;
 import com.icuxika.modules.user.entity.MenuPermission;
@@ -49,7 +50,7 @@ public class MenuServiceImpl implements MenuService {
 
     @Override
     public void update(Menu menu) {
-        Menu exist = menuRepository.findById(menu.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
+        Menu exist = menuRepository.findById(menu.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
         BeanUtils.copyProperties(menu, exist, BeanExUtil.getIgnorePropertyArray(menu));
         menuRepository.save(exist);
     }
@@ -64,10 +65,10 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void bindAuthorities(BindOneDTO bindOneDTO) {
         if (!menuRepository.existsById(bindOneDTO.getId())) {
-            throw new RuntimeException("角色数据不存在");
+            throw new GlobalServiceException("角色数据不存在");
         }
         if (menuPermissionRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
-            throw new RuntimeException("权限数据不存在");
+            throw new GlobalServiceException("权限数据不存在");
         }
         List<MenuPermission> existList = menuPermissionRepository.findByPermissionIdIn(bindOneDTO.getIdList());
         List<MenuPermission> menuPermissionList = bindOneDTO.getIdList().stream().map(permissionId -> {

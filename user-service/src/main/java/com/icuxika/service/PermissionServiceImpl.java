@@ -1,5 +1,6 @@
 package com.icuxika.service;
 
+import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.user.entity.Permission;
 import com.icuxika.repository.PermissionRepository;
 import com.icuxika.util.BeanExUtil;
@@ -43,7 +44,7 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void save(Permission permission) {
         permissionRepository.findByName(permission.getName()).ifPresent(p -> {
-            throw new RuntimeException("权限名已被使用");
+            throw new GlobalServiceException("权限名已被使用");
         });
 
         permissionRepository.save(permission);
@@ -51,7 +52,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     @Override
     public void update(Permission permission) {
-        Permission exist = permissionRepository.findById(permission.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
+        Permission exist = permissionRepository.findById(permission.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
         BeanUtils.copyProperties(permission, exist, BeanExUtil.getIgnorePropertyArray(permission));
         permissionRepository.save(exist);
     }

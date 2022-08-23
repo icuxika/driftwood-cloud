@@ -1,6 +1,7 @@
 package com.icuxika.service;
 
 import com.icuxika.constant.SystemConstant;
+import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.user.entity.PermissionGroup;
 import com.icuxika.repository.PermissionGroupRepository;
 import com.icuxika.util.BeanExUtil;
@@ -48,10 +49,10 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
     @Override
     public void save(PermissionGroup permissionGroup) {
         permissionGroupRepository.findByName(permissionGroup.getName()).ifPresent(exist -> {
-            throw new RuntimeException("PermissionGroup with name " + permissionGroup.getName() + " already exists");
+            throw new GlobalServiceException("权限分组[" + permissionGroup.getName() + "]已经存在");
         });
         if (!SystemConstant.TREE_ROOT_ID.equals(permissionGroup.getParentId()) && permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
-            throw new RuntimeException("Parent PermissionGroup not found");
+            throw new GlobalServiceException("父权限分组不存在");
         }
 
         permissionGroupRepository.save(permissionGroup);
@@ -59,10 +60,10 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
 
     @Override
     public void update(PermissionGroup permissionGroup) {
-        PermissionGroup exist = permissionGroupRepository.findById(permissionGroup.getId()).orElseThrow(() -> new RuntimeException("PermissionGroup not found"));
+        PermissionGroup exist = permissionGroupRepository.findById(permissionGroup.getId()).orElseThrow(() -> new GlobalServiceException("权限分组不存在"));
         if (permissionGroup.getParentId() != null && !permissionGroup.getParentId().equals(exist.getParentId())) {
             if (permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
-                throw new RuntimeException("Parent PermissionGroup not found");
+                throw new GlobalServiceException("父权限分组不存在");
             }
         }
         BeanUtils.copyProperties(permissionGroup, exist, BeanExUtil.getIgnorePropertyArray(permissionGroup));
@@ -73,7 +74,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
     public void deleteById(Long id) {
         if (permissionGroupRepository.existsById(id)) {
             if (!permissionGroupRepository.findByParentId(id).isEmpty()) {
-                throw new RuntimeException("PermissionGroup has children, can't delete");
+                throw new GlobalServiceException("权限分组包含权限，无法删除");
             }
             permissionGroupRepository.deleteById(id);
         }

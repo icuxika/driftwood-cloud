@@ -1,5 +1,6 @@
 package com.icuxika.service;
 
+import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.user.dto.BindOneDTO;
 import com.icuxika.modules.user.entity.Role;
 import com.icuxika.modules.user.entity.RolePermission;
@@ -49,7 +50,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void save(Role role) {
         roleRepository.findByName(role.getName()).ifPresent(exist -> {
-            throw new RuntimeException("角色名已被使用");
+            throw new GlobalServiceException("角色名已被使用");
         });
 
         roleRepository.save(role);
@@ -57,7 +58,7 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void update(Role role) {
-        Role exist = roleRepository.findById(role.getId()).orElseThrow(() -> new RuntimeException("数据不存在"));
+        Role exist = roleRepository.findById(role.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
         BeanUtils.copyProperties(role, exist, BeanExUtil.getIgnorePropertyArray(role));
         roleRepository.save(exist);
     }
@@ -72,10 +73,10 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public void bindAuthorities(BindOneDTO bindOneDTO) {
         if (!roleRepository.existsById(bindOneDTO.getId())) {
-            throw new RuntimeException("角色数据不存在");
+            throw new GlobalServiceException("角色数据不存在");
         }
         if (permissionRepository.findByIdIn(bindOneDTO.getIdList()).size() != bindOneDTO.getIdList().size()) {
-            throw new RuntimeException("权限数据不存在");
+            throw new GlobalServiceException("权限数据不存在");
         }
         List<RolePermission> existList = rolePermissionRepository.findByPermissionIdIn(bindOneDTO.getIdList());
         List<RolePermission> rolePermissionList = bindOneDTO.getIdList().stream().map(permissionId -> {
