@@ -7,6 +7,7 @@ import com.icuxika.modules.user.entity.RolePermission;
 import com.icuxika.repository.PermissionRepository;
 import com.icuxika.repository.RolePermissionRepository;
 import com.icuxika.repository.RoleRepository;
+import com.icuxika.repository.UserRoleRepository;
 import com.icuxika.util.BeanExUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Example;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +25,15 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 
+    private final UserRoleRepository userRoleRepository;
+
     private final RolePermissionRepository rolePermissionRepository;
 
     private final PermissionRepository permissionRepository;
 
-    public RoleServiceImpl(RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository) {
+    public RoleServiceImpl(RoleRepository roleRepository, UserRoleRepository userRoleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository) {
         this.roleRepository = roleRepository;
+        this.userRoleRepository = userRoleRepository;
         this.rolePermissionRepository = rolePermissionRepository;
         this.permissionRepository = permissionRepository;
     }
@@ -63,10 +68,15 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(exist);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void deleteById(Long id) {
         if (roleRepository.existsById(id)) {
             roleRepository.deleteById(id);
+            // 删除用户与角色绑定
+            userRoleRepository.deleteByRoleId(id);
+            // 删除角色与权限绑定
+            rolePermissionRepository.deleteByRoleId(id);
         }
     }
 

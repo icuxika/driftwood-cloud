@@ -2,6 +2,7 @@ package com.icuxika.service;
 
 import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.modules.user.entity.Permission;
+import com.icuxika.repository.PermissionGroupRepository;
 import com.icuxika.repository.PermissionRepository;
 import com.icuxika.util.BeanExUtil;
 import org.springframework.beans.BeanUtils;
@@ -18,8 +19,11 @@ public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
 
-    public PermissionServiceImpl(PermissionRepository permissionRepository) {
+    private final PermissionGroupRepository permissionGroupRepository;
+
+    public PermissionServiceImpl(PermissionRepository permissionRepository, PermissionGroupRepository permissionGroupRepository) {
         this.permissionRepository = permissionRepository;
+        this.permissionGroupRepository = permissionGroupRepository;
     }
 
     @Override
@@ -53,6 +57,11 @@ public class PermissionServiceImpl implements PermissionService {
     @Override
     public void update(Permission permission) {
         Permission exist = permissionRepository.findById(permission.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
+        if (permission.getGroupId() != null && !permission.getGroupId().equals(exist.getGroupId())) {
+            if (permissionGroupRepository.findById(permission.getGroupId()).isEmpty()) {
+                throw new GlobalServiceException("父权限分组不存在");
+            }
+        }
         BeanUtils.copyProperties(permission, exist, BeanExUtil.getIgnorePropertyArray(permission));
         permissionRepository.save(exist);
     }
