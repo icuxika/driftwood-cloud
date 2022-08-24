@@ -3,6 +3,9 @@ package com.icuxika.handler;
 import com.icuxika.common.ApiData;
 import com.icuxika.common.ApiStatusCode;
 import com.icuxika.exception.GlobalServiceException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -28,6 +31,15 @@ public class ExceptionHandlerAdvice {
         apiData.setCode(ApiStatusCode.EXCEPTION.getCode());
         apiData.setMsg(e.getMessage());
         return apiData;
+    }
+
+    /**
+     * 捕获因 @PreAuthorize 拦截产生的权限不足异常
+     * {@link com.icuxika.config.AccessDeniedHandlerImpl} 在全局异常拦截的情况下不生效
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleException(AccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No auth");
     }
 
     /**
