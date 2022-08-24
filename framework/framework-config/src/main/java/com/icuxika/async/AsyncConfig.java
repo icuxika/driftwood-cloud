@@ -2,6 +2,7 @@ package com.icuxika.async;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -16,6 +17,7 @@ public class AsyncConfig {
     private static final Logger L = LoggerFactory.getLogger(AsyncConfig.class);
 
     @Bean
+    @ConditionalOnExpression("!'${spring.application.name}'.equals('framework-service-flowable')")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(24);
