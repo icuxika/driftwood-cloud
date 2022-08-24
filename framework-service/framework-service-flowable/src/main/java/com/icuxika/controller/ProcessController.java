@@ -6,8 +6,10 @@ import com.icuxika.transfer.flowable.ProcessTaskDTO;
 import com.icuxika.transfer.flowable.TaskVO;
 import com.icuxika.util.SecurityUtil;
 import org.flowable.common.engine.impl.identity.Authentication;
+import org.flowable.engine.RepositoryService;
 import org.flowable.engine.RuntimeService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
 import org.springframework.beans.BeanUtils;
@@ -29,6 +31,9 @@ public class ProcessController {
     private RuntimeService runtimeService;
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private RepositoryService repositoryService;
 
     /**
      * 创建流程
@@ -84,6 +89,17 @@ public class ProcessController {
     @GetMapping("getTaskList")
     public ApiData<List<TaskVO>> getTaskList(HttpServletRequest request) {
         return ApiData.ok(task2VO(taskService.createTaskQuery().list()));
+    }
+
+    /**
+     * 获取已经部署的流程定义列表
+     *
+     * @return
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @GetMapping("getProcessDefinitionList")
+    public ApiData<List<ProcessDefinition>> getProcessDefinitionList(HttpServletRequest request) {
+        return ApiData.ok(repositoryService.createProcessDefinitionQuery().list());
     }
 
     private List<TaskVO> task2VO(List<Task> taskList) {
