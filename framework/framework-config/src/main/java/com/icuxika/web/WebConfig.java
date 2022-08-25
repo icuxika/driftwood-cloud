@@ -1,5 +1,6 @@
 package com.icuxika.web;
 
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
@@ -16,6 +17,7 @@ import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -53,7 +55,8 @@ public class WebConfig implements WebMvcConfigurer {
             jacksonObjectMapperBuilder.serializers(
                     new LocalDateSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN)),
                     new LocalTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_PATTERN)),
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN))
+                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN)),
+                    new DateSerializer(false, new SimpleDateFormat(DEFAULT_DATE_TIME_PATTERN))
             );
             jacksonObjectMapperBuilder.deserializers(
                     new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN)),

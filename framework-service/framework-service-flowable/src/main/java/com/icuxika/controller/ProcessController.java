@@ -1,6 +1,8 @@
 package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
+import com.icuxika.exception.GlobalServiceException;
+import com.icuxika.transfer.flowable.DoneTaskVO;
 import com.icuxika.transfer.flowable.NewProcessDTO;
 import com.icuxika.transfer.flowable.ProcessTaskDTO;
 import com.icuxika.transfer.flowable.TaskVO;
@@ -13,7 +15,6 @@ import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
-import org.flowable.image.impl.DefaultProcessDiagramGenerator;
 import org.flowable.task.api.Task;
 import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.BeanUtils;
@@ -107,6 +108,29 @@ public class ProcessController {
         return ApiData.ok(task2VO(taskService.createTaskQuery().list()));
     }
 
+    /**
+     * 获取已完成用户任务分页
+     *
+     * @return
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @GetMapping("getDoneTaskPage")
+    public ApiData<List<DoneTaskVO>> getDoneTaskPage(@PageableDefault Pageable pageable, String userId, HttpServletRequest request) {
+        List<HistoricTaskInstance> historicTaskInstanceList = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).listPage((int) pageable.getOffset(), pageable.getPageSize());
+        return ApiData.ok(doneTask2VO(historicTaskInstanceList));
+    }
+
+    /**
+     * 获取已完成用户任务列表
+     *
+     * @return
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @GetMapping("getDoneTaskList")
+    public ApiData<List<DoneTaskVO>> getDoneTaskList(HttpServletRequest request) {
+        return ApiData.ok(doneTask2VO(historyService.createHistoricTaskInstanceQuery().list()));
+    }
+
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @GetMapping("getHistoricTaskInstance")
     public ApiData<List<HistoricTaskInstance>> getHistoricTaskInstance(HttpServletRequest request) {
@@ -130,22 +154,7 @@ public class ProcessController {
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @GetMapping("getProcessDiagram")
     public void getProcessDiagram(@RequestParam String processDefinitionId, HttpServletRequest request, HttpServletResponse response) {
-        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
-        ProcessEngineConfiguration engineConfiguration = processEngine.getProcessEngineConfiguration();
-        ProcessDiagramGenerator diagramGenerator = new DefaultProcessDiagramGenerator();
-        try (
-                InputStream inputStream = diagramGenerator.generateDiagram(bpmnModel, "png", Collections.EMPTY_LIST, Collections.EMPTY_LIST, engineConfiguration.getActivityFontName(), engineConfiguration.getLabelFontName(), engineConfiguration.getAnnotationFontName(), engineConfiguration.getClassLoader(), 1.0, true);
-                OutputStream outputStream = response.getOutputStream();
-        ) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, length);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        writeProcessDiagram(processDefinitionId, Collections.EMPTY_LIST, Collections.EMPTY_LIST, response);
     }
 
     /**
@@ -176,6 +185,26 @@ public class ProcessController {
             }
         });
 
+        writeProcessDiagram(processDefinitionId, highLightedActivities, highLightedFlows, response);
+    }
+
+    private List<TaskVO> task2VO(List<Task> taskList) {
+        return taskList.stream().map(task -> {
+            TaskVO taskVO = new TaskVO();
+            BeanUtils.copyProperties(task, taskVO);
+            return taskVO;
+        }).collect(Collectors.toList());
+    }
+
+    private List<DoneTaskVO> doneTask2VO(List<HistoricTaskInstance> historicTaskInstanceList) {
+        return historicTaskInstanceList.stream().map(historicTaskInstance -> {
+            DoneTaskVO doneTaskVO = new DoneTaskVO();
+            BeanUtils.copyProperties(historicTaskInstance, doneTaskVO);
+            return doneTaskVO;
+        }).collect(Collectors.toList());
+    }
+
+    public void writeProcessDiagram(String processDefinitionId, List<String> highLightedActivities, List<String> highLightedFlows, HttpServletResponse response) {
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
         ProcessEngineConfiguration engineConfiguration = processEngine.getProcessEngineConfiguration();
         ProcessDiagramGenerator diagramGenerator = engineConfiguration.getProcessDiagramGenerator();
@@ -190,15 +219,7 @@ public class ProcessController {
                 outputStream.write(buffer, 0, length);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new GlobalServiceException("流程图生成失败：" + e.getMessage());
         }
-    }
-
-    private List<TaskVO> task2VO(List<Task> taskList) {
-        return taskList.stream().map(task -> {
-            TaskVO taskVO = new TaskVO();
-            BeanUtils.copyProperties(task, taskVO);
-            return taskVO;
-        }).collect(Collectors.toList());
     }
 }
