@@ -30,7 +30,6 @@
         <module>admin-service</module>
         <module>seata-service</module>
         <module>framework-extension</module>
-        <module>framework-extension/framework-extension-office</module>
     </modules>
 
     <dependencyManagement>

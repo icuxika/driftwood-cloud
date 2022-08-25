@@ -14,6 +14,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8900:8900"
 
@@ -32,6 +34,8 @@ services:
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
       - JAVA_TOOL_OPTIONS=-XX:+PrintCommandLineFlags
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8901:8901"
 
@@ -49,6 +53,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8902:8902"
 
@@ -66,6 +72,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8904:8904"
 
@@ -83,6 +91,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8906:8906"
 
@@ -100,6 +110,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8910:8910"
 
@@ -117,6 +129,8 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8911:8911"
 
@@ -134,5 +148,7 @@ services:
       - NACOS_HOST=${NACOS_HOST}
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8912:8912"
