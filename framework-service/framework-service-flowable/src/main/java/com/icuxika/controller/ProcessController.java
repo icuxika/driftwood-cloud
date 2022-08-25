@@ -155,9 +155,15 @@ public class ProcessController {
     @GetMapping("getProcessDiagramTrace")
     public void getProcessDiagramTrace(@RequestParam String processInstanceId, HttpServletRequest request, HttpServletResponse response) {
         String processDefinitionId;
-        // TODO 流程是否已经结束判断
-        HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
-        processDefinitionId = historicProcessInstance.getProcessDefinitionId();
+        ProcessInstance processInstance = runtimeService.createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+        if (processInstance != null) {
+            // 流程正在运行
+            processDefinitionId = processInstance.getProcessDefinitionId();
+        } else {
+            // 流程已经结束
+            HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery().processInstanceId(processInstanceId).singleResult();
+            processDefinitionId = historicProcessInstance.getProcessDefinitionId();
+        }
 
         List<HistoricActivityInstance> historicActivityInstanceList = historyService.createHistoricActivityInstanceQuery().processInstanceId(processInstanceId).orderByHistoricActivityInstanceStartTime().asc().list();
         List<String> highLightedActivities = new ArrayList<>();
