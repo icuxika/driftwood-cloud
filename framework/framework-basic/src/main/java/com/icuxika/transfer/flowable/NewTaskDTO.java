@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * 创建新流程
  */
-public class NewProcessDTO {
+public class NewTaskDTO {
 
     /**
      * 流程创建用户

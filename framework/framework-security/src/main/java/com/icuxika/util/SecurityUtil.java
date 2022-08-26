@@ -1,7 +1,6 @@
 package com.icuxika.util;
 
 import com.icuxika.constant.SystemConstant;
-import com.icuxika.exception.GlobalServiceException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
@@ -44,6 +43,6 @@ public interface SecurityUtil {
      */
     static String getTenantId() {
 //        return getClaim(getJwt(), "tenantId", String.class);
-        throw new GlobalServiceException("尚不支持");
+        return "driftwood";
     }
 }

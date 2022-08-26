@@ -2,23 +2,17 @@ package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.exception.GlobalServiceException;
-import com.icuxika.transfer.flowable.DoneTaskVO;
-import com.icuxika.transfer.flowable.NewProcessDTO;
-import com.icuxika.transfer.flowable.ProcessTaskDTO;
-import com.icuxika.transfer.flowable.TaskVO;
-import com.icuxika.util.SecurityUtil;
+import com.icuxika.transfer.flowable.ProcessDefinitionVO;
 import org.flowable.bpmn.model.BpmnModel;
-import org.flowable.common.engine.impl.identity.Authentication;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
-import org.flowable.task.api.Task;
-import org.flowable.task.api.history.HistoricTaskInstance;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,8 +34,6 @@ public class ProcessController {
 
     @Autowired
     private RuntimeService runtimeService;
-    @Autowired
-    private TaskService taskService;
 
     @Autowired
     private RepositoryService repositoryService;
@@ -53,88 +45,16 @@ public class ProcessController {
     private HistoryService historyService;
 
     /**
-     * 创建流程
-     */
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @PostMapping("startProcess")
-    public ApiData<String> startProcess(@RequestBody NewProcessDTO newProcessDTO, HttpServletRequest request) {
-        Authentication.setAuthenticatedUserId(newProcessDTO.getCreateUserId().toString());
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
-                newProcessDTO.getProcessDefinitionKey(),
-                newProcessDTO.getBusinessKey(),
-                newProcessDTO.getVariables());
-        return ApiData.ok(processInstance.getProcessInstanceId());
-    }
-
-    /**
-     * 处理任务
+     * 获取已经部署的流程定义分页
      *
      * @return
      */
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @PostMapping("submitTask")
-    public ApiData<Object> submitTask(@RequestBody ProcessTaskDTO processTaskDTO, HttpServletRequest request) {
-        Task task = taskService.createTaskQuery().taskId(processTaskDTO.getTaskId()).singleResult();
-        if (task == null) {
-            return ApiData.errorMsg("任务查询失败");
-        }
-        if (!Long.valueOf(task.getAssignee()).equals(SecurityUtil.getUserId())) {
-            return ApiData.errorMsg("无权处理");
-        }
-        taskService.complete(processTaskDTO.getTaskId(), processTaskDTO.getVariables());
-        return ApiData.okMsg("处理成功");
-    }
-
-    /**
-     * 获取用户任务分页
-     *
-     * @return
-     */
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @GetMapping("getTaskPage")
-    public ApiData<List<TaskVO>> getTaskPage(@PageableDefault Pageable pageable, String userId, HttpServletRequest request) {
-        List<Task> taskList = taskService.createTaskQuery().taskCandidateOrAssigned(userId).listPage((int) pageable.getOffset(), pageable.getPageSize());
-        return ApiData.ok(task2VO(taskList));
-    }
-
-    /**
-     * 获取用户任务列表
-     *
-     * @return
-     */
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @GetMapping("getTaskList")
-    public ApiData<List<TaskVO>> getTaskList(HttpServletRequest request) {
-        return ApiData.ok(task2VO(taskService.createTaskQuery().list()));
-    }
-
-    /**
-     * 获取已完成用户任务分页
-     *
-     * @return
-     */
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @GetMapping("getDoneTaskPage")
-    public ApiData<List<DoneTaskVO>> getDoneTaskPage(@PageableDefault Pageable pageable, String userId, HttpServletRequest request) {
-        List<HistoricTaskInstance> historicTaskInstanceList = historyService.createHistoricTaskInstanceQuery().taskAssignee(userId).listPage((int) pageable.getOffset(), pageable.getPageSize());
-        return ApiData.ok(doneTask2VO(historicTaskInstanceList));
-    }
-
-    /**
-     * 获取已完成用户任务列表
-     *
-     * @return
-     */
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @GetMapping("getDoneTaskList")
-    public ApiData<List<DoneTaskVO>> getDoneTaskList(HttpServletRequest request) {
-        return ApiData.ok(doneTask2VO(historyService.createHistoricTaskInstanceQuery().list()));
-    }
-
-    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
-    @GetMapping("getHistoricTaskInstance")
-    public ApiData<List<HistoricTaskInstance>> getHistoricTaskInstance(HttpServletRequest request) {
-        return ApiData.ok(historyService.createHistoricTaskInstanceQuery().list());
+    @GetMapping("getProcessDefinitionPage")
+    public ApiData<PageImpl<ProcessDefinitionVO>> getProcessDefinitionPage(@PageableDefault Pageable pageable, HttpServletRequest request) {
+        long total = repositoryService.createProcessDefinitionQuery().latestVersion().count();
+        List<ProcessDefinition> processDefinitionList = repositoryService.createProcessDefinitionQuery().latestVersion().listPage((int) pageable.getOffset(), pageable.getPageSize());
+        return ApiData.ok(new PageImpl<>(processDefinition2VO(processDefinitionList), pageable, total));
     }
 
     /**
@@ -144,8 +64,9 @@ public class ProcessController {
      */
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @GetMapping("getProcessDefinitionList")
-    public ApiData<List<ProcessDefinition>> getProcessDefinitionList(HttpServletRequest request) {
-        return ApiData.ok(repositoryService.createProcessDefinitionQuery().list());
+    public ApiData<List<ProcessDefinitionVO>> getProcessDefinitionList(HttpServletRequest request) {
+        List<ProcessDefinition> processDefinitionList = repositoryService.createProcessDefinitionQuery().latestVersion().list();
+        return ApiData.ok(processDefinition2VO(processDefinitionList));
     }
 
     /**
@@ -188,19 +109,44 @@ public class ProcessController {
         writeProcessDiagram(processDefinitionId, highLightedActivities, highLightedFlows, response);
     }
 
-    private List<TaskVO> task2VO(List<Task> taskList) {
-        return taskList.stream().map(task -> {
-            TaskVO taskVO = new TaskVO();
-            BeanUtils.copyProperties(task, taskVO);
-            return taskVO;
-        }).collect(Collectors.toList());
+    /**
+     * 删除已经部署的流程
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @DeleteMapping("deleteByDeploymentId/{deploymentId}")
+    public void deleteByDeploymentId(@PathVariable("deploymentId") String deploymentId, HttpServletRequest request) {
+        // 级联删除流程实例，历史流程等数据
+        repositoryService.deleteDeployment(deploymentId, true);
     }
 
-    private List<DoneTaskVO> doneTask2VO(List<HistoricTaskInstance> historicTaskInstanceList) {
-        return historicTaskInstanceList.stream().map(historicTaskInstance -> {
-            DoneTaskVO doneTaskVO = new DoneTaskVO();
-            BeanUtils.copyProperties(historicTaskInstance, doneTaskVO);
-            return doneTaskVO;
+    /**
+     * 删除流程实例
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @PostMapping("deleteProcessInstance")
+    public void deleteProcessInstance(@RequestParam("processInstanceId") String processInstanceId, @RequestParam("running") Boolean running, HttpServletRequest request) {
+        if (running) {
+            runtimeService.deleteProcessInstance(processInstanceId, "运行时任务清理");
+        } else {
+            historyService.deleteHistoricProcessInstance(processInstanceId);
+        }
+    }
+
+    /**
+     * 删除所有流程实例
+     */
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    @PostMapping("deleteAllProcessInstance")
+    public void deleteAllProcessInstance(HttpServletRequest request) {
+        runtimeService.createProcessInstanceQuery().list().forEach(processInstance -> runtimeService.deleteProcessInstance(processInstance.getProcessInstanceId(), "运行时任务清理"));
+        historyService.createHistoricProcessInstanceQuery().list().forEach(historicProcessInstance -> historyService.deleteHistoricProcessInstance(historicProcessInstance.getId()));
+    }
+
+    private List<ProcessDefinitionVO> processDefinition2VO(List<ProcessDefinition> processDefinitionList) {
+        return processDefinitionList.stream().map(processDefinition -> {
+            ProcessDefinitionVO processDefinitionVO = new ProcessDefinitionVO();
+            BeanUtils.copyProperties(processDefinition, processDefinitionVO);
+            return processDefinitionVO;
         }).collect(Collectors.toList());
     }
 
