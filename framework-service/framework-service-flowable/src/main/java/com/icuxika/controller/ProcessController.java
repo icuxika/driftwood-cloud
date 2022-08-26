@@ -2,12 +2,14 @@ package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.exception.GlobalServiceException;
-import com.icuxika.transfer.flowable.ProcessDefinitionVO;
+import com.icuxika.transfer.flowable.vo.ProcessDefinitionVO;
+import com.icuxika.util.SecurityUtil;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.repository.ProcessDefinition;
+import org.flowable.engine.repository.ProcessDefinitionQuery;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.springframework.beans.BeanUtils;
@@ -52,8 +54,9 @@ public class ProcessController {
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @GetMapping("getProcessDefinitionPage")
     public ApiData<PageImpl<ProcessDefinitionVO>> getProcessDefinitionPage(@PageableDefault Pageable pageable, HttpServletRequest request) {
-        long total = repositoryService.createProcessDefinitionQuery().latestVersion().count();
-        List<ProcessDefinition> processDefinitionList = repositoryService.createProcessDefinitionQuery().latestVersion().listPage((int) pageable.getOffset(), pageable.getPageSize());
+        ProcessDefinitionQuery processDefinitionQuery = repositoryService.createProcessDefinitionQuery().processDefinitionTenantId(SecurityUtil.getTenantId()).latestVersion();
+        long total = processDefinitionQuery.count();
+        List<ProcessDefinition> processDefinitionList = processDefinitionQuery.listPage((int) pageable.getOffset(), pageable.getPageSize());
         return ApiData.ok(new PageImpl<>(processDefinition2VO(processDefinitionList), pageable, total));
     }
 
@@ -65,7 +68,7 @@ public class ProcessController {
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @GetMapping("getProcessDefinitionList")
     public ApiData<List<ProcessDefinitionVO>> getProcessDefinitionList(HttpServletRequest request) {
-        List<ProcessDefinition> processDefinitionList = repositoryService.createProcessDefinitionQuery().latestVersion().list();
+        List<ProcessDefinition> processDefinitionList = repositoryService.createProcessDefinitionQuery().processDefinitionTenantId(SecurityUtil.getTenantId()).latestVersion().list();
         return ApiData.ok(processDefinition2VO(processDefinitionList));
     }
 
@@ -126,6 +129,7 @@ public class ProcessController {
     @PostMapping("deleteProcessInstance")
     public void deleteProcessInstance(@RequestParam("processInstanceId") String processInstanceId, @RequestParam("running") Boolean running, HttpServletRequest request) {
         if (running) {
+            // 运行中的流程实例删除后会变成历史流程实例
             runtimeService.deleteProcessInstance(processInstanceId, "运行时任务清理");
         } else {
             historyService.deleteHistoricProcessInstance(processInstanceId);

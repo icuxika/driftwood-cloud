@@ -1,4 +1,4 @@
-package com.icuxika.transfer.flowable;
+package com.icuxika.transfer.flowable.vo;
 
 public class TaskVO extends CommonTaskVO {
 

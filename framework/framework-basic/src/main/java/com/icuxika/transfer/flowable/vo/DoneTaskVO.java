@@ -1,4 +1,4 @@
-package com.icuxika.transfer.flowable;
+package com.icuxika.transfer.flowable.vo;
 
 import java.util.Date;
 

@@ -2,7 +2,7 @@ package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
 import com.icuxika.exception.GlobalServiceException;
-import com.icuxika.transfer.flowable.ModelVO;
+import com.icuxika.transfer.flowable.vo.ModelVO;
 import com.icuxika.util.SecurityUtil;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
