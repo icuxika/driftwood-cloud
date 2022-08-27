@@ -19,8 +19,8 @@ seata:
       server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
       namespace: ""
       group: SEATA_GROUP
-      username: "icuxika"
-      password: "rbj549232512"
+      username: "nacos"
+      password: "nacos"
   config:
     type: nacos
     nacos:
@@ -28,8 +28,8 @@ seata:
       namespace: ""
       group: SEATA_GROUP
       dataId: "seataServer.properties"
-      username: "icuxika"
-      password: "rbj549232512"
+      username: "nacos"
+      password: "nacos"
 
 logging:
   level:

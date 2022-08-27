@@ -15,3 +15,18 @@ networks:
     name: driftwood-cloud-net
     external: true
 ```
+
+# 控制台端口分配
+
+| 控制台                | 端口   | 
+|--------------------|------|
+| sentinel-dashboard | 8899 |
+| rocketmq-dashboard | 8882 |
+| xxl-job-admin      | 8883 |
+
+# 服务补充说明
+
+## sentinel-dashboard
+
+在 [Sentinel Releases](https://github.com/alibaba/Sentinel/releases) 下载所需的控制台`jar`包，修改`.env`
+文件中`SENTINEL_DASHBOARD_VERSION`属性的值为正确版本，然后使用`docker-compose build`命令进行构建
