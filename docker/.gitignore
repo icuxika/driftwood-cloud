@@ -21,5 +21,9 @@
 
 ### seata ###
 
+### sentinel-dashboard ###
+/sentinel-dashboard/logs
+/sentinel-dashboard/sentinel-dashboard-1.8.5.jar
+
 ### xxl-job-admin ###
 /xxl-job-admin/tmp

@@ -6,3 +6,10 @@ feign:
     enabled: true
   okhttp:
     enabled: true
+
+spring:
+  cloud:
+    sentinel:
+      transport:
+        port: 8719
+        dashboard: driftwood-cloud:8899

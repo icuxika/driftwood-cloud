@@ -15,7 +15,7 @@ spring:
     sentinel:
       transport:
         port: 8719
-        dashboard: 127.0.0.1:8899
+        dashboard: driftwood-cloud:8899
 
 logging:
   level:

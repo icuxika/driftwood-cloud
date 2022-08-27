@@ -12,4 +12,4 @@ ENV JAR_FILE=target/gateway.jar
 ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages"
 COPY ${JAR_FILE} app.jar
 EXPOSE 8900
-ENTRYPOINT java ${JAVA_OPTS} -jar /app.jar
+ENTRYPOINT java ${JAVA_OPTS} -Dcsp.sentinel.app.type=1 -jar /app.jar
