@@ -1,7 +1,6 @@
 package com.icuxika.controller;
 
 import com.icuxika.common.ApiData;
-import com.icuxika.exception.GlobalServiceException;
 import com.icuxika.transfer.flowable.dto.NewTaskDTO;
 import com.icuxika.transfer.flowable.dto.ProcessTaskDTO;
 import com.icuxika.transfer.flowable.vo.DoneTaskVO;
@@ -49,13 +48,16 @@ public class TaskController {
 
     /**
      * 创建任务
+     * 对于 A (业务服务) -><- B (工作流微服务)：
+     * A 进行涉及到 B 流程的数据，应在 A 数据进行新增的时候即在 B 创建一个相应的工作流的任务，然后返回对应流程实例数据给 A 存储。同时，当 A 数据删除的时候，应同步删除创建的流程任务。
+     * 对于一个审核的业务流程而言，如果在报送的时候才创建工作流任务，也会需要默认进行第一阶段用户任务的提交，这时 1、A 数据新增 2、B 新建流程 3、B 通过一阶段用户任务 如果处于同一个事务环境下，由于执行 3 的时候，2 尚未提交，会带来不必要的麻烦。
      */
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @PostMapping("createTask")
     public ApiData<NewTaskVO> createTask(@RequestBody NewTaskDTO newTaskDTO, HttpServletRequest request) {
         ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery().processDefinitionKey(newTaskDTO.getProcessDefinitionKey()).latestVersion().singleResult();
         if (processDefinition == null) {
-            throw new GlobalServiceException("未部署key为[" + newTaskDTO.getProcessDefinitionKey() + "]的流程");
+            return ApiData.errorMsg("未部署key为[" + newTaskDTO.getProcessDefinitionKey() + "]的流程");
         }
         Authentication.setAuthenticatedUserId(newTaskDTO.getCreateUserId().toString());
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKeyAndTenantId(
@@ -70,6 +72,8 @@ public class TaskController {
 
     /**
      * 处理任务
+     * <p>
+     * 提交当前任务时应指定下一个任务的审核员
      *
      * @return
      */

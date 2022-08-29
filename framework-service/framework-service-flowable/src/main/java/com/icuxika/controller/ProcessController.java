@@ -124,16 +124,23 @@ public class ProcessController {
 
     /**
      * 删除流程实例
+     *
+     * @return
      */
     @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
     @PostMapping("deleteProcessInstance")
-    public void deleteProcessInstance(@RequestParam("processInstanceId") String processInstanceId, @RequestParam("running") Boolean running, HttpServletRequest request) {
-        if (running) {
-            // 运行中的流程实例删除后会变成历史流程实例
-            runtimeService.deleteProcessInstance(processInstanceId, "运行时任务清理");
-        } else {
-            historyService.deleteHistoricProcessInstance(processInstanceId);
+    public ApiData<Void> deleteProcessInstance(@RequestParam("processInstanceId") String processInstanceId, @RequestParam("running") Boolean running, HttpServletRequest request) {
+        try {
+            if (running) {
+                // 运行中的流程实例删除后会变成历史流程实例
+                runtimeService.deleteProcessInstance(processInstanceId, "运行时任务清理");
+            } else {
+                historyService.deleteHistoricProcessInstance(processInstanceId);
+            }
+        } catch (Exception e) {
+            return ApiData.errorMsg("删除失败：" + e.getMessage());
         }
+        return ApiData.okMsg("删除成功");
     }
 
     /**
