@@ -33,3 +33,32 @@
 ```shell
 docker-compose build
 ```
+
+### 模块关系
+
+#### framework
+
+```mermaid
+graph TD; 
+    framework-basic-->framework-object-base & framework-config;
+    framework-object-base-->framework-object;
+    framework-config-->framework-security-->framework-config-jpa;
+```
+
+#### driftwood-cloud
+
+```mermaid
+graph TD;
+    framework-config-->framework-security-->framework-config-jpa;
+    
+    framework-object-->admin-service;
+    framework-security-->admin-service;
+    
+    framework-object-->authorization-server;
+    framework-config-->authorization-server;
+    
+    framework-basic-->gateway;
+    
+    framework-object-->user-service;
+    framework-config-jpa-->user-service;
+```
