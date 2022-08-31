@@ -11,4 +11,4 @@ interface Permission extends BaseEntity {
 	description: string;
 }
 
-export { Permission };
+export type { Permission };

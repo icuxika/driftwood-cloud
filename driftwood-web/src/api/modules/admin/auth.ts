@@ -81,10 +81,6 @@ const createService: CreateService = (path: string) => {
 
 const adminAuthService = createService("/admin/auth");
 
-export {
-	adminAuthService,
-	CLIENT_TYPE_HTML,
-	AuthorizationGrantType,
-	LoginParam,
-	TokenInfo,
-};
+export { adminAuthService, CLIENT_TYPE_HTML, AuthorizationGrantType };
+
+export type { LoginParam, TokenInfo };

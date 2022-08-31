@@ -137,4 +137,5 @@ const createService: CreateService = (path: string) => {
 
 const userService = createService("/user/user");
 
-export { userService, User, UserInfoVO, UserVO };
+export { userService };
+export type { User, UserInfoVO, UserVO };

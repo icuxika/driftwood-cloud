@@ -54,4 +54,5 @@ const createService: CreateService = (path: string) => {
 
 const fileService = createService("/file/file");
 
-export { fileService, ChunkUploadUrlMap };
+export { fileService };
+export type { ChunkUploadUrlMap };

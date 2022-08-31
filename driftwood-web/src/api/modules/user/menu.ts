@@ -13,4 +13,4 @@ interface Menu extends BaseEntity {
 	status: number;
 }
 
-export { Menu };
+export type { Menu };

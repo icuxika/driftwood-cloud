@@ -8,4 +8,4 @@ interface Role extends BaseEntity {
 	role: string;
 }
 
-export { Role };
+export type { Role };

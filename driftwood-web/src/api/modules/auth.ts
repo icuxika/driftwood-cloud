@@ -81,4 +81,5 @@ const createService: CreateService = (path: string) => {
 
 const authService = createService("/auth/oauth2/token");
 
-export { authService, TokenInfo, LoginParamPassword, LoginParamPhone };
+export { authService };
+export type { TokenInfo, LoginParamPassword, LoginParamPhone };

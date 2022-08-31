@@ -148,13 +148,6 @@ const NoNullReject = () => Promise.reject("不应出现的数据为空错误");
 const IsUndefined = <T>(target: T | null): boolean =>
 	typeof target === "undefined";
 
-export {
-	ApiData,
-	Pageable,
-	Page,
-	HasId,
-	BaseEntity,
-	BindOneDTO,
-	resolveAxiosResult,
-	NoNullReject,
-};
+export { resolveAxiosResult, NoNullReject };
+
+export type { ApiData, Pageable, Page, HasId, BaseEntity, BindOneDTO };
