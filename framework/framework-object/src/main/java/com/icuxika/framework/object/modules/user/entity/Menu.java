@@ -47,7 +47,7 @@ public class Menu extends BaseEntity {
      * 菜单排序
      */
     @Column(nullable = false)
-    private Integer sort;
+    private Integer sequence;
 
     /**
      * 菜单状态
@@ -95,12 +95,12 @@ public class Menu extends BaseEntity {
         this.path = path;
     }
 
-    public Integer getSort() {
-        return sort;
+    public Integer getSequence() {
+        return sequence;
     }
 
-    public void setSort(Integer sort) {
-        this.sort = sort;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public Integer getStatus() {
