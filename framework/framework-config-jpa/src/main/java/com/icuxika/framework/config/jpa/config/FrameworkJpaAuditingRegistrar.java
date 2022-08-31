@@ -1,6 +1,6 @@
-package com.icuxika.framework.security.config;
+package com.icuxika.framework.config.jpa.config;
 
-import com.icuxika.framework.security.auditing.SpringSecurityAuditorAware;
+import com.icuxika.framework.config.jpa.auditing.SpringSecurityAuditorAware;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;

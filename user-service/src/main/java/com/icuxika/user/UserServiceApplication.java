@@ -1,6 +1,6 @@
 package com.icuxika.user;
 
-import com.icuxika.framework.security.annotation.EnableFrameworkJpaAuditing;
+import com.icuxika.framework.config.jpa.annotation.EnableFrameworkJpaAuditing;
 import com.icuxika.framework.security.annotation.EnableFrameworkResourceServer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

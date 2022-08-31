@@ -1,6 +1,6 @@
-package com.icuxika.framework.security.annotation;
+package com.icuxika.framework.config.jpa.annotation;
 
-import com.icuxika.framework.security.config.FrameworkJpaAuditingRegistrar;
+import com.icuxika.framework.config.jpa.config.FrameworkJpaAuditingRegistrar;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;

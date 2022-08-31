@@ -20,6 +20,7 @@
         <module>framework-config</module>
         <module>framework-basic</module>
         <module>framework-xxl-job</module>
+        <module>framework-config-jpa</module>
     </modules>
 
 </project>

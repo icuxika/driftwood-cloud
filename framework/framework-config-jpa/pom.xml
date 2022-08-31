@@ -9,36 +9,19 @@
         <version>0.0.1</version>
     </parent>
 
-    <artifactId>framework-security</artifactId>
+    <artifactId>framework-config-jpa</artifactId>
     <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-basic</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.icuxika</groupId>
-            <artifactId>framework-config</artifactId>
+            <artifactId>framework-security</artifactId>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package com.icuxika.framework.security.auditing;
+package com.icuxika.framework.config.jpa.auditing;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.security.util.SecurityUtil;

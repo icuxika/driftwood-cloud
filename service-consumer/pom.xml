@@ -23,13 +23,7 @@
 
         <dependency>
             <groupId>com.icuxika</groupId>
-            <artifactId>framework-security</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.icuxika</groupId>
-            <artifactId>framework-config</artifactId>
+            <artifactId>framework-config-jpa</artifactId>
             <scope>compile</scope>
         </dependency>
 

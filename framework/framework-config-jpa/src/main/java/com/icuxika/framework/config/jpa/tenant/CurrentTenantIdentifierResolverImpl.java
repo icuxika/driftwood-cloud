@@ -1,4 +1,4 @@
-package com.icuxika.framework.security.tenant;
+package com.icuxika.framework.config.jpa.tenant;
 
 import com.icuxika.framework.security.util.SecurityUtil;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
