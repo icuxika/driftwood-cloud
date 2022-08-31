@@ -19,6 +19,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- framework -->
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-basic</artifactId>
@@ -52,6 +53,18 @@
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-xxl-job</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+
+            <!-- everything -->
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>everything</artifactId>
+                <version>${driftwood.project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
+                <artifactId>warp-exchange-trading-common</artifactId>
                 <version>${driftwood.project.version}</version>
             </dependency>
 
