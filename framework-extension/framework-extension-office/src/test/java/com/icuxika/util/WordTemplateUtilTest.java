@@ -1,5 +1,6 @@
 package com.icuxika.util;
 
+import com.icuxika.framework.extension.office.util.WordTemplateUtil;
 import freemarker.template.Template;
 
 import java.io.File;

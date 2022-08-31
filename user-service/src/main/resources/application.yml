@@ -26,7 +26,7 @@ spring:
 logging:
   level:
     com.alibaba.nacos.client.*: ERROR
-    com.icuxika.modules.file.feign.FileClient: DEBUG
+    com.icuxika.framework.object.modules.file.feign.FileClient: DEBUG
 
 feign:
   client:
