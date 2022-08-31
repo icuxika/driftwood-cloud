@@ -1,7 +1,10 @@
 package com.icuxika.user.service;
 
+import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
+import com.icuxika.framework.basic.util.TreeNode;
+import com.icuxika.framework.basic.util.TreeUtil;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.entity.Menu;
 import com.icuxika.framework.object.modules.user.entity.MenuPermission;
@@ -39,18 +42,37 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
+    public List<Menu> getList(Menu menu) {
+        return menuRepository.findAll(Example.of(menu));
+    }
+
+    @Override
+    public List<TreeNode<Menu>> getTree() {
+        List<Menu> menus = menuRepository.findAll();
+        return TreeUtil.buildTree(menus, Menu::getId, Menu::getParentId);
+    }
+
+    @Override
     public Menu getById(Long id) {
         return menuRepository.findById(id).orElse(null);
     }
 
     @Override
     public void save(Menu menu) {
+        if (!SystemConstant.TREE_ROOT_ID.equals(menu.getParentId()) && menuRepository.findById(menu.getParentId()).isEmpty()) {
+            throw new GlobalServiceException("父菜单不存在");
+        }
         menuRepository.save(menu);
     }
 
     @Override
     public void update(Menu menu) {
         Menu exist = menuRepository.findById(menu.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
+        if (menu.getParentId() != null && !menu.getParentId().equals(exist.getParentId()) && !menu.getParentId().equals(SystemConstant.TREE_ROOT_ID)) {
+            if (menuRepository.findById(menu.getParentId()).isEmpty()) {
+                throw new GlobalServiceException("父菜单不存在");
+            }
+        }
         BeanUtils.copyProperties(menu, exist, BeanExUtil.getIgnorePropertyArray(menu));
         menuRepository.save(exist);
     }
@@ -58,6 +80,9 @@ public class MenuServiceImpl implements MenuService {
     @Override
     public void deleteById(Long id) {
         if (menuRepository.existsById(id)) {
+            if (!menuRepository.findByParentId(id).isEmpty()) {
+                throw new GlobalServiceException("菜单下还包含子菜单，无法删除");
+            }
             menuRepository.deleteById(id);
         }
     }

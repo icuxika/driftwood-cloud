@@ -61,7 +61,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
     @Override
     public void update(PermissionGroup permissionGroup) {
         PermissionGroup exist = permissionGroupRepository.findById(permissionGroup.getId()).orElseThrow(() -> new GlobalServiceException("权限分组不存在"));
-        if (permissionGroup.getParentId() != null && !permissionGroup.getParentId().equals(exist.getParentId())) {
+        if (permissionGroup.getParentId() != null && !permissionGroup.getParentId().equals(exist.getParentId()) && !permissionGroup.getParentId().equals(SystemConstant.TREE_ROOT_ID)) {
             if (permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
                 throw new GlobalServiceException("父权限分组不存在");
             }

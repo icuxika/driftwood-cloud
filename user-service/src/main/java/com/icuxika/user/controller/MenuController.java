@@ -1,6 +1,7 @@
 package com.icuxika.user.controller;
 
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.basic.util.TreeNode;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.entity.Menu;
 import com.icuxika.user.service.MenuService;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/menu")
@@ -23,6 +26,18 @@ public class MenuController {
     public ApiData<Page<Menu>> getPage(@PageableDefault(sort = "id") Pageable pageable, Menu menu) {
         Page<Menu> page = menuService.getPage(pageable, menu);
         return ApiData.ok(page);
+    }
+
+    @GetMapping("/list")
+    public ApiData<List<Menu>> getList(Menu menu) {
+        List<Menu> menuList = menuService.getList(menu);
+        return ApiData.ok(menuList);
+    }
+
+    @GetMapping("/tree")
+    public ApiData<List<TreeNode<Menu>>> getTree() {
+        List<TreeNode<Menu>> treeNodeList = menuService.getTree();
+        return ApiData.ok(treeNodeList);
     }
 
     @GetMapping("/{id}")
