@@ -158,3 +158,16 @@ services:
       - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8912:8912"
+
+  driftwood-web:
+    build:
+      context: ./driftwood-web/docker
+      args:
+        buildno: 1
+    image: icuxika.com/driftwood/driftwood-web
+    container_name: driftwood-web
+    restart: always
+    volumes:
+      - ./run-logs/driftwood-web:/var/log/nginx
+    ports:
+      - "8881:80"
