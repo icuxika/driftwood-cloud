@@ -8,12 +8,14 @@ public enum MenuType {
     /**
      * 代表菜单
      */
-    MENU(1, "菜单"),
+    MENU_APPLICATION(1, "菜单-应用"),
+    MENU_SERVICE(2, "菜单-服务"),
+    MENU_URL(3, "菜单-URL"),
 
     /**
      * 代表按钮
      */
-    BUTTON(2, "按钮");
+    BUTTON(4, "按钮");
 
     private final Integer code;
 
