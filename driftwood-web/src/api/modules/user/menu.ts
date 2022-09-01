@@ -1,4 +1,4 @@
-import { BaseEntity } from "@/api";
+import { BaseEntity, HasId } from "@/api";
 
 /**
  * 菜单
@@ -9,8 +9,10 @@ interface Menu extends BaseEntity {
 	name: string;
 	icon: string;
 	path: string;
-	sort: number;
+	sequence: number;
 	status: number;
 }
 
-export type { Menu };
+type MenuWithId = Menu & HasId;
+
+export type { Menu, MenuWithId };

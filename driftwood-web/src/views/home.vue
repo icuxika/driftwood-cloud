@@ -27,7 +27,7 @@
 		<n-layout-content>
 			<n-layout has-sider class="basic-wrapper">
 				<!-- 侧栏菜单 -->
-				<SiderMenu />
+				<SideMenu />
 				<n-layout>
 					<!-- 导航 -->
 					<MainHeader />
@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { useLoadingBar, useMessage } from "naive-ui";
-import SiderMenu from "@/layouts/components/SiderMenu.vue";
+import SideMenu from "@/layouts/components/SideMenu.vue";
 import MainHeader from "@/layouts/components/main/MainHeader.vue";
 import MainContent from "@/layouts/components/main/MainContent.vue";
 import { CSSProperties } from "vue";
