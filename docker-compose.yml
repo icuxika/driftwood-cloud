@@ -169,5 +169,7 @@ services:
     restart: always
     volumes:
       - ./run-logs/driftwood-web:/var/log/nginx
+    extra_hosts:
+      - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8881:80"
