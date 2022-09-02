@@ -169,6 +169,8 @@ services:
     restart: always
     volumes:
       - ./run-logs/driftwood-web:/var/log/nginx
+    environment:
+      - TZ=Asia/Shanghai
     extra_hosts:
       - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
