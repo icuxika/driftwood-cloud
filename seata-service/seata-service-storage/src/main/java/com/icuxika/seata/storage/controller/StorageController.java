@@ -19,8 +19,8 @@ public class StorageController {
     @Autowired
     private StorageRepository storageRepository;
 
-    @GetMapping("/storage")
-    public String storage(String commodityCode, Long count) {
+    @GetMapping("/storageAT")
+    public String storageAT(String commodityCode, Long count) {
         L.info("xid: " + RootContext.getXID());
         Storage storage = new Storage();
         storage.setCreateTime(LocalDateTime.now());

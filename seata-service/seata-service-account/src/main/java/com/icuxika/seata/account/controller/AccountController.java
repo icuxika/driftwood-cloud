@@ -11,12 +11,13 @@ public class AccountController {
 
     private static final Logger L = LoggerFactory.getLogger(AccountController.class);
 
-    @GetMapping("/account")
-    public String account(Long userId, Long money) {
+    @GetMapping("/accountAT")
+    public String accountAT(Long userId, Long money) {
         L.info("xid: " + RootContext.getXID());
         if (userId == 0) {
             throw new RuntimeException("xxxx");
         }
         return "success";
     }
+
 }

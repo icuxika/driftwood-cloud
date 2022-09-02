@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "seata-service-storage")
 public interface StorageClient {
 
-    @GetMapping("/storage")
-    String storage(@RequestParam("commodityCode") String commodityCode, @RequestParam("count") Long count);
+    @GetMapping("/storageAT")
+    String storageAT(@RequestParam("commodityCode") String commodityCode, @RequestParam("count") Long count);
 }

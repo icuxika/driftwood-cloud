@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(value = "seata-service-order")
 public interface OrderClient {
 
-    @GetMapping("/order")
-    String order(@RequestParam("userId") Long userId, @RequestParam("commodityCode") String commodityCode, @RequestParam("orderCount") Long orderCount);
+    @GetMapping("/orderAT")
+    String orderAT(@RequestParam("userId") Long userId, @RequestParam("commodityCode") String commodityCode, @RequestParam("orderCount") Long orderCount);
 }

@@ -23,8 +23,8 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    @GetMapping("/order")
-    public String order(Long userId, String commodityCode, Long orderCount) {
+    @GetMapping("/orderAT")
+    public String orderAT(Long userId, String commodityCode, Long orderCount) {
         L.info("xid: " + RootContext.getXID());
         if (userId == 0L) {
             throw new RuntimeException("aa");
@@ -39,8 +39,9 @@ public class OrderController {
         order.setCount(1L);
         order.setMoney(1L);
         orderRepository.save(order);
-        String result = accountClient.account(0L, 0L);
+        String result = accountClient.accountAT(0L, 0L);
         System.out.println(result);
         return "success";
     }
+
 }
