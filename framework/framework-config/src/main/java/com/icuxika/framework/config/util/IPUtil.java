@@ -6,6 +6,7 @@ public class IPUtil {
 
     /**
      * 获取IP地址
+     * 当 Nginx 运行在 Docker 中时，如果 Docker 网络不是 host 模式，那么 x-forwarded-for 存储的将是容器内网关地址
      *
      * @param request HttpServletRequest
      * @return ip
