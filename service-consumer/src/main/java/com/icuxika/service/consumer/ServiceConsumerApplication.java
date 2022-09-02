@@ -5,9 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 
-@EnableFeignClients
 @EnableFrameworkResourceServer
-@SpringBootApplication
+@EnableFeignClients(basePackages = "com.icuxika")
+@SpringBootApplication(scanBasePackages = "com.icuxika")
 public class ServiceConsumerApplication {
 
     public static void main(String[] args) {
