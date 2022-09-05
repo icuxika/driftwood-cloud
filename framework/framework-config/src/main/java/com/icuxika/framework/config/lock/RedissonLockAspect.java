@@ -38,10 +38,10 @@ public class RedissonLockAspect {
         if (rLock != null) {
             boolean result = false;
             try {
-                if (redissonLock.lockUntil() > 0) {
-                    result = rLock.tryLock(redissonLock.lockUntil(), redissonLock.expireIn(), TimeUnit.MILLISECONDS);
+                if (redissonLock.leaseTime() > 0) {
+                    result = rLock.tryLock(redissonLock.waitTime(), redissonLock.leaseTime(), TimeUnit.MILLISECONDS);
                 } else {
-                    result = rLock.tryLock(redissonLock.expireIn(), TimeUnit.MILLISECONDS);
+                    result = rLock.tryLock(redissonLock.waitTime(), TimeUnit.MILLISECONDS);
                 }
                 if (result) {
                     L.info("[" + redissonLock.name() + "]Redisson锁获取成功");

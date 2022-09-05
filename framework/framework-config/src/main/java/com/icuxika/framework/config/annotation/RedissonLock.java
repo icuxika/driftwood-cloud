@@ -22,12 +22,12 @@ public @interface RedissonLock {
     /**
      * 等待加锁直到，0表示一直等待，单位毫秒
      */
-    long lockUntil() default 0;
+    long waitTime() default 3000;
 
     /**
      * 超时，单位毫秒
      */
-    long expireIn() default 3000;
+    long leaseTime() default -1;
 
     String error() default "服务器异常，请稍后再试！";
 }
