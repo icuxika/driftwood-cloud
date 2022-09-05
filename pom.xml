@@ -28,9 +28,11 @@
         <!-- 项目版本，更新时需要同步更新 framework/framework-dependencies/pom.xml -->
         <revision>0.0.2</revision>
 
-        <spring-boot.version>2.6.3</spring-boot.version>
-        <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <spring-boot.version>2.7.3</spring-boot.version>
+        <spring-cloud.version>2021.0.3</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.0.1.0</spring-cloud-alibaba.version>
+
+        <spring.authorization.server>0.3.1</spring.authorization.server>
     </properties>
 
     <modules>
@@ -84,7 +86,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-oauth2-authorization-server</artifactId>
-                <version>0.3.0</version>
+                <version>${spring.authorization.server}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
