@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.icuxika</groupId>
         <artifactId>driftwood-cloud</artifactId>
-        <version>0.0.1</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>framework-extension</artifactId>

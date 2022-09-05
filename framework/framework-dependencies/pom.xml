@@ -6,10 +6,10 @@
     <groupId>com.icuxika</groupId>
     <artifactId>framework-dependencies</artifactId>
     <packaging>pom</packaging>
-    <version>${driftwood.project.version}</version>
+    <version>${revision}</version>
 
     <properties>
-        <driftwood.project.version>0.0.1</driftwood.project.version>
+        <revision>0.0.2</revision>
         <!-- Seata 1.4.2版本下，MySQL8.22以上的版本会导致LocalDateTime无法转换异常 -->
         <!-- spring-boot-dependencies有内定的MySQL版本设置，需在dependencyManagement中将此pom配置它之前，才能覆盖MySQL版本 -->
         <mysql.version>8.0.22</mysql.version>
@@ -23,49 +23,49 @@
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-basic</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-config</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-config-jpa</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-object-base</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-object</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-security</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-xxl-job</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <!-- everything -->
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>everything</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>warp-exchange-trading-common</artifactId>
-                <version>${driftwood.project.version}</version>
+                <version>${revision}</version>
             </dependency>
 
             <dependency>

@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.icuxika</groupId>
         <artifactId>seata-service</artifactId>
-        <version>0.0.1</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>seata-service-account</artifactId>
-    <version>0.0.1</version>
     <name>seata-service-account</name>
     <description>seata-service-account</description>
 

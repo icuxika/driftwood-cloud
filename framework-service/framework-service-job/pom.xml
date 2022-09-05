@@ -5,10 +5,9 @@
     <parent>
         <groupId>com.icuxika</groupId>
         <artifactId>framework-service</artifactId>
-        <version>0.0.1</version>
+        <version>${revision}</version>
     </parent>
     <artifactId>framework-service-job</artifactId>
-    <version>0.0.1</version>
     <name>framework-service-job</name>
     <description>framework-service-job</description>
 

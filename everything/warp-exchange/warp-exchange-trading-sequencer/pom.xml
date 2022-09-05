@@ -6,7 +6,7 @@
     <parent>
         <artifactId>warp-exchange</artifactId>
         <groupId>com.icuxika</groupId>
-        <version>0.0.1</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>warp-exchange-trading-sequencer</artifactId>

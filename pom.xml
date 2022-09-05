@@ -6,13 +6,27 @@
     <groupId>com.icuxika</groupId>
     <artifactId>driftwood-cloud</artifactId>
     <packaging>pom</packaging>
-    <version>0.0.1</version>
+    <version>${revision}</version>
+    <name>Driftwood Cloud</name>
+    <description>Driftwood Cloud</description>
+    <url>https://github.com/icuxika/driftwood-cloud</url>
+
+    <developers>
+        <developer>
+            <name>icuxika</name>
+            <email>icuxika@outlook.com</email>
+            <url>https://github.com/icuxika</url>
+        </developer>
+    </developers>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- 项目版本，更新时需要同步更新 framework/framework-dependencies/pom.xml -->
+        <revision>0.0.2</revision>
 
         <spring-boot.version>2.6.3</spring-boot.version>
         <spring-cloud.version>2021.0.1</spring-cloud.version>
@@ -38,7 +52,7 @@
             <dependency>
                 <groupId>com.icuxika</groupId>
                 <artifactId>framework-dependencies</artifactId>
-                <version>0.0.1</version>
+                <version>${revision}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
