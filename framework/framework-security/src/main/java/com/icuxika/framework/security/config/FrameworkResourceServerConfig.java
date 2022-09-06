@@ -65,8 +65,7 @@ public class FrameworkResourceServerConfig {
         List<String> anonymousPathList = new ArrayList<>();
         // 扫描所有的RestController中被@Anonymous注解的方法
         for (BeanDefinition beanDefinition : beanDefinitionSet) {
-            if (beanDefinition instanceof ScannedGenericBeanDefinition) {
-                ScannedGenericBeanDefinition scannedGenericBeanDefinition = (ScannedGenericBeanDefinition) beanDefinition;
+            if (beanDefinition instanceof ScannedGenericBeanDefinition scannedGenericBeanDefinition) {
                 try {
                     Class<?> clazz = getClass().getClassLoader().loadClass(scannedGenericBeanDefinition.getBeanClassName());
                     boolean isRequestMappingOnClass = clazz.isAnnotationPresent(RequestMapping.class);
