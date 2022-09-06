@@ -1,15 +1,19 @@
 package com.icuxika.framework.security.config;
 
+import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.security.annotation.Anonymous;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConstructorArgumentValues;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.context.annotation.ScannedGenericBeanDefinition;
-import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -17,10 +21,44 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class FrameworkResourceServerRegistrar implements ImportBeanDefinitionRegistrar {
+@EnableWebSecurity
+public class FrameworkResourceServerConfig {
 
-    @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        List<String> anonymousPathList = buildAnonymousPathList();
+        httpSecurity
+                .csrf().disable()
+                .authorizeRequests(authorizeRequests -> authorizeRequests
+                        // flowable-ui -> modeler
+                        .antMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
+                        .antMatchers(anonymousPathList.toArray(new String[0])).permitAll()
+                        .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+                        .authenticationEntryPoint(new AuthenticationEntryPointImpl())
+                        .accessDeniedHandler(new AccessDeniedHandlerImpl())
+                        .jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                );
+        return httpSecurity.build();
+    }
+
+    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName(SystemConstant.OAUTH2_JWT_CLAIM_KEY_AUTHORITIES);
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
+
+    /**
+     * 允许匿名访问
+     */
+    private List<String> buildAnonymousPathList() {
         ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
         provider.addIncludeFilter(new AnnotationTypeFilter(RestController.class));
         Set<BeanDefinition> beanDefinitionSet = provider.findCandidateComponents("com.icuxika");
@@ -119,13 +157,7 @@ public class FrameworkResourceServerRegistrar implements ImportBeanDefinitionReg
                 }
             }
         }
-        ConstructorArgumentValues constructorArgumentValues = new ConstructorArgumentValues();
-        constructorArgumentValues.addIndexedArgumentValue(0, anonymousPathList);
-
-        GenericBeanDefinition genericBeanDefinition = new GenericBeanDefinition();
-        genericBeanDefinition.setBeanClass(FrameworkResourceServerWebSecurityConfigurerAdapter.class);
-        genericBeanDefinition.setConstructorArgumentValues(constructorArgumentValues);
-        registry.registerBeanDefinition(FrameworkResourceServerWebSecurityConfigurerAdapter.class.getName(), genericBeanDefinition);
+        return anonymousPathList;
     }
 
     /**
