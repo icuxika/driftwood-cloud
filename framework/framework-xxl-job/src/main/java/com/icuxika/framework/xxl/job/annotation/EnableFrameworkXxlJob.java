@@ -1,4 +1,4 @@
-package com.icuxika.framework.xxl.job.annotations;
+package com.icuxika.framework.xxl.job.annotation;
 
 import com.icuxika.framework.xxl.job.config.XxlJobAutoConfiguration;
 import org.springframework.context.annotation.Import;

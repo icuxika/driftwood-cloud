@@ -1,7 +1,7 @@
 package com.icuxika.framework.service.job;
 
 import com.icuxika.framework.security.annotation.EnableFrameworkResourceServer;
-import com.icuxika.framework.xxl.job.annotations.EnableFrameworkXxlJob;
+import com.icuxika.framework.xxl.job.annotation.EnableFrameworkXxlJob;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
