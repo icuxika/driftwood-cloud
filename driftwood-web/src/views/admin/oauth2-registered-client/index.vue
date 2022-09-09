@@ -1,11 +1,11 @@
 <template>
 	<div>
-		<MinioPartialFileUploader />
+		<ThreeDisplay />
 	</div>
 </template>
 
 <script setup lang="ts">
-import MinioPartialFileUploader from "@/components/MinioPartialFileUploader.vue";
+import ThreeDisplay from "@/components/ThreeDisplay.vue";
 </script>
 
 <style lang="scss" scoped></style>

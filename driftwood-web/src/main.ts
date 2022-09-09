@@ -46,10 +46,12 @@ import {
 	NTree,
 	NNotificationProvider,
 	NAvatar,
+	NColorPicker,
 } from "naive-ui";
 
 const naive = create({
 	components: [
+		NColorPicker,
 		NDataTable,
 		NSelect,
 		NFormItem,
