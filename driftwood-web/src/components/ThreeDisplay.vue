@@ -53,6 +53,7 @@ import { onMounted, reactive, ref, toRefs } from "vue";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
+
 let scene: Scene;
 let directionalLight: DirectionalLight; // 平行光
 let directionalLightHelper: DirectionalLightHelper;
@@ -219,7 +220,7 @@ const initialize = async () => {
 	initControls();
 	initStats();
 
-	const gltf = await loadGLTFL("/public/models/chair/", "scene.gltf");
+	const gltf = await loadGLTFL("/models/chair/", "scene.gltf");
 	console.log(gltf);
 	const modelScene = gltf.scene;
 
