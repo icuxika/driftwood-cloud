@@ -13,6 +13,10 @@
 				<template #checked> 开启自动旋转</template>
 				<template #unchecked> 关闭自动旋转</template>
 			</n-switch>
+			<n-switch @update:value="handleAxesHelperVisibility">
+				<template #checked> 显示坐标轴</template>
+				<template #unchecked> 隐藏坐标轴</template>
+			</n-switch>
 			<ul>
 				<li
 					v-for="(mesh, index) in meshList"
@@ -48,6 +52,7 @@ import {
 	DataTexture,
 	RGBFormat,
 	Object3D,
+	AxesHelper,
 } from "three";
 import { onMounted, reactive, ref, toRefs } from "vue";
 import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -65,6 +70,7 @@ let renderer: WebGLRenderer;
 let controls: OrbitControls;
 let loader: GLTFLoader;
 let stats: Stats;
+let axesHelper: AxesHelper;
 
 const threeDisplayDivRef = ref<HTMLDivElement | null>(null);
 
@@ -144,6 +150,13 @@ const initStats = () => {
 	}
 };
 
+// 显示坐标轴
+const initAxesHelper = () => {
+	axesHelper = new AxesHelper(5);
+	axesHelper.visible = false;
+	scene.add(axesHelper);
+};
+
 const animate = () => {
 	requestAnimationFrame(animate);
 	stats.update();
@@ -191,9 +204,8 @@ const selectMesh = (index: number) => {
 
 // 更新颜色
 const handleColorConfirm = (value: string) => {
-	console.log(value);
+	// rgb(205, 53, 53) -> ['205', '53', '53']
 	let rgb = value.replace(/[rgb]|[(]|[)]|\s/g, "").split(",");
-	console.log(rgb);
 	if (selectedMesh.value) {
 		if (selectedMesh.value.material) {
 			let meshPhongMaterial = selectedMesh.value
@@ -213,12 +225,18 @@ const handleAutoRotate = (value: boolean) => {
 	controls.autoRotate = value;
 };
 
+// 是否显示坐标轴
+const handleAxesHelperVisibility = (value: boolean) => {
+	axesHelper.visible = value;
+};
+
 const initialize = async () => {
 	initScene();
 	initLight();
 	initCamera();
 	initControls();
 	initStats();
+	initAxesHelper();
 
 	const gltf = await loadGLTFL("/models/chair/", "scene.gltf");
 	console.log(gltf);
