@@ -28,7 +28,7 @@ import {
 import { User } from "@/api/modules/user/user";
 import { ApiData, NoNullReject, Page } from "@/api";
 import { defineUserColumnList } from "@/views/user/user/data";
-import { PartialPageable, usePage } from "@/hooks/usePage";
+import { PartialPageable, usePage } from "@/hooks/use-page";
 import { useUserStore } from "@/store/pinia/user/user";
 
 const userStore = useUserStore();
