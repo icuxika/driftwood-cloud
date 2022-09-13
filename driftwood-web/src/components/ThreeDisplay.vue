@@ -233,6 +233,8 @@ const initialize = async () => {
 	scene.add(modelScene);
 	animate();
 	window.addEventListener("resize", onWindowResize, false);
+	// 确保第一次加载的时候canvas的宽高正确计算
+	onWindowResize();
 };
 onMounted(initialize);
 </script>
