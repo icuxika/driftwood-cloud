@@ -6,7 +6,7 @@
 			cascade
 			checkable
 			draggable
-			:data="permissionData"
+			:data="permissionStore.permissionData"
 			:node-props="nodeProps"
 			@update:checked-keys="updateCheckedKeys"
 			@drop="handleDrop"
@@ -109,109 +109,17 @@
 import {
 	DropdownOption,
 	NButton,
-	NTag,
 	TreeDropInfo,
 	TreeOption,
 	useMessage,
 } from "naive-ui";
-import { h, ref } from "vue";
+import { onMounted, ref } from "vue";
+import { usePermissionStore } from "@/store/pinia/user/permission";
+import { PermissionGroupWithId } from "@/api/modules/user/permission-group";
+import { PermissionWithId } from "@/api/modules/user/permission";
 
 const message = useMessage();
-
-const renderPrefix = (isGroup: boolean) => {
-	return h(
-		NTag,
-		{ type: isGroup ? "info" : "warning" },
-		{ default: () => (isGroup ? "权限分组" : "权限") }
-	);
-};
-
-const renderSuffix = (isGroup: boolean, authority: string) => {
-	if (isGroup) {
-		return null;
-	}
-	return h(NTag, { type: "success" }, { default: () => authority });
-};
-
-const permissionList: TreeOption[] = [
-	{
-		label: "授权服务",
-		key: "admin-service",
-		checkboxDisabled: true,
-		isGroup: true,
-		prefix: () => renderPrefix(true),
-		suffix: () => renderSuffix(true, ""),
-		children: [
-			{
-				label: "客户端",
-				key: "client",
-				checkboxDisabled: true,
-				isGroup: true,
-				prefix: () => renderPrefix(true),
-				suffix: () => renderSuffix(true, ""),
-			},
-		],
-	},
-	{
-		label: "用户服务",
-		key: "user-service",
-		isGroup: true,
-		prefix: () => renderPrefix(true),
-		suffix: () => renderSuffix(true, ""),
-		children: [
-			{
-				label: "用户",
-				key: "user",
-				isGroup: true,
-				prefix: () => renderPrefix(true),
-				suffix: () => renderSuffix(true, ""),
-				children: [
-					{
-						label: "新增",
-						key: "1",
-						isGroup: false,
-						prefix: () => renderPrefix(false),
-						suffix: () => renderSuffix(false, "user:user:add"),
-					},
-				],
-			},
-			{
-				label: "角色",
-				key: "role",
-				isGroup: true,
-				prefix: () => renderPrefix(true),
-				suffix: () => renderSuffix(true, ""),
-				children: [
-					{
-						label: "新增",
-						key: "2",
-						isGroup: false,
-						prefix: () => renderPrefix(false),
-						suffix: () => renderSuffix(false, "user:role:add"),
-					},
-				],
-			},
-			{
-				label: "权限",
-				key: "permission",
-				isGroup: true,
-				prefix: () => renderPrefix(true),
-				suffix: () => renderSuffix(true, ""),
-				children: [],
-			},
-			{
-				label: "菜单",
-				key: "menu",
-				isGroup: true,
-				prefix: () => renderPrefix(true),
-				suffix: () => renderSuffix(true, ""),
-				children: [],
-			},
-		],
-	},
-];
-
-const permissionData = ref(permissionList);
+const permissionStore = usePermissionStore();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
 	console.log(checkedKeys);
@@ -267,7 +175,7 @@ const handleDrop = ({ node, dragNode, dropPosition }: TreeDropInfo) => {
 	}
 	const [dragNodeSiblings, dragNodeIndex] = findSiblingsAndIndex(
 		dragNode,
-		permissionData.value
+		permissionStore.permissionData
 	);
 	if (dragNodeSiblings === null || dragNodeIndex === null) {
 		message.warning("当前节点数据异常，无法完成操作");
@@ -286,7 +194,7 @@ const handleDrop = ({ node, dragNode, dropPosition }: TreeDropInfo) => {
 	} else if (dropPosition === "before") {
 		const [nodeSiblings, nodeIndex] = findSiblingsAndIndex(
 			node,
-			permissionData.value
+			permissionStore.permissionData
 		);
 		if (nodeSiblings === null || nodeIndex === null) {
 			return;
@@ -295,15 +203,15 @@ const handleDrop = ({ node, dragNode, dropPosition }: TreeDropInfo) => {
 	} else if (dropPosition === "after") {
 		const [nodeSiblings, nodeIndex] = findSiblingsAndIndex(
 			node,
-			permissionData.value
+			permissionStore.permissionData
 		);
 		if (nodeSiblings === null || nodeIndex === null) {
 			return;
 		}
 		nodeSiblings.splice(nodeIndex + 1, 0, dragNode);
 	}
-	permissionData.value = Array.from(permissionData.value);
-	console.log("tree", JSON.stringify(permissionData.value));
+	permissionStore.permissionData = Array.from(permissionStore.permissionData);
+	console.log("tree", JSON.stringify(permissionStore.permissionData));
 };
 
 // 树节点右键菜单
@@ -384,6 +292,85 @@ const permissionEditFormModel = ref({
 	groupId: 0,
 	description: "描述",
 });
+
+const loadPermissionGroup = async (): Promise<PermissionGroupWithId[]> => {
+	return [
+		{
+			id: 1,
+			name: "授权服务",
+			parentId: 0,
+			description: "",
+		},
+		{
+			id: 2,
+			name: "用户服务",
+			parentId: 0,
+			description: "",
+		},
+		{
+			id: 3,
+			name: "客户端",
+			parentId: 1,
+			description: "",
+		},
+		{
+			id: 4,
+			name: "用户",
+			parentId: 2,
+			description: "",
+		},
+		{
+			id: 5,
+			name: "角色",
+			parentId: 2,
+			description: "",
+		},
+		{
+			id: 6,
+			name: "权限",
+			parentId: 2,
+			description: "",
+		},
+		{
+			id: 7,
+			name: "菜单",
+			parentId: 2,
+			description: "",
+		},
+	];
+};
+const loadPermission = async (): Promise<PermissionWithId[]> => {
+	return [
+		{
+			id: 1,
+			name: "新增",
+			authority: "user:user:add",
+			type: 0,
+			groupId: 4,
+			description: "",
+		},
+		{
+			id: 1,
+			name: "新增",
+			authority: "user:role:add",
+			type: 0,
+			groupId: 5,
+			description: "",
+		},
+	];
+};
+
+const initialize = async () => {
+	let [permissionGroupList, permissionList] = await Promise.all([
+		loadPermissionGroup(),
+		loadPermission(),
+	]);
+	await permissionStore.refreshPermission(
+		permissionGroupList,
+		permissionList
+	);
+};
+onMounted(initialize);
 </script>
 
 <style lang="scss" scoped></style>

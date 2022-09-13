@@ -9,7 +9,6 @@
 		@collapse="collapsed = true"
 		@expand="collapsed = false"
 	>
-		<n-button @click="test">加载菜单</n-button>
 		<n-menu
 			ref="menuRef"
 			:collapsed="collapsed"
@@ -24,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useSideMenuStore } from "@/store/pinia/side-menu";
 import { MenuInst } from "naive-ui";
 
@@ -33,7 +32,7 @@ const sideMenuStore = useSideMenuStore();
 const menuRef = ref<MenuInst | null>(null);
 const collapsed = ref(false);
 
-const test = async () => {
+const initialize = async () => {
 	const menuList = [
 		{
 			id: 2,
@@ -150,6 +149,7 @@ const test = async () => {
 	];
 	await sideMenuStore.refreshMenu(menuList);
 };
+onMounted(initialize);
 </script>
 
 <style lang="scss" scoped></style>

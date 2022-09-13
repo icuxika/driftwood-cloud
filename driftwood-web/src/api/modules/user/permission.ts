@@ -1,4 +1,4 @@
-import { BaseEntity } from "@/api";
+import { BaseEntity, HasId } from "@/api";
 
 /**
  * 权限
@@ -11,4 +11,6 @@ interface Permission extends BaseEntity {
 	description: string;
 }
 
-export type { Permission };
+type PermissionWithId = Permission & HasId;
+
+export type { Permission, PermissionWithId };
