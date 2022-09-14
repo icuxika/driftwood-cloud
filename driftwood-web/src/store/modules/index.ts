@@ -1,7 +1,7 @@
 import { ActionTree, GetterTree, Module, MutationTree } from "vuex";
 import { StateInterface } from "@/store";
 import { BuiltInGlobalTheme } from "naive-ui/es/themes/interface";
-import { lightTheme } from "naive-ui/es/themes/light";
+import { lightTheme } from "naive-ui";
 import {
 	darkTheme,
 	dateEnUS,

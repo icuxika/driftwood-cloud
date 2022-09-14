@@ -60,16 +60,16 @@ type CreateService = (path: string) => {
 
 const createService: CreateService = (path: string) => {
 	return {
-		loginByPassword(loginParam: LoginParamPassword) {
-			return AxiosInstance.post<TokenInfo>(path, null, {
+		loginByPassword(loginParam) {
+			return AxiosInstance.post(path, null, {
 				headers: {
 					Authorization: "Basic aWRfcGFzc3dvcmQ6c2VjcmV0",
 				},
 				params: loginParam,
 			});
 		},
-		loginByPhone(loginParam: LoginParamPhone) {
-			return AxiosInstance.post<TokenInfo>(path, null, {
+		loginByPhone(loginParam) {
+			return AxiosInstance.post(path, null, {
 				headers: {
 					Authorization: "Basic aWRfcGhvbmU6c2VjcmV0",
 				},

@@ -75,7 +75,7 @@ type CreateService = (path: string) => {
 	/**
 	 * 根据id查询用户
 	 */
-	getById: (id: User["id"]) => Promise<AxiosResponse<ApiData<User>>>;
+	getById: (id: UserWithId["id"]) => Promise<AxiosResponse<ApiData<User>>>;
 
 	/**
 	 * 新增用户
@@ -87,12 +87,16 @@ type CreateService = (path: string) => {
 	/**
 	 * 更新用户
 	 */
-	update: (user: UserWithId) => Promise<AxiosResponse<ApiData<never>>>;
+	update: (
+		user: Partial<User> & HasId
+	) => Promise<AxiosResponse<ApiData<never>>>;
 
 	/**
 	 * 根据id删除用户
 	 */
-	deleteById: (id: User["id"]) => Promise<AxiosResponse<ApiData<never>>>;
+	deleteById: (
+		id: UserWithId["id"]
+	) => Promise<AxiosResponse<ApiData<never>>>;
 
 	/**
 	 * 为用户绑定角色
@@ -105,32 +109,27 @@ type CreateService = (path: string) => {
 const createService: CreateService = (path: string) => {
 	return {
 		getUserInfo() {
-			return AxiosInstance.get<ApiData<UserInfoVO>>(
-				path + "/getUserInfo"
-			);
+			return AxiosInstance.get(path + "/getUserInfo");
 		},
-		page<T extends User>(pageable: Partial<Pageable & T>) {
-			return AxiosInstance.get<ApiData<Page<UserVO>>>(path + "/page", {
+		page(pageable) {
+			return AxiosInstance.get(path + "/page", {
 				params: pageable,
 			});
 		},
-		getById(id: User["id"]) {
-			return AxiosInstance.get<ApiData<User>>(path + "/" + id);
+		getById(id) {
+			return AxiosInstance.get(path + "/" + id);
 		},
-		save(user: Omit<Partial<User>, "id">) {
-			return AxiosInstance.post<ApiData<never>>(path, user);
+		save(user) {
+			return AxiosInstance.post(path, user);
 		},
-		update(user: UserWithId) {
-			return AxiosInstance.put<ApiData<never>>(path, user);
+		update(user) {
+			return AxiosInstance.put(path, user);
 		},
-		deleteById(id: User["id"]) {
-			return AxiosInstance.delete<ApiData<never>>(path + "/" + id);
+		deleteById(id) {
+			return AxiosInstance.delete(path + "/" + id);
 		},
-		bindRoles(bindOneDTO: BindOneDTO) {
-			return AxiosInstance.post<ApiData<never>>(
-				path + "/bindRoles",
-				bindOneDTO
-			);
+		bindRoles(bindOneDTO) {
+			return AxiosInstance.post(path + "/bindRoles", bindOneDTO);
 		},
 	};
 };

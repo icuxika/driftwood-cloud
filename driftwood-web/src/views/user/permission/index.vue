@@ -53,8 +53,18 @@
 				</n-form>
 				<template #footer>
 					<n-space justify="end">
-						<n-button type="success"> 确定</n-button>
-						<n-button type="warning"> 取消</n-button>
+						<n-button
+							type="success"
+							@click="handleUpdatePermissionGroup"
+						>
+							确定</n-button
+						>
+						<n-button
+							type="warning"
+							@click="hidePermissionGroupEditModal"
+						>
+							取消</n-button
+						>
 					</n-space>
 				</template>
 			</n-card>
@@ -96,8 +106,18 @@
 				</n-form>
 				<template #footer>
 					<n-space justify="end">
-						<n-button type="success"> 确定</n-button>
-						<n-button type="warning"> 取消</n-button>
+						<n-button
+							type="success"
+							@click="handleUpdatePermission"
+						>
+							确定</n-button
+						>
+						<n-button
+							type="warning"
+							@click="hidePermissionEditModal"
+						>
+							取消</n-button
+						>
 					</n-space>
 				</template>
 			</n-card>
@@ -115,8 +135,6 @@ import {
 } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { usePermissionStore } from "@/store/pinia/user/permission";
-import { PermissionGroupWithId } from "@/api/modules/user/permission-group";
-import { PermissionWithId } from "@/api/modules/user/permission";
 
 const message = useMessage();
 const permissionStore = usePermissionStore();
@@ -238,6 +256,18 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 						props: {
 							onClick: () => {
 								showPermissionGroupEditModal.value = true;
+								let cachePermissionGroup =
+									permissionStore.getCachePermissionGroupById(
+										Number(
+											(option.key as string).substring(1)
+										)
+									);
+								if (cachePermissionGroup) {
+									Object.assign(
+										permissionGroupEditFormModel.value,
+										cachePermissionGroup
+									);
+								}
 							},
 						},
 					},
@@ -250,6 +280,16 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 						props: {
 							onClick: () => {
 								showPermissionEditModal.value = true;
+								let cachePermission =
+									permissionStore.getCachePermissionById(
+										option.key as number
+									);
+								if (cachePermission) {
+									Object.assign(
+										permissionEditFormModel.value,
+										cachePermission
+									);
+								}
 							},
 						},
 					},
@@ -265,11 +305,12 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 
 // 是否展示权限分组编辑模态框
 const showPermissionGroupEditModal = ref(false);
-// 权限分组数据model
-const permissionGroupEditFormModel = ref({
+const defaultPermissionGroupEditFormModel = {
 	name: "新增",
 	description: "描述",
-});
+};
+// 权限分组数据model
+const permissionGroupEditFormModel = ref(defaultPermissionGroupEditFormModel);
 
 // 是否展示权限编辑模态框
 const showPermissionEditModal = ref(false);
@@ -277,98 +318,56 @@ const showPermissionEditModal = ref(false);
 const permissionTypeDict = [
 	{
 		label: "功能服务",
-		value: "1",
+		value: 1,
 	},
 	{
 		label: "界面元素",
-		value: "2",
+		value: 2,
 	},
 ];
-// 权限数据model
-const permissionEditFormModel = ref({
+const defaultPermissionEditFormModel = {
 	name: "新增",
 	authority: "user:user:add",
-	type: "1",
+	type: 1,
 	groupId: 0,
 	description: "描述",
-});
-
-const loadPermissionGroup = async (): Promise<PermissionGroupWithId[]> => {
-	return [
-		{
-			id: 1,
-			name: "授权服务",
-			parentId: 0,
-			description: "",
-		},
-		{
-			id: 2,
-			name: "用户服务",
-			parentId: 0,
-			description: "",
-		},
-		{
-			id: 3,
-			name: "客户端",
-			parentId: 1,
-			description: "",
-		},
-		{
-			id: 4,
-			name: "用户",
-			parentId: 2,
-			description: "",
-		},
-		{
-			id: 5,
-			name: "角色",
-			parentId: 2,
-			description: "",
-		},
-		{
-			id: 6,
-			name: "权限",
-			parentId: 2,
-			description: "",
-		},
-		{
-			id: 7,
-			name: "菜单",
-			parentId: 2,
-			description: "",
-		},
-	];
 };
-const loadPermission = async (): Promise<PermissionWithId[]> => {
-	return [
-		{
-			id: 1,
-			name: "新增",
-			authority: "user:user:add",
-			type: 0,
-			groupId: 4,
-			description: "",
-		},
-		{
-			id: 1,
-			name: "新增",
-			authority: "user:role:add",
-			type: 0,
-			groupId: 5,
-			description: "",
-		},
-	];
+// 权限数据model
+const permissionEditFormModel = ref(defaultPermissionEditFormModel);
+
+const handleUpdatePermissionGroup = async () => {
+	console.log(JSON.stringify(permissionGroupEditFormModel.value));
+};
+const hidePermissionGroupEditModal = () => {
+	showPermissionGroupEditModal.value = false;
+	permissionGroupEditFormModel.value = defaultPermissionGroupEditFormModel;
+};
+
+const handleUpdatePermission = async () => {
+	console.log(JSON.stringify(permissionEditFormModel.value));
+};
+const hidePermissionEditModal = () => {
+	showPermissionEditModal.value = false;
+	permissionEditFormModel.value = defaultPermissionEditFormModel;
+};
+
+const refreshPermission = async () => {
+	let [permissionGroupList, permissionList] = await Promise.all([
+		permissionStore.listPermissionGroup(),
+		permissionStore.listPermission(),
+	]);
+	if (permissionGroupList && permissionList) {
+		permissionStore.cachePermissionGroupList = permissionGroupList;
+		permissionStore.cachePermissionList = permissionList;
+		await permissionStore.refreshPermission(
+			permissionGroupList,
+			permissionList
+		);
+	}
 };
 
 const initialize = async () => {
-	let [permissionGroupList, permissionList] = await Promise.all([
-		loadPermissionGroup(),
-		loadPermission(),
-	]);
-	await permissionStore.refreshPermission(
-		permissionGroupList,
-		permissionList
-	);
+	await refreshPermission();
 };
 onMounted(initialize);
 </script>

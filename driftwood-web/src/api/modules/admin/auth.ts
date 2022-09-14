@@ -70,11 +70,8 @@ type CreateService = (path: string) => {
 
 const createService: CreateService = (path: string) => {
 	return {
-		login(loginParam: LoginParam) {
-			return AxiosInstance.post<ApiData<TokenInfo>>(
-				path + "/login",
-				loginParam
-			);
+		login(loginParam) {
+			return AxiosInstance.post(path + "/login", loginParam);
 		},
 	};
 };

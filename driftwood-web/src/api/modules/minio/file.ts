@@ -28,7 +28,7 @@ type CreateService = (path: string) => {
 
 const createService: CreateService = (path: string) => {
 	return {
-		createMultipartUpload(fileName: string, chunkNumber: number) {
+		createMultipartUpload(fileName, chunkNumber) {
 			return AxiosInstance.get(
 				path +
 					"/createMultipartUpload" +
@@ -39,7 +39,7 @@ const createService: CreateService = (path: string) => {
 			);
 		},
 
-		completeMultipartUpload(fileName: string, uploadId: string) {
+		completeMultipartUpload(fileName, uploadId) {
 			return AxiosInstance.get(
 				path +
 					"/completeMultipartUpload" +

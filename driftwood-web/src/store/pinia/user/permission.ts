@@ -1,8 +1,17 @@
 import { defineStore } from "pinia";
 import { NTag, TreeOption } from "naive-ui";
-import { PermissionGroupWithId } from "@/api/modules/user/permission-group";
+import {
+	PermissionGroup,
+	permissionGroupService,
+	PermissionGroupWithId,
+} from "@/api/modules/user/permission-group";
 import { h } from "vue";
-import { PermissionWithId } from "@/api/modules/user/permission";
+import {
+	Permission,
+	permissionService,
+	PermissionWithId,
+} from "@/api/modules/user/permission";
+import { resolveAxiosResult } from "@/api";
 
 const renderPrefix = (isGroup: boolean) => {
 	return h(
@@ -21,15 +30,19 @@ const renderSuffix = (isGroup: boolean, authority: string) => {
 
 interface DPermissionState {
 	permissionData: TreeOption[];
+	cachePermissionGroupList: PermissionGroupWithId[];
+	cachePermissionList: PermissionWithId[];
 }
 
 export const usePermissionStore = defineStore("permission", {
 	state: (): DPermissionState => ({
 		permissionData: [],
+		cachePermissionGroupList: [],
+		cachePermissionList: [],
 	}),
 	getters: {},
 	actions: {
-		refreshPermission: async function (
+		async refreshPermission(
 			permissionGroupList: PermissionGroupWithId[],
 			permissionList: PermissionWithId[]
 		) {
@@ -75,6 +88,30 @@ export const usePermissionStore = defineStore("permission", {
 				}
 			});
 			this.permissionData = treeOptionList;
+		},
+
+		async listPermissionGroup(
+			permissionGroup: Partial<PermissionGroup> = {}
+		) {
+			return resolveAxiosResult(() =>
+				permissionGroupService.list(permissionGroup)
+			);
+		},
+
+		async listPermission(permission: Partial<Permission> = {}) {
+			return resolveAxiosResult(() => permissionService.list(permission));
+		},
+
+		getCachePermissionGroupById(id: PermissionGroupWithId["id"]) {
+			return this.cachePermissionGroupList.find(
+				(permissionGroup) => permissionGroup.id === id
+			);
+		},
+
+		getCachePermissionById(id: PermissionWithId["id"]) {
+			return this.cachePermissionList.find(
+				(permission) => permission.id === id
+			);
 		},
 	},
 });

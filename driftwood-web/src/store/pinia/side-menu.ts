@@ -24,7 +24,7 @@ export const useSideMenuStore = defineStore("side-menu", {
 		/**
 		 * 刷新菜单
 		 */
-		refreshMenu: async function (menuList: MenuWithId[]) {
+		async refreshMenu(menuList: MenuWithId[]) {
 			const menuOptionList: MenuOption[] = [];
 
 			// id -> icon name
