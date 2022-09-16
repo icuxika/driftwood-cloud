@@ -23,7 +23,7 @@
 			@select="handleSelect"
 			@clickoutside="handleClickOutSide"
 		/>
-		<n-modal v-model:show="showPermissionGroupEditModal">
+		<n-modal v-model:show="showPermissionGroupModal">
 			<n-card
 				style="width: 600px"
 				title="编辑权限分组"
@@ -33,19 +33,19 @@
 				aria-modal="true"
 			>
 				<n-form
-					:model="permissionGroupEditFormModel"
+					:model="permissionGroupFormModelRef"
 					label-placement="left"
 					:label-width="80"
 				>
 					<n-form-item label="名称">
 						<n-input
-							v-model:value="permissionGroupEditFormModel.name"
+							v-model:value="permissionGroupFormModelRef.name"
 						/>
 					</n-form-item>
 					<n-form-item label="描述">
 						<n-input
 							v-model:value="
-								permissionGroupEditFormModel.description
+								permissionGroupFormModelRef.description
 							"
 							type="textarea"
 						/>
@@ -55,13 +55,13 @@
 					<n-space justify="end">
 						<n-button
 							type="success"
-							@click="handleUpdatePermissionGroup"
+							@click="handleSaveOrUpdatePermissionGroup"
 						>
 							确定</n-button
 						>
 						<n-button
 							type="warning"
-							@click="hidePermissionGroupEditModal"
+							@click="hidePermissionGroupModal"
 						>
 							取消</n-button
 						>
@@ -69,7 +69,7 @@
 				</template>
 			</n-card>
 		</n-modal>
-		<n-modal v-model:show="showPermissionEditModal">
+		<n-modal v-model:show="showPermissionModal">
 			<n-card
 				style="width: 600px"
 				title="编辑权限"
@@ -79,27 +79,27 @@
 				aria-modal="true"
 			>
 				<n-form
-					:model="permissionEditFormModel"
+					:model="permissionFormModelRef"
 					label-placement="left"
 					:label-width="80"
 				>
 					<n-form-item label="名称">
-						<n-input v-model:value="permissionEditFormModel.name" />
+						<n-input v-model:value="permissionFormModelRef.name" />
 					</n-form-item>
 					<n-form-item label="权限">
 						<n-input
-							v-model:value="permissionEditFormModel.authority"
+							v-model:value="permissionFormModelRef.authority"
 						/>
 					</n-form-item>
 					<n-form-item label="权限类型">
 						<n-select
-							v-model:value="permissionEditFormModel.type"
+							v-model:value="permissionFormModelRef.type"
 							:options="permissionTypeDict"
 						/>
 					</n-form-item>
 					<n-form-item label="描述">
 						<n-input
-							v-model:value="permissionEditFormModel.description"
+							v-model:value="permissionFormModelRef.description"
 							type="textarea"
 						/>
 					</n-form-item>
@@ -108,14 +108,11 @@
 					<n-space justify="end">
 						<n-button
 							type="success"
-							@click="handleUpdatePermission"
+							@click="handleSaveOrUpdatePermission"
 						>
 							确定</n-button
 						>
-						<n-button
-							type="warning"
-							@click="hidePermissionEditModal"
-						>
+						<n-button type="warning" @click="hidePermissionModal">
 							取消</n-button
 						>
 					</n-space>
@@ -135,9 +132,15 @@ import {
 } from "naive-ui";
 import { onMounted, ref } from "vue";
 import { usePermissionStore } from "@/store/pinia/user/permission";
+import {
+	permissionFormModel,
+	permissionGroupFormModel,
+} from "@/views/user/permission/data";
+import { useObject } from "@/hooks/use-object";
 
 const message = useMessage();
 const permissionStore = usePermissionStore();
+const { getPropertyValue } = useObject();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
 	console.log(checkedKeys);
@@ -255,7 +258,7 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 						key: "edit->" + option.key,
 						props: {
 							onClick: () => {
-								showPermissionGroupEditModal.value = true;
+								showPermissionGroupModal.value = true;
 								let cachePermissionGroup =
 									permissionStore.getCachePermissionGroupById(
 										Number(
@@ -263,10 +266,16 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 										)
 									);
 								if (cachePermissionGroup) {
-									Object.assign(
-										permissionGroupEditFormModel.value,
-										cachePermissionGroup
-									);
+									Object.keys(
+										permissionGroupFormModel
+									).forEach((key) => {
+										permissionGroupFormModel[
+											key as keyof typeof permissionGroupFormModel
+										] = getPropertyValue(
+											cachePermissionGroup,
+											key as keyof typeof cachePermissionGroup
+										);
+									});
 								}
 							},
 						},
@@ -279,15 +288,21 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 						key: "edit->" + option.key,
 						props: {
 							onClick: () => {
-								showPermissionEditModal.value = true;
+								showPermissionModal.value = true;
 								let cachePermission =
 									permissionStore.getCachePermissionById(
 										option.key as number
 									);
 								if (cachePermission) {
-									Object.assign(
-										permissionEditFormModel.value,
-										cachePermission
+									Object.keys(permissionFormModel).forEach(
+										(key) => {
+											permissionFormModel[
+												key as keyof typeof permissionFormModel
+											] = getPropertyValue(
+												cachePermission,
+												key as keyof typeof cachePermission
+											);
+										}
 									);
 								}
 							},
@@ -304,16 +319,13 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 };
 
 // 是否展示权限分组编辑模态框
-const showPermissionGroupEditModal = ref(false);
-const defaultPermissionGroupEditFormModel = {
-	name: "新增",
-	description: "描述",
-};
+const showPermissionGroupModal = ref(false);
 // 权限分组数据model
-const permissionGroupEditFormModel = ref(defaultPermissionGroupEditFormModel);
-
+const permissionGroupFormModelRef = ref(permissionGroupFormModel);
 // 是否展示权限编辑模态框
-const showPermissionEditModal = ref(false);
+const showPermissionModal = ref(false);
+// 权限数据model
+const permissionFormModelRef = ref(permissionFormModel);
 // 权限类型
 const permissionTypeDict = [
 	{
@@ -325,30 +337,19 @@ const permissionTypeDict = [
 		value: 2,
 	},
 ];
-const defaultPermissionEditFormModel = {
-	name: "新增",
-	authority: "user:user:add",
-	type: 1,
-	groupId: 0,
-	description: "描述",
-};
-// 权限数据model
-const permissionEditFormModel = ref(defaultPermissionEditFormModel);
 
-const handleUpdatePermissionGroup = async () => {
-	console.log(JSON.stringify(permissionGroupEditFormModel.value));
+const handleSaveOrUpdatePermissionGroup = async () => {
+	console.log(JSON.stringify(permissionGroupFormModelRef.value));
 };
-const hidePermissionGroupEditModal = () => {
-	showPermissionGroupEditModal.value = false;
-	permissionGroupEditFormModel.value = defaultPermissionGroupEditFormModel;
+const hidePermissionGroupModal = () => {
+	showPermissionGroupModal.value = false;
 };
 
-const handleUpdatePermission = async () => {
-	console.log(JSON.stringify(permissionEditFormModel.value));
+const handleSaveOrUpdatePermission = async () => {
+	console.log(JSON.stringify(permissionFormModelRef.value));
 };
-const hidePermissionEditModal = () => {
-	showPermissionEditModal.value = false;
-	permissionEditFormModel.value = defaultPermissionEditFormModel;
+const hidePermissionModal = () => {
+	showPermissionModal.value = false;
 };
 
 const refreshPermission = async () => {
@@ -357,8 +358,8 @@ const refreshPermission = async () => {
 		permissionStore.listPermission(),
 	]);
 	if (permissionGroupList && permissionList) {
-		permissionStore.cachePermissionGroupList = permissionGroupList;
-		permissionStore.cachePermissionList = permissionList;
+		permissionStore.initCachePermissionGroup(permissionGroupList);
+		permissionStore.initCachePermission(permissionList);
 		await permissionStore.refreshPermission(
 			permissionGroupList,
 			permissionList

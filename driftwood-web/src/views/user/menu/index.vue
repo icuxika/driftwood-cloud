@@ -6,6 +6,7 @@
 			cascade
 			checkable
 			draggable
+			expand-on-click
 			:data="menuStore.menuData"
 			:node-props="nodeProps"
 			@update:checked-keys="updateCheckedKeys"
@@ -23,39 +24,49 @@
 			@select="handleSelect"
 			@clickoutside="handleClickOutSide"
 		/>
-		<n-modal v-model:show="showMenuEditModal">
+		<n-modal v-model:show="showMenuModal">
 			<n-card
 				style="width: 600px"
-				title="编辑权限分组"
+				:title="menuModalEditModeIsUpdate ? '编辑菜单' : '新增菜单'"
 				:bordered="false"
 				size="huge"
 				role="dialog"
 				aria-modal="true"
 			>
 				<n-form
-					:model="menuEditFormModel"
+					:model="menuFormModelRef"
 					label-placement="left"
 					:label-width="80"
 				>
 					<n-form-item label="菜单类型">
 						<n-select
-							v-model:value="menuEditFormModel.type"
+							v-model:value="menuFormModelRef.type"
 							:options="menuTypeDict"
 						/>
 					</n-form-item>
+					<n-form-item label="父菜单">
+						<n-select
+							v-model:value="menuFormModelRef.parentId"
+							:options="menuStore.menuDict"
+							disabled
+						/>
+					</n-form-item>
 					<n-form-item label="名称">
-						<n-input v-model:value="menuEditFormModel.name" />
+						<n-input v-model:value="menuFormModelRef.name" />
 					</n-form-item>
 					<n-form-item label="图标">
-						<n-input v-model:value="menuEditFormModel.icon" />
+						<n-input v-model:value="menuFormModelRef.icon" />
 					</n-form-item>
 					<n-form-item label="路径">
-						<n-input v-model:value="menuEditFormModel.path" />
+						<n-input v-model:value="menuFormModelRef.path" />
 					</n-form-item>
 				</n-form>
 				<template #footer>
 					<n-space justify="end">
-						<n-button type="success" @click="handleUpdateMenu">
+						<n-button
+							type="success"
+							@click="handleSaveOrUpdateMenu"
+						>
 							确定</n-button
 						>
 						<n-button type="warning" @click="hideMenuEditModal">
@@ -70,32 +81,33 @@
 
 <script setup lang="ts">
 import { useMenuStore } from "@/store/pinia/user/menu";
-import { DropdownOption, TreeDropInfo, TreeOption, useMessage } from "naive-ui";
+import {
+	DropdownOption,
+	TreeDropInfo,
+	TreeOption,
+	useDialog,
+	useMessage,
+} from "naive-ui";
 import { onMounted, ref } from "vue";
+import {
+	MenuFormModel,
+	defaultMenuFormModel,
+	menuFormModel,
+} from "@/views/user/menu/data";
+import { useTree } from "@/hooks/use-tree";
+import { useObject } from "@/hooks/use-object";
+import { useTrick } from "@/hooks/use-trick";
+import { MenuWithId } from "@/api/modules/user/menu";
 
 const message = useMessage();
+const dialog = useDialog();
 const menuStore = useMenuStore();
+const { findSiblingsAndIndex, getParentTreeOption } = useTree();
+const { getPropertyValue } = useObject();
+const { sleep } = useTrick();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
 	console.log(checkedKeys);
-};
-
-// 查找节点在tree中的与其同级的所有节点和其在这些节点中的索引
-const findSiblingsAndIndex = (
-	node: TreeOption,
-	nodes?: TreeOption[]
-): [TreeOption[], number] | [null, null] => {
-	if (!nodes) return [null, null];
-	for (let i = 0; i < nodes.length; ++i) {
-		const siblingNode = nodes[i];
-		if (siblingNode.key === node.key) return [nodes, i];
-		const [siblings, index] = findSiblingsAndIndex(
-			node,
-			siblingNode.children
-		);
-		if (siblings && index !== null) return [siblings, index];
-	}
-	return [null, null];
 };
 
 const handleDragStart = (data: { node: TreeOption; event: DragEvent }) => {};
@@ -164,21 +176,66 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 	return {
 		onContextmenu(e: MouseEvent): void {
 			options.value = [
+				...(option.type !== 4
+					? [
+							{
+								label: "新增",
+								key: "add->" + option.key,
+								props: {
+									onClick: () => {
+										showMenuModal.value = true;
+										menuModalEditModeIsUpdate.value = false;
+										Object.assign(
+											menuFormModel,
+											defaultMenuFormModel
+										);
+										menuFormModel.parentId =
+											option.parentId as number;
+									},
+								},
+							},
+					  ]
+					: []),
 				{
 					label: "编辑",
 					key: "edit->" + option.key,
 					props: {
 						onClick: () => {
-							showMenuEditModal.value = true;
+							showMenuModal.value = true;
+							menuModalEditModeIsUpdate.value = true;
 							let cacheMenu = menuStore.getCacheMenuById(
 								option.key as number
 							);
 							if (cacheMenu) {
-								Object.assign(
-									menuEditFormModel.value,
-									cacheMenu
-								);
+								Object.keys(menuFormModel).forEach((key) => {
+									menuFormModel[
+										key as keyof typeof menuFormModel
+									] = getPropertyValue(
+										cacheMenu,
+										key as keyof typeof cacheMenu
+									);
+								});
 							}
+						},
+					},
+				},
+				{
+					label: "删除",
+					key: "delete->" + option.key,
+					props: {
+						onClick: () => {
+							const d = dialog.warning({
+								title: "删除菜单：" + option.label,
+								content: "你确定？",
+								positiveText: "确定",
+								negativeText: "不确定",
+								onPositiveClick: () => {
+									d.loading = true;
+									return menuStore.deleteMenu(
+										option.key as number
+									);
+								},
+							});
 						},
 					},
 				},
@@ -191,16 +248,11 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 	};
 };
 
+// 是不是编辑模式
+const menuModalEditModeIsUpdate = ref(true);
 // 是否展示菜单编辑模态框
-const showMenuEditModal = ref(false);
-const defaultMenuEditFormModel = {
-	id: 0,
-	type: 0,
-	name: "",
-	icon: "",
-	path: "",
-};
-const menuEditFormModel = ref(defaultMenuEditFormModel);
+const showMenuModal = ref(false);
+const menuFormModelRef = ref<MenuFormModel>(menuFormModel);
 // 菜单类型
 const menuTypeDict = [
 	{
@@ -221,18 +273,38 @@ const menuTypeDict = [
 	},
 ];
 
-const handleUpdateMenu = async () => {
-	console.log(JSON.stringify(menuEditFormModel.value));
+const handleSaveOrUpdateMenu = async () => {
+	let newMenu: MenuWithId | null;
+	const isUpdate = menuModalEditModeIsUpdate.value;
+	if (isUpdate) {
+		newMenu = await menuStore.updateMenu(menuFormModel);
+	} else {
+		newMenu = await menuStore.saveMenu(menuFormModel);
+	}
+	if (newMenu) {
+		// await refreshMenu();
+		const parent = getParentTreeOption(
+			newMenu.parentId,
+			menuStore.menuData
+		);
+		if (parent) {
+			if (isUpdate) {
+				menuStore.updateTreeOption(parent, newMenu);
+			} else {
+				menuStore.addTreeOption(parent, newMenu);
+			}
+		}
+	}
 };
+
 const hideMenuEditModal = () => {
-	showMenuEditModal.value = false;
-	menuEditFormModel.value = defaultMenuEditFormModel;
+	showMenuModal.value = false;
 };
 
 const refreshMenu = async () => {
 	let menuList = await menuStore.listMenu();
 	if (menuList) {
-		menuStore.cacheMenuList = menuList;
+		menuStore.initCacheMenu(menuList);
 		await menuStore.refreshMenu(menuList);
 	}
 };

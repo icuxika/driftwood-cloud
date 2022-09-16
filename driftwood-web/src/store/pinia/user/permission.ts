@@ -102,6 +102,14 @@ export const usePermissionStore = defineStore("permission", {
 			return resolveAxiosResult(() => permissionService.list(permission));
 		},
 
+		initCachePermissionGroup(permissionGroupList: PermissionGroupWithId[]) {
+			this.cachePermissionGroupList = [...permissionGroupList];
+		},
+
+		initCachePermission(permissionList: PermissionWithId[]) {
+			this.cachePermissionList = [...permissionList];
+		},
+
 		getCachePermissionGroupById(id: PermissionGroupWithId["id"]) {
 			return this.cachePermissionGroupList.find(
 				(permissionGroup) => permissionGroup.id === id
