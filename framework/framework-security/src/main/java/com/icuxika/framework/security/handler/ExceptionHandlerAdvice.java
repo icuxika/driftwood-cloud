@@ -40,7 +40,7 @@ public class ExceptionHandlerAdvice {
      */
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleException(AccessDeniedException e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No auth");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("No auth");
     }
 
     /**
