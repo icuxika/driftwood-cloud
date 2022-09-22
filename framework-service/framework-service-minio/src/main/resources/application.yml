@@ -1,14 +1,24 @@
 server:
   port: 8912
 
+spring:
+  application:
+    name: @artifactId@
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+  config:
+    import:
+      - nacos:application-@profiles.active@.yml?refreshEnabled=false
+      - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
+      - nacos:resource-server.yml?refreshEnabled=false
+
 minio:
   endpoint: http://localhost:9001
   accessKey: driftwood
   secretKey: driftwood
-
-spring:
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 512MB # 单个文件的最大上限
-      max-request-size: 512MB # 单个请求的最大上限

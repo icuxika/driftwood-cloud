@@ -2,6 +2,22 @@ server:
   port: 8904
 
 spring:
+  application:
+    name: @artifactId@
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+  config:
+    import:
+      - nacos:application-@profiles.active@.yml?refreshEnabled=false
+      - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
+      - nacos:resource-server.yml?refreshEnabled=false
+
   datasource:
     druid:
       web-stat-filter:
@@ -17,11 +33,6 @@ spring:
         login-username: driftwood
         login-password: driftwood
       filters: stat,wall,log4j2
-  cloud:
-    sentinel:
-      transport:
-        port: 8719
-        dashboard: driftwood-cloud:8899
 
 logging:
   level:

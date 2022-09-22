@@ -62,3 +62,66 @@ graph TD;
     framework-object-->user-service;
     framework-config-jpa-->user-service;
 ```
+
+### 运行参数
+
+> 主要用来配置阿里系框架的日志生成位置和是否启用sentinel控制台配置
+
+#### gateway
+
+- 添加 VM 选项
+
+> -Xms64m -Xmx256m -Dcsp.sentinel.app.type=1 -Dcsp.sentinel.log.dir=logs/gateway/sentinel -DJM.LOG.PATH=logs/gateway
+> -DJM.SNAPSHOT.PATH=logs/gateway
+
+- 程序实参
+
+> --spring.cloud.sentinel.transport.dashboard=""
+
+#### authorization-server
+
+- 添加 VM 选项
+
+> -Xms64m -Xmx256m -Dcsp.sentinel.log.dir=logs/authorization-server/sentinel -DJM.LOG.PATH=logs/authorization-server
+> -DJM.SNAPSHOT.PATH=logs/authorization-server
+
+- 程序实参
+
+> --spring.cloud.sentinel.transport.dashboard=""
+
+#### admin-service
+
+- 添加 VM 选项
+
+> -Xms64m -Xmx256m -Dcsp.sentinel.log.dir=logs/admin-service/sentinel -DJM.LOG.PATH=logs/admin-service
+> -DJM.SNAPSHOT.PATH=logs/admin-service
+
+- 程序实参
+
+> --spring.cloud.sentinel.transport.dashboard=""
+
+#### user-service
+
+- 添加 VM 选项
+
+> -Xms64m -Xmx256m -Dcsp.sentinel.log.dir=logs/user-service/sentinel -DJM.LOG.PATH=logs/user-service
+> -DJM.SNAPSHOT.PATH=logs/user-service
+
+- 程序实参
+
+> --spring.cloud.sentinel.transport.dashboard=""
+
+### 服务端口分配
+
+> 其他未列举出来的服务可能属于测试服务
+
+| 服务                          | 端口   | 
+|-----------------------------|------|
+| gateway                     | 8900 |
+| authorization-server        | 8901 |
+| admin-service               | 8902 |
+| user-service                | 8904 |
+| framework-service-flowable  | 8906 |
+| framework-service-websocket | 8910 |
+| framework-service-job       | 8911 |
+| framework-service-minio     | 8912 |

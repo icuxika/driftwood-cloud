@@ -2,6 +2,21 @@ server:
   port: 8901
 
 spring:
+  application:
+    name: @artifactId@
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+  config:
+    import:
+      - nacos:application-@profiles.active@.yml?refreshEnabled=false
+      - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
+
   sql:
     init:
       username: root
@@ -11,11 +26,6 @@ spring:
         - classpath:sql/oauth2-authorization-consent-schema.sql
         - classpath:sql/oauth2-registered-client-schema.sql
       mode: never
-  cloud:
-    sentinel:
-      transport:
-        port: 8719
-        dashboard: driftwood-cloud:8899
 
 logging:
   level:

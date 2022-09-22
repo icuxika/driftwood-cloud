@@ -1,15 +1,25 @@
 server:
   port: 8902
 
+spring:
+  application:
+    name: @artifactId@
+
+  cloud:
+    nacos:
+      discovery:
+        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+
+  config:
+    import:
+      - nacos:application-@profiles.active@.yml?refreshEnabled=false
+      - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
+      - nacos:resource-server.yml?refreshEnabled=false
+
 feign:
   circuitbreaker:
     enabled: true
   okhttp:
     enabled: true
-
-spring:
-  cloud:
-    sentinel:
-      transport:
-        port: 8719
-        dashboard: driftwood-cloud:8899
