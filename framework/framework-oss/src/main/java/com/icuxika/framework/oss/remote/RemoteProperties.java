@@ -6,8 +6,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RemoteProperties {
     private Boolean enable;
     private String endpoint;
+    private String region;
     private String accessKey;
     private String secretKey;
+    private Integer maxConnections;
+    private Boolean pathStyleAccessEnabled = true;
 
     public Boolean getEnable() {
         return enable;
@@ -25,6 +28,14 @@ public class RemoteProperties {
         this.endpoint = endpoint;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     public String getAccessKey() {
         return accessKey;
     }
@@ -39,5 +50,21 @@ public class RemoteProperties {
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
+    }
+
+    public Integer getMaxConnections() {
+        return maxConnections;
+    }
+
+    public void setMaxConnections(Integer maxConnections) {
+        this.maxConnections = maxConnections;
+    }
+
+    public Boolean getPathStyleAccessEnabled() {
+        return pathStyleAccessEnabled;
+    }
+
+    public void setPathStyleAccessEnabled(Boolean pathStyleAccessEnabled) {
+        this.pathStyleAccessEnabled = pathStyleAccessEnabled;
     }
 }
