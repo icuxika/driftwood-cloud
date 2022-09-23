@@ -15,6 +15,17 @@
         <mysql.version>8.0.22</mysql.version>
         <querydsl.version>5.0.0</querydsl.version>
         <blaze-persistence.version>1.6.6</blaze-persistence.version>
+        <druid.version>1.2.12</druid.version>
+
+        <commons.lang3.version>3.12.0</commons.lang3.version>
+        <commons.codec.version>1.15</commons.codec.version>
+        <commons.io.version>2.11.0</commons.io.version>
+
+        <methanol.version>1.7.0</methanol.version>
+        <sentinel-logging-slf4j.version>1.8.5</sentinel-logging-slf4j.version>
+        <redisson.version>3.17.5</redisson.version>
+        <aviator.version>5.3.1</aviator.version>
+        <aws.java.sdk.s3.version>1.12.305</aws.java.sdk.s3.version>
     </properties>
 
     <dependencyManagement>
@@ -37,12 +48,17 @@
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
+                <artifactId>framework-object</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
                 <artifactId>framework-object-base</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
-                <artifactId>framework-object</artifactId>
+                <artifactId>framework-oss</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>
@@ -71,25 +87,25 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid-spring-boot-starter</artifactId>
-                <version>1.2.8</version>
+                <version>${druid.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
+                <version>${commons.lang3.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
+                <version>${commons.codec.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.11.0</version>
+                <version>${commons.io.version}</version>
             </dependency>
 
             <dependency>
@@ -125,25 +141,31 @@
             <dependency>
                 <groupId>com.github.mizosoft.methanol</groupId>
                 <artifactId>methanol</artifactId>
-                <version>1.7.0</version>
+                <version>${methanol.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-logging-slf4j</artifactId>
-                <version>1.8.3</version>
+                <version>${sentinel-logging-slf4j.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
-                <version>3.17.5</version>
+                <version>${redisson.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>com.googlecode.aviator</groupId>
                 <artifactId>aviator</artifactId>
-                <version>5.3.1</version>
+                <version>${aviator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.amazonaws</groupId>
+                <artifactId>aws-java-sdk-s3</artifactId>
+                <version>${aws.java.sdk.s3.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

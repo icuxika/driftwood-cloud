@@ -21,6 +21,7 @@
         <module>framework-basic</module>
         <module>framework-xxl-job</module>
         <module>framework-config-jpa</module>
+        <module>framework-oss</module>
     </modules>
 
 </project>
