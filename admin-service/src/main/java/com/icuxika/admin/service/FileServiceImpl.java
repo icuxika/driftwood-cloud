@@ -72,7 +72,7 @@ public class FileServiceImpl implements FileService {
         AdminFile adminFile = fileRepository.findById(fileId).orElseThrow(() -> new GlobalServiceException("文件信息不存在"));
         try (S3Object s3Object = fileTemplate.getObject(SystemConstant.MINIO_BUCKET_NAME, adminFile.getObjectName())) {
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentDisposition(ContentDisposition.attachment().filename("").build());
+            headers.setContentDisposition(ContentDisposition.attachment().filename(adminFile.getOriginalFilename()).build());
             headers.toSingleValueMap().forEach(response::addHeader);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
