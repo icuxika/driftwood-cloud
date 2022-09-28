@@ -23,3 +23,8 @@ feign:
     enabled: true
   okhttp:
     enabled: true
+
+file:
+  local:
+    enable: true
+    base: /driftwood/file
