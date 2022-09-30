@@ -13,5 +13,9 @@ export const useFileStore = defineStore("file", {
 				fileService.uploadFile(file, progress)
 			);
 		},
+
+		async downloadFile(fileId: number) {
+			return fileService.downloadFile(fileId);
+		},
 	},
 });

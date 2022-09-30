@@ -1,7 +1,10 @@
 <template>
-	<n-upload :custom-request="customRequest" @remove="handleRemove">
-		<n-button>上传文件</n-button>
-	</n-upload>
+	<div>
+		<n-upload :custom-request="customRequest" @remove="handleRemove">
+			<n-button>上传文件</n-button>
+		</n-upload>
+		<n-button type="info" @click="download"> 下载 </n-button>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -11,6 +14,7 @@ import {
 	useMessage,
 } from "naive-ui";
 import { useFileStore } from "@/store/pinia/admin/file";
+import { fileService } from "@/api/modules/admin/file";
 
 const message = useMessage();
 const fileStore = useFileStore();
@@ -53,6 +57,18 @@ const handleRemove = ({
 		// 已上传成功的文件才能有后端 id
 	}
 	delete fileIdMap[file.id];
+};
+
+const download = () => {
+	fileService.downloadFile(2).then((response) => {
+		const url = window.URL.createObjectURL(new Blob([response.data]));
+		const link = document.createElement("a");
+		link.href = url;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+	});
 };
 </script>
 

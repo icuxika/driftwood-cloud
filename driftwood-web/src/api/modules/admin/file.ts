@@ -7,11 +7,13 @@ type CreateService = (path: string) => {
 		file: File,
 		progress: (percent: number) => void
 	) => Promise<AxiosResponse<ApiData<number>>>;
+
+	downloadFile: (fileId: number) => Promise<AxiosResponse>;
 };
 
 const createService: CreateService = (path: string) => {
 	return {
-		uploadFile(file: File, progress: (percent: number) => void) {
+		uploadFile(file, progress) {
 			const formData = new FormData();
 			formData.append("file", file, file.name);
 			return AxiosInstance.post(path + "/uploadFile", formData, {
@@ -24,6 +26,10 @@ const createService: CreateService = (path: string) => {
 					);
 				},
 			});
+		},
+
+		downloadFile(fileId) {
+			return AxiosInstance.get("/" + fileId);
 		},
 	};
 };
