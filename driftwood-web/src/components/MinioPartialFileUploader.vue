@@ -22,9 +22,9 @@
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ref } from "vue";
-import { useFileStore } from "@/store/pinia/file/file";
+import { useMinioFileStore } from "@/store/pinia/file/minio-file";
 
-const fileStore = useFileStore();
+const minioFileStore = useMinioFileStore();
 const uploaderRef = ref<any>(null);
 const options = {
 	target: (file: any, chunk: any, mode: any) => {
@@ -60,7 +60,7 @@ const fileAdded = async (file: any, event: any) => {
 	// 单个文件添加，获取文件分片上传路径
 	const fileName = (file as File).name;
 	const chunkNumber = file.chunks.length;
-	let map = await fileStore
+	let map = await minioFileStore
 		.createMultipartUpload(fileName, chunkNumber)
 		.then();
 	if (map) {
@@ -74,7 +74,7 @@ const fileSuccess = (rootFile: any, file: any, message: any, chunk: any) => {
 	// 单个文件上传成功，调用文件分片合并
 	const fileName = file.name;
 	const uploadId = file.chunkUrlData.uploadId;
-	fileStore.completeMultipartUpload(fileName, uploadId).then();
+	minioFileStore.completeMultipartUpload(fileName, uploadId).then();
 };
 </script>
 

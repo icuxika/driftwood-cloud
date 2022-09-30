@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
 <template>
-	<h1>你好，世界</h1>
+	<div>
+		<FileUpload />
+	</div>
 </template>
+<script setup lang="ts">
+import FileUpload from "@/components/FileUpload.vue";
+</script>
 <style lang="scss" scoped></style>

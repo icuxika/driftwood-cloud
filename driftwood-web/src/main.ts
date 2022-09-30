@@ -47,6 +47,7 @@ import {
 	NNotificationProvider,
 	NAvatar,
 	NColorPicker,
+	NUpload,
 } from "naive-ui";
 
 const naive = create({
@@ -88,6 +89,7 @@ const naive = create({
 		NLayoutFooter,
 		NNotificationProvider,
 		NAvatar,
+		NUpload,
 	],
 });
 

@@ -52,7 +52,7 @@ const createService: CreateService = (path: string) => {
 	};
 };
 
-const fileService = createService("/file/file");
+const minioFileService = createService("/file/file");
 
-export { fileService };
+export { minioFileService };
 export type { ChunkUploadUrlMap };

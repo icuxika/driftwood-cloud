@@ -1,11 +1,14 @@
 import { defineStore } from "pinia";
-import { ChunkUploadUrlMap, fileService } from "@/api/modules/minio/file";
+import {
+	ChunkUploadUrlMap,
+	minioFileService,
+} from "@/api/modules/minio/minio-file";
 import { resolveAxiosResult } from "@/api";
 
-interface FileState {}
+interface MinioFileState {}
 
-export const useFileStore = defineStore("file", {
-	state: (): FileState => ({}),
+export const useMinioFileStore = defineStore("minioFile", {
+	state: (): MinioFileState => ({}),
 	getters: {},
 	actions: {
 		async createMultipartUpload(
@@ -13,7 +16,7 @@ export const useFileStore = defineStore("file", {
 			chunkNumber: number
 		): Promise<ChunkUploadUrlMap | null> {
 			return resolveAxiosResult(() =>
-				fileService.createMultipartUpload(fileName, chunkNumber)
+				minioFileService.createMultipartUpload(fileName, chunkNumber)
 			);
 		},
 
@@ -22,7 +25,7 @@ export const useFileStore = defineStore("file", {
 			uploadId: string
 		): Promise<null> {
 			return resolveAxiosResult(() =>
-				fileService.completeMultipartUpload(fileName, uploadId)
+				minioFileService.completeMultipartUpload(fileName, uploadId)
 			);
 		},
 	},
