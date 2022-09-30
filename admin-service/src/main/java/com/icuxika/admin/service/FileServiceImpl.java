@@ -5,13 +5,11 @@ import com.icuxika.admin.entity.AdminFile;
 import com.icuxika.admin.repository.FileRepository;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
+import com.icuxika.framework.config.util.FileUtil;
 import com.icuxika.framework.oss.core.FileTemplate;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ContentDisposition;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -71,12 +68,13 @@ public class FileServiceImpl implements FileService {
     public void downloadFile(Long fileId, HttpServletResponse response) {
         AdminFile adminFile = fileRepository.findById(fileId).orElseThrow(() -> new GlobalServiceException("文件信息不存在"));
         try (S3Object s3Object = fileTemplate.getObject(SystemConstant.MINIO_BUCKET_NAME, adminFile.getObjectName())) {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentDisposition(ContentDisposition.attachment().filename(adminFile.getOriginalFilename()).build());
-            headers.toSingleValueMap().forEach(response::addHeader);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-            StreamUtils.copy(s3Object.getObjectContent(), response.getOutputStream());
+            FileUtil.responseFile(response, adminFile.getOriginalFilename(), outputStream -> {
+                try {
+                    StreamUtils.copy(s3Object.getObjectContent(), outputStream);
+                } catch (IOException e) {
+                    throw new GlobalServiceException("文件写出失败：" + e.getMessage());
+                }
+            });
         } catch (IOException e) {
             throw new GlobalServiceException("文件下载失败：" + e.getMessage());
         }
