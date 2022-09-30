@@ -8,6 +8,7 @@ import com.icuxika.framework.oss.core.FileTemplate;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -61,9 +62,11 @@ public class LocalFileTemplate implements FileTemplate {
         }
         File file = new File(bucketPath + FILE_SEPARATOR + objectName);
         try {
-            Files.copy(inputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Path path = file.toPath();
+            Files.createDirectories(path.getParent());
+            Files.copy(inputStream, path, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
-            throw new RuntimeException("保存文件失败");
+            throw new RuntimeException("保存文件失败：" + e.getMessage());
         }
     }
 
@@ -89,7 +92,7 @@ public class LocalFileTemplate implements FileTemplate {
         try {
             Files.deleteIfExists(Paths.get(fileProperties.getLocal().getBase() + FILE_SEPARATOR + bucketName + FILE_SEPARATOR + objectName));
         } catch (IOException e) {
-            throw new RuntimeException("删除文件失败");
+            throw new RuntimeException("删除文件失败：" + e.getMessage());
         }
     }
 
