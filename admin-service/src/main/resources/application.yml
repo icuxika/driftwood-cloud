@@ -21,10 +21,15 @@ spring:
 feign:
   circuitbreaker:
     enabled: true
-  okhttp:
-    enabled: true
+#  okhttp:
+#    enabled: true
+
+logging:
+  level:
+    com.alibaba.nacos.client.*: ERROR
+    com.icuxika.admin.feign.AuthClient: DEBUG
 
 file:
   local:
     enable: true
-    base: C:\driftwood\file
+    base: /Users/icuxika/temp/driftwood

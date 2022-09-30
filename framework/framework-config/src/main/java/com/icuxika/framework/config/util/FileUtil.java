@@ -23,7 +23,7 @@ public class FileUtil {
     public static void responseFile(HttpServletResponse response, String filename, Consumer<OutputStream> consumer) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         // Content-Disposition: attachment; filename="filename.jpg"
-        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename, StandardCharsets.UTF_8).build());
         headers.toSingleValueMap().forEach(response::addHeader);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         // Content-Type: application/octet-stream
