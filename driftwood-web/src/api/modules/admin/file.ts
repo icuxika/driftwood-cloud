@@ -29,7 +29,7 @@ const createService: CreateService = (path: string) => {
 		},
 
 		downloadFile(fileId) {
-			return AxiosInstance.get("/" + fileId);
+			return AxiosInstance.get(path + "/" + fileId);
 		},
 	};
 };

@@ -3,7 +3,9 @@
 		<n-upload :custom-request="customRequest" @remove="handleRemove">
 			<n-button>上传文件</n-button>
 		</n-upload>
-		<n-button type="info" @click="download"> 下载 </n-button>
+		<n-button :loading="loading" type="info" @click="download">
+			下载
+		</n-button>
 	</div>
 </template>
 
@@ -15,9 +17,13 @@ import {
 } from "naive-ui";
 import { useFileStore } from "@/store/pinia/admin/file";
 import { fileService } from "@/api/modules/admin/file";
+import { useFile } from "@/hooks/use-file";
+import { ref } from "vue";
 
 const message = useMessage();
 const fileStore = useFileStore();
+const { downloadFile } = useFile();
+const loading = ref(false);
 
 // UploadFileInfo:id -> 后端 id
 const fileIdMap: Record<string, number> = {};
@@ -60,15 +66,16 @@ const handleRemove = ({
 };
 
 const download = () => {
-	fileService.downloadFile(2).then((response) => {
-		const url = window.URL.createObjectURL(new Blob([response.data]));
-		const link = document.createElement("a");
-		link.href = url;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-		URL.revokeObjectURL(url);
-	});
+	loading.value = true;
+	fileService
+		.downloadFile(1)
+		.then((response) => {
+			loading.value = false;
+			downloadFile(response);
+		})
+		.catch((error) => {
+			loading.value = false;
+		});
 };
 </script>
 
