@@ -33,14 +33,9 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Long uploadFile(MultipartFile file) {
-        String fileSha256 = null;
-        try {
-            fileSha256 = DigestUtils.sha256Hex(file.getInputStream());
-        } catch (IOException e) {
-            throw new GlobalServiceException("计算文件的SHA-256时失败：" + e.getMessage());
-        }
-
         try (InputStream inputStream = file.getInputStream()) {
+            // 计算文件的SHA-256
+            String fileSha256 = DigestUtils.sha256Hex(file.getInputStream());
             String originalFilename = file.getOriginalFilename();
             // 文件扩展名
             String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
