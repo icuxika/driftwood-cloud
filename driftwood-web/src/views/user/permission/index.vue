@@ -133,6 +133,8 @@ import {
 import { onMounted, ref } from "vue";
 import { usePermissionStore } from "@/store/pinia/user/permission";
 import {
+	defaultPermissionFormModel,
+	defaultPermissionGroupFormModel,
 	permissionFormModel,
 	permissionGroupFormModel,
 } from "@/views/user/permission/data";
@@ -254,11 +256,28 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 			if (option.isGroup) {
 				options.value = [
 					{
+						label: "新增权限分组",
+						key: "add->" + option.key,
+						props: {
+							onClick: () => {
+								showPermissionGroupModal.value = true;
+								permissionGroupModalEditModeIsUpdate.value =
+									false;
+								Object.assign(
+									permissionGroupFormModel,
+									defaultPermissionGroupFormModel
+								);
+							},
+						},
+					},
+					{
 						label: "编辑权限分组",
 						key: "edit->" + option.key,
 						props: {
 							onClick: () => {
 								showPermissionGroupModal.value = true;
+								permissionGroupModalEditModeIsUpdate.value =
+									true;
 								let cachePermissionGroup =
 									permissionStore.getCachePermissionGroupById(
 										Number(
@@ -284,11 +303,26 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 			} else {
 				options.value = [
 					{
+						label: "新增权限",
+						key: "add->" + option.key,
+						props: {
+							onClick: () => {
+								showPermissionModal.value = true;
+								permissionModalEditModeIsUpdate.value = false;
+								Object.assign(
+									permissionFormModel,
+									defaultPermissionFormModel
+								);
+							},
+						},
+					},
+					{
 						label: "编辑权限",
 						key: "edit->" + option.key,
 						props: {
 							onClick: () => {
 								showPermissionModal.value = true;
+								permissionModalEditModeIsUpdate.value = true;
 								let cachePermission =
 									permissionStore.getCachePermissionById(
 										option.key as number
@@ -317,11 +351,14 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 		},
 	};
 };
-
+// 是不是编辑模式
+const permissionGroupModalEditModeIsUpdate = ref(true);
 // 是否展示权限分组编辑模态框
 const showPermissionGroupModal = ref(false);
 // 权限分组数据model
 const permissionGroupFormModelRef = ref(permissionGroupFormModel);
+// 是不是编辑模式
+const permissionModalEditModeIsUpdate = ref(true);
 // 是否展示权限编辑模态框
 const showPermissionModal = ref(false);
 // 权限数据model

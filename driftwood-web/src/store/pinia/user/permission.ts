@@ -11,7 +11,11 @@ import {
 	permissionService,
 	PermissionWithId,
 } from "@/api/modules/user/permission";
-import { resolveAxiosResult } from "@/api";
+import { HasId, resolveAxiosResult } from "@/api";
+import {
+	PermissionFormModel,
+	PermissionGroupFormModel,
+} from "@/views/user/permission/data";
 
 const renderPrefix = (isGroup: boolean) => {
 	return h(
@@ -102,6 +106,70 @@ export const usePermissionStore = defineStore("permission", {
 			return resolveAxiosResult(() => permissionService.list(permission));
 		},
 
+		async savePermissionGroup(
+			permissionGroupFormModel: PermissionGroupFormModel
+		) {
+			const newPermissionGroup = await resolveAxiosResult(() =>
+				permissionGroupService.save({
+					name: permissionGroupFormModel.name,
+					description: permissionGroupFormModel.description,
+				})
+			);
+			if (newPermissionGroup) {
+				this.saveCachePermissionGroup(newPermissionGroup);
+			}
+			return newPermissionGroup;
+		},
+
+		async savePermission(permissionFormModel: PermissionFormModel) {
+			const newPermission = await resolveAxiosResult(() =>
+				permissionService.save({
+					name: permissionFormModel.name,
+					authority: permissionFormModel.authority,
+					type: permissionFormModel.type,
+					groupId: permissionFormModel.groupId,
+					description: permissionFormModel.description,
+				})
+			);
+			if (newPermission) {
+				this.saveCachePermission(newPermission);
+			}
+			return newPermission;
+		},
+
+		async updatePermissionGroup(
+			permissionGroupFormModel: PermissionGroupFormModel
+		) {
+			const permissionGroupFormModelWithId =
+				permissionGroupFormModel as PermissionGroupFormModel & HasId;
+			const newPermissionGroup = await resolveAxiosResult(() =>
+				permissionGroupService.update({
+					id: permissionGroupFormModelWithId.id,
+					name: permissionGroupFormModelWithId.name,
+					description: permissionGroupFormModelWithId.description,
+				})
+			);
+			if (newPermissionGroup) {
+				this.updateCachePermissionGroup(newPermissionGroup);
+			}
+			return newPermissionGroup;
+		},
+
+		async updatePermission(permissionFormModel: PermissionFormModel) {
+			const permissionFormModelWithId =
+				permissionFormModel as PermissionFormModel & HasId;
+			const newPermission = await resolveAxiosResult(() =>
+				permissionService.update({
+					id: permissionFormModelWithId.id,
+					name: permissionFormModelWithId.name,
+					authority: permissionFormModelWithId.authority,
+					type: permissionFormModelWithId.type,
+					groupId: permissionFormModelWithId.groupId,
+					description: permissionFormModelWithId.description,
+				})
+			);
+		},
+
 		initCachePermissionGroup(permissionGroupList: PermissionGroupWithId[]) {
 			this.cachePermissionGroupList = [...permissionGroupList];
 		},
@@ -120,6 +188,30 @@ export const usePermissionStore = defineStore("permission", {
 			return this.cachePermissionList.find(
 				(permission) => permission.id === id
 			);
+		},
+
+		saveCachePermissionGroup(permissionGroup: PermissionGroupWithId) {
+			this.cachePermissionGroupList.push(permissionGroup);
+		},
+
+		saveCachePermission(permission: PermissionWithId) {
+			this.cachePermissionList.push(permission);
+		},
+
+		updateCachePermissionGroup(permissionGroup: PermissionGroupWithId) {
+			const existPermissionGroup = this.getCachePermissionGroupById(
+				permissionGroup.id
+			);
+			if (existPermissionGroup) {
+				Object.assign(existPermissionGroup, permissionGroup);
+			}
+		},
+
+		updateCachePermission(permission: PermissionWithId) {
+			const existPermission = this.getCachePermissionById(permission.id);
+			if (existPermission) {
+				Object.assign(existPermission, permission);
+			}
 		},
 	},
 });
