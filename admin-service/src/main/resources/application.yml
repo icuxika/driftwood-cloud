@@ -33,3 +33,21 @@ file:
   local:
     enable: true
     base: /Users/icuxika/temp/driftwood
+
+open:
+  auth:
+    callback-template: callback
+    error-callback-template: errorCallback
+    notification-page: http://localhost:3000/
+    github:
+      client-id: 1
+      client-secret: 2
+    gitee:
+      client-id: 1
+      client-secret: 2
+    wechat-mini:
+      client-id: 1
+      client-secret: 2
+    alipay-mini:
+      client-id: 1
+      client-secret: 2
