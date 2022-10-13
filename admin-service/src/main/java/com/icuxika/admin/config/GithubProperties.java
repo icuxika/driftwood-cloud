@@ -4,6 +4,8 @@ public class GithubProperties {
 
     private String accessTokenUrl = "https://github.com/login/oauth/access_token";
 
+    private String userUrl = "https://api.github.com/user";
+
     private String clientId;
 
     private String clientSecret;
@@ -14,6 +16,14 @@ public class GithubProperties {
 
     public void setAccessTokenUrl(String accessTokenUrl) {
         this.accessTokenUrl = accessTokenUrl;
+    }
+
+    public String getUserUrl() {
+        return userUrl;
+    }
+
+    public void setUserUrl(String userUrl) {
+        this.userUrl = userUrl;
     }
 
     public String getClientId() {

@@ -59,6 +59,20 @@ public class UserController {
         return ApiData.ok(userAuthVO);
     }
 
+    @GetMapping("findByOpenid")
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    public ApiData<UserAuthVO> findByOpenid(@RequestParam("openid") String openid, @RequestParam("type") Integer type, HttpServletRequest request) {
+        UserAuthVO userAuthVO = userService.findByOpenid(openid, type);
+        return ApiData.ok(userAuthVO);
+    }
+
+    @GetMapping("findThirdBindByOpenid")
+    @PreAuthorize("@fvs.isFeign(#request) || hasRole('ADMIN')")
+    public ApiData<Boolean> findThirdBindByOpenid(@RequestParam("openid") String openid, @RequestParam("type") Integer type, HttpServletRequest request) {
+        Boolean result = userService.findThirdBindByOpenid(openid, type);
+        return ApiData.ok(result);
+    }
+
     /**
      * 更新用户最近登录ip地址
      *

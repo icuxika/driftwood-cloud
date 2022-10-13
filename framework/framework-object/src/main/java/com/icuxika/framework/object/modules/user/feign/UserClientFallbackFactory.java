@@ -31,6 +31,18 @@ public class UserClientFallbackFactory implements FallbackFactory<UserClient> {
             }
 
             @Override
+            public ApiData<UserAuthVO> findByOpenid(String openid, Integer type) {
+                L.warn("[findByOpenid]进入fallback");
+                return ApiData.errorMsg("[findByOpenid]进入fallback");
+            }
+
+            @Override
+            public ApiData<Boolean> findThirdBindByOpenid(String openid, Integer type) {
+                L.warn("[findThirdBindByOpenid]进入fallback");
+                return ApiData.errorMsg("[findThirdBindByOpenid]进入fallback");
+            }
+
+            @Override
             public ApiData<Void> updateUserIP(Long userId, String ip) {
                 L.warn("更新用户最近登录ip地址失败");
                 return ApiData.errorMsg("[updateUserIP]进入fallback");

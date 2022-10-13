@@ -106,6 +106,16 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.mizosoft.methanol</groupId>
+            <artifactId>methanol</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.mizosoft.methanol</groupId>
+            <artifactId>methanol-jackson</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

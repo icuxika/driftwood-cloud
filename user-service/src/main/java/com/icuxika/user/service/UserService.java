@@ -17,6 +17,10 @@ public interface UserService {
 
     UserAuthVO findByPhone(String phone);
 
+    UserAuthVO findByOpenid(String openid, Integer type);
+
+    Boolean findThirdBindByOpenid(String openid, Integer type);
+
     void updateUserIP(Long userId, String ip);
 
     UserInfoVO getUserInfo();

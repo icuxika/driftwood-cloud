@@ -16,6 +16,12 @@ public interface UserClient {
     @GetMapping(value = "/user/findByPhone")
     ApiData<UserAuthVO> findByPhone(@RequestParam("phone") String phone);
 
+    @GetMapping("/user/findByOpenid")
+    ApiData<UserAuthVO> findByOpenid(@RequestParam("openid") String openid, @RequestParam("type") Integer type);
+
+    @GetMapping("/user/findThirdBindByOpenid")
+    ApiData<Boolean> findThirdBindByOpenid(@RequestParam("openid") String openid, @RequestParam("type") Integer type);
+
     @PostMapping("/user/updateUserIP")
     ApiData<Void> updateUserIP(@RequestParam("userId") Long userId, @RequestParam("ip") String ip);
 }

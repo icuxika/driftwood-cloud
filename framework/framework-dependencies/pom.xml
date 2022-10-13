@@ -145,6 +145,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.github.mizosoft.methanol</groupId>
+                <artifactId>methanol-jackson</artifactId>
+                <version>${methanol.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.alibaba.csp</groupId>
                 <artifactId>sentinel-logging-slf4j</artifactId>
                 <version>${sentinel-logging-slf4j.version}</version>

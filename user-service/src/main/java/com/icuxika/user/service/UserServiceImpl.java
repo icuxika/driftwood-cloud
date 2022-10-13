@@ -70,9 +70,11 @@ public class UserServiceImpl implements UserService {
 
     private final CriteriaBuilderFactory criteriaBuilderFactory;
 
+    private final UserOpenAuthRepository userOpenAuthRepository;
+
     private static final String USER_AVATAR_FILE_PATH_PREFIX = "user/avatar";
 
-    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory) {
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory, UserOpenAuthRepository userOpenAuthRepository) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
@@ -84,6 +86,7 @@ public class UserServiceImpl implements UserService {
         this.fileClient = fileClient;
         this.entityManager = entityManager;
         this.criteriaBuilderFactory = criteriaBuilderFactory;
+        this.userOpenAuthRepository = userOpenAuthRepository;
     }
 
     @Override
@@ -94,6 +97,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserAuthVO findByPhone(String phone) {
         return userRepository.findByPhone(phone).map(this::buildUserAuthVO).orElse(null);
+    }
+
+    @Override
+    public UserAuthVO findByOpenid(String openid, Integer type) {
+        Optional<UserOpenAuth> userOpenAuthOptional = userOpenAuthRepository.findByOpenidAndType(openid, type);
+        if (userOpenAuthOptional.isEmpty()) return null;
+        UserOpenAuth userOpenAuth = userOpenAuthOptional.get();
+        return userRepository.findById(userOpenAuth.getUserId()).map(this::buildUserAuthVO).orElse(null);
+    }
+
+    @Override
+    public Boolean findThirdBindByOpenid(String openid, Integer type) {
+        return userOpenAuthRepository.findByOpenidAndType(openid, type).isPresent();
     }
 
     @Override
