@@ -18,12 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class FileServiceImpl implements FileService {
-
-    private static final String ADMIN_FILE_PATH_PREFIX = "admin" + File.separator;
 
     @Autowired
     private FileTemplate fileTemplate;
@@ -41,7 +41,7 @@ public class FileServiceImpl implements FileService {
             String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
             // 文件名
             String fileName = SystemConstant.MINIO_BUCKET_NAME + "_" + DigestUtils.md5Hex(file.getInputStream()) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
-            String objectName = ADMIN_FILE_PATH_PREFIX + fileName;
+            String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + File.separator + fileName;
             fileTemplate.putObject(SystemConstant.MINIO_BUCKET_NAME, objectName, inputStream);
 
             AdminFile adminFile = new AdminFile();
