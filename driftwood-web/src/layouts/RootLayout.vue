@@ -7,7 +7,9 @@
 				:date-locale="systemStore.naiveUIDateLocale"
 			>
 				<n-dialog-provider>
-					<router-view />
+					<n-theme-editor>
+						<router-view />
+					</n-theme-editor>
 				</n-dialog-provider>
 			</n-config-provider>
 		</n-notification-provider>

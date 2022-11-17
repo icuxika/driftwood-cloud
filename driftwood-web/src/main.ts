@@ -48,10 +48,12 @@ import {
 	NAvatar,
 	NColorPicker,
 	NUpload,
+	NThemeEditor,
 } from "naive-ui";
 
 const naive = create({
 	components: [
+		NThemeEditor,
 		NColorPicker,
 		NDataTable,
 		NSelect,
