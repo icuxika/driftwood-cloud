@@ -5,6 +5,7 @@ import com.icuxika.admin.entity.AdminFile;
 import com.icuxika.admin.repository.FileRepository;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
+import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.util.FileUtil;
 import com.icuxika.framework.oss.core.FileTemplate;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -51,7 +52,7 @@ public class FileServiceImpl implements FileService {
                 // 文件扩展名
                 String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
                 // 文件名
-                String fileName = SystemConstant.MINIO_BUCKET_NAME + "_" + DigestUtils.md5Hex(md5HexStream) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
+                String fileName = DateUtil.getLocalDateTimeText() + "_" + DigestUtils.md5Hex(md5HexStream) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
                 String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + File.separator + fileName;
                 fileTemplate.putObject(SystemConstant.MINIO_BUCKET_NAME, objectName, fileStream);
 
