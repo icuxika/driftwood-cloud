@@ -15,9 +15,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,27 +31,41 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public Long uploadFile(MultipartFile file) {
-        try (InputStream inputStream = file.getInputStream()) {
-            // 计算文件的SHA-256
-            String fileSha256 = DigestUtils.sha256Hex(file.getInputStream());
-            String originalFilename = file.getOriginalFilename();
-            // 文件扩展名
-            String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
-            // 文件名
-            String fileName = SystemConstant.MINIO_BUCKET_NAME + "_" + DigestUtils.md5Hex(file.getInputStream()) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
-            String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + File.separator + fileName;
-            fileTemplate.putObject(SystemConstant.MINIO_BUCKET_NAME, objectName, inputStream);
+        try (
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                InputStream inputStream = file.getInputStream()
+        ) {
+            final byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > -1) {
+                byteArrayOutputStream.write(buffer, 0, len);
+            }
+            try (
+                    InputStream sha256HexStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                    InputStream md5HexStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+                    InputStream fileStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+            ) {
+                // 计算文件的SHA-256
+                String fileSha256 = DigestUtils.sha256Hex(sha256HexStream);
+                String originalFilename = file.getOriginalFilename();
+                // 文件扩展名
+                String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
+                // 文件名
+                String fileName = SystemConstant.MINIO_BUCKET_NAME + "_" + DigestUtils.md5Hex(md5HexStream) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
+                String objectName = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + File.separator + fileName;
+                fileTemplate.putObject(SystemConstant.MINIO_BUCKET_NAME, objectName, fileStream);
 
-            AdminFile adminFile = new AdminFile();
-            adminFile.setOriginalFilename(originalFilename);
-            adminFile.setBucketName(SystemConstant.MINIO_BUCKET_NAME);
-            adminFile.setFileName(fileName);
-            adminFile.setObjectName(objectName);
-            adminFile.setFileSize(file.getSize());
-            adminFile.setFileExtension(fileExtension);
-            adminFile.setFileSha256(fileSha256);
-            fileRepository.save(adminFile);
-            return adminFile.getId();
+                AdminFile adminFile = new AdminFile();
+                adminFile.setOriginalFilename(originalFilename);
+                adminFile.setBucketName(SystemConstant.MINIO_BUCKET_NAME);
+                adminFile.setFileName(fileName);
+                adminFile.setObjectName(objectName);
+                adminFile.setFileSize(file.getSize());
+                adminFile.setFileExtension(fileExtension);
+                adminFile.setFileSha256(fileSha256);
+                fileRepository.save(adminFile);
+                return adminFile.getId();
+            }
         } catch (IOException e) {
             throw new GlobalServiceException("文件上传失败：" + e.getMessage());
         }
