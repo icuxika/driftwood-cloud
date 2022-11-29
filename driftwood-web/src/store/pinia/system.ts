@@ -1,18 +1,18 @@
 import { defineStore } from "pinia";
-import { BuiltInGlobalTheme } from "naive-ui/es/themes/interface";
-import { lightTheme } from "naive-ui";
 import {
+	GlobalTheme,
+	lightTheme,
 	darkTheme,
-	dateEnUS,
-	dateZhCN,
-	enUS,
-	NDateLocale,
-	NLocale,
 	zhCN,
+	enUS,
+	dateZhCN,
+	dateEnUS,
+	NLocale,
+	NDateLocale,
 } from "naive-ui";
 
 interface SystemState {
-	naiveUITheme: BuiltInGlobalTheme;
+	naiveUITheme: GlobalTheme;
 	naiveUILocale: NLocale;
 	naiveUIDateLocale: NDateLocale;
 }
