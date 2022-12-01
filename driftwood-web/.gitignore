@@ -13,5 +13,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Yarn error
+# Yarn
+yarn.lock
 yarn-error.log
