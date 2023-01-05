@@ -9,8 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FeignClient(value = "framework-service-minio", contextId = "fileClient", fallbackFactory = FileClientFallbackFactory.class)
-public interface FileClient {
+@FeignClient(value = "framework-service-minio", contextId = "minioFileClient", fallbackFactory = MinioFileClientFallbackFactory.class)
+public interface MinioFileClient {
 
     @PostMapping(value = "/file/uploadFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     ApiData<MinioFileVO> uploadFile(@RequestPart("file") MultipartFile file, @RequestParam("path") String path);

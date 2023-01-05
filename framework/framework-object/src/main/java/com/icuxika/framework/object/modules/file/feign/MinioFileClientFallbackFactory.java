@@ -11,16 +11,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Component
-public class FileClientFallbackFactory implements FallbackFactory<FileClient> {
+public class MinioFileClientFallbackFactory implements FallbackFactory<MinioFileClient> {
 
-    private static final Logger L = LoggerFactory.getLogger(FileClientFallbackFactory.class);
+    private static final Logger L = LoggerFactory.getLogger(MinioFileClientFallbackFactory.class);
 
     @Override
-    public FileClient create(Throwable cause) {
+    public MinioFileClient create(Throwable cause) {
 
         L.error(cause.getMessage());
 
-        return new FileClient() {
+        return new MinioFileClient() {
             @Override
             public ApiData<MinioFileVO> uploadFile(MultipartFile file, String path) {
                 return ApiData.errorMsg("上传文件出错");

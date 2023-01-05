@@ -23,6 +23,9 @@ public class UserProfile extends BaseEntity {
     @Column(name = "avatar", nullable = true)
     private String avatar;
 
+    @Column(name = "avatar_file_id", nullable = true)
+    private Long avatarFileId;
+
     /**
      * 国家
      */
@@ -103,6 +106,14 @@ public class UserProfile extends BaseEntity {
 
     public void setAvatar(String avatar) {
         this.avatar = avatar;
+    }
+
+    public Long getAvatarFileId() {
+        return avatarFileId;
+    }
+
+    public void setAvatarFileId(Long avatarFileId) {
+        this.avatarFileId = avatarFileId;
     }
 
     public String getNation() {

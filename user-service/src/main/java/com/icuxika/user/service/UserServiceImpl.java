@@ -5,8 +5,8 @@ import com.blazebit.persistence.querydsl.BlazeJPAQuery;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
-import com.icuxika.framework.object.modules.file.feign.FileClient;
-import com.icuxika.framework.object.modules.file.vo.MinioFileVO;
+import com.icuxika.framework.object.modules.admin.feign.AdminFileClient;
+import com.icuxika.framework.object.modules.file.feign.MinioFileClient;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 
     private final MenuRepository menuRepository;
 
-    private final FileClient fileClient;
+    private final AdminFileClient adminFileClient;
 
     private final EntityManager entityManager;
 
@@ -72,9 +72,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserOpenAuthRepository userOpenAuthRepository;
 
-    private static final String USER_AVATAR_FILE_PATH_PREFIX = "user/avatar";
-
-    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, FileClient fileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory, UserOpenAuthRepository userOpenAuthRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, MinioFileClient minioFileClient, AdminFileClient adminFileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory, UserOpenAuthRepository userOpenAuthRepository) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
@@ -83,7 +81,7 @@ public class UserServiceImpl implements UserService {
         this.permissionRepository = permissionRepository;
         this.menuPermissionRepository = menuPermissionRepository;
         this.menuRepository = menuRepository;
-        this.fileClient = fileClient;
+        this.adminFileClient = adminFileClient;
         this.entityManager = entityManager;
         this.criteriaBuilderFactory = criteriaBuilderFactory;
         this.userOpenAuthRepository = userOpenAuthRepository;
@@ -256,13 +254,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void uploadAvatar(MultipartFile file) {
-        ApiData<MinioFileVO> minioFileVOApiData = fileClient.uploadFile(file, USER_AVATAR_FILE_PATH_PREFIX);
+        ApiData<Long> minioFileVOApiData = adminFileClient.uploadFile(file);
         if (!minioFileVOApiData.isSuccess()) {
             throw new GlobalServiceException("头像上传失败");
         }
-        MinioFileVO minioFileVO = minioFileVOApiData.getData();
         userProfileRepository.findByUserId(SecurityUtil.getUserId()).ifPresent(userProfile -> {
-            userProfile.setAvatar(minioFileVO.getFullPath());
+            userProfile.setAvatarFileId(minioFileVOApiData.getData());
             userProfileRepository.save(userProfile);
         });
     }
