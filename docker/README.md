@@ -21,8 +21,10 @@ networks:
 | 控制台                | 端口   | 
 |--------------------|------|
 | sentinel-dashboard | 8899 |
+| nginx              | 8880 |
 | rocketmq-dashboard | 8882 |
 | xxl-job-admin      | 8883 |
+| minio              | 8884 |
 
 # 服务补充说明
 
