@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data/namesrv/logs:/home/rocketmq/logs
     command: sh mqnamesrv
+
   broker:
     image: apacherocketmq/rocketmq:${ROCKETMQ_VERSION}
     container_name: rmqbroker
@@ -24,6 +25,7 @@ services:
     command: sh mqbroker -n namesrv:9876 -c ../conf/broker.conf
     depends_on:
       - namesrv
+
   rocketmq-dashboard:
     image: apacherocketmq/rocketmq-dashboard:1.0.0
     container_name: rocketmq-dashboard

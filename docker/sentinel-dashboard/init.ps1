@@ -1,0 +1,2 @@
+param ($SentinelVersion)
+Invoke-WebRequest "https://github.com/alibaba/Sentinel/releases/download/${SentinelVersion}/sentinel-dashboard-${SentinelVersion}.jar" -OutFile "sentinel-dashboard-${SentinelVersion}.jar"

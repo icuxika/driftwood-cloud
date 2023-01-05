@@ -1,0 +1,1 @@
+wget -O "sentinel-dashboard-$1.jar" "https://github.com/alibaba/Sentinel/releases/download/$1/sentinel-dashboard-$1.jar"
