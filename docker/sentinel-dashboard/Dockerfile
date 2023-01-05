@@ -1,5 +1,5 @@
 FROM openjdk:17-alpine
-LABEL MAINTAINER icuxika@outlook.com
+LABEL MAINTAINER=icuxika@outlook.com
 
 ENV TZ=Asia/Shanghai
 
