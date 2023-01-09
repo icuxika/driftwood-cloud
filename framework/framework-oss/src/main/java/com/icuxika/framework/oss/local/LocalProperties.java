@@ -1,8 +1,5 @@
 package com.icuxika.framework.oss.local;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-@ConfigurationProperties(prefix = "local")
 public class LocalProperties {
 
     private Boolean enable;

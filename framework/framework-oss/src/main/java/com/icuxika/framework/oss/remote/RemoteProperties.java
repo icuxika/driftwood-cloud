@@ -1,8 +1,5 @@
 package com.icuxika.framework.oss.remote;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-@ConfigurationProperties(prefix = "remote")
 public class RemoteProperties {
     private Boolean enable;
     private String endpoint;
