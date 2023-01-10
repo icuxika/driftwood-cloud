@@ -4,6 +4,8 @@ public class GiteeProperties {
 
     private String accessTokenUrl = "https://gitee.com/oauth/token";
 
+    private String userUrl = "https://gitee.com/api/v5/user";
+
     private String clientId;
 
     private String clientSecret;
@@ -14,6 +16,14 @@ public class GiteeProperties {
 
     public void setAccessTokenUrl(String accessTokenUrl) {
         this.accessTokenUrl = accessTokenUrl;
+    }
+
+    public String getUserUrl() {
+        return userUrl;
+    }
+
+    public void setUserUrl(String userUrl) {
+        this.userUrl = userUrl;
     }
 
     public String getClientId() {

@@ -4,6 +4,8 @@ import com.github.mizosoft.methanol.Methanol;
 import com.github.mizosoft.methanol.MoreBodyHandlers;
 import com.github.mizosoft.methanol.MutableRequest;
 import com.icuxika.admin.config.OpenAuthProperties;
+import com.icuxika.admin.vo.GiteeAccessToken;
+import com.icuxika.admin.vo.GiteeUser;
 import com.icuxika.admin.vo.GithubAccessToken;
 import com.icuxika.admin.vo.GithubUser;
 import com.icuxika.framework.basic.common.ApiData;
@@ -52,7 +54,8 @@ public class ThirdAuthController {
                 openAuthProperties.getGithub().getAccessTokenUrl() +
                         "?client_id=" + openAuthProperties.getGithub().getClientId() +
                         "&client_secret=" + openAuthProperties.getGithub().getClientSecret() +
-                        "&code=" + code, HttpRequest.BodyPublishers.noBody()
+                        "&code=" + code +
+                        "&redirect_uri=http://127.0.0.1:8900/admin/third/auth/github/callback", HttpRequest.BodyPublishers.noBody()
         ).header("Accept", "application/json");
         try {
             var tokenResponse = client.send(request, MoreBodyHandlers.ofObject(GithubAccessToken.class));
@@ -85,11 +88,42 @@ public class ThirdAuthController {
         }
     }
 
+    @Anonymous
     @ApiReturn(disable = true)
     @RequestMapping("/gitee/callback")
     public String callbackForGitee(String code) {
         Context context = new Context();
-        return templateEngine.process(openAuthProperties.getErrorCallbackTemplate(), context);
+        var client = Methanol.create();
+        var request = MutableRequest.POST(
+                openAuthProperties.getGitee().getAccessTokenUrl() +
+                        "?grant_type=authorization_code" +
+                        "&client_id=" + openAuthProperties.getGitee().getClientId() +
+                        "&client_secret=" + openAuthProperties.getGitee().getClientSecret() +
+                        "&code=" + code +
+                        "&redirect_uri=http://127.0.0.1:8900/admin/third/auth/gitee/callback", HttpRequest.BodyPublishers.noBody()
+        );
+        try {
+            var tokenResponse = client.send(request, MoreBodyHandlers.ofObject(GiteeAccessToken.class));
+            GiteeAccessToken giteeAccessToken = tokenResponse.body();
+
+            request = MutableRequest.GET(openAuthProperties.getGitee().getUserUrl() + "?access_token=" + giteeAccessToken.getAccessToken());
+            var userResponse = client.send(request, MoreBodyHandlers.ofObject(GiteeUser.class));
+            GiteeUser giteeUser = userResponse.body();
+            ApiData<Boolean> isBoundApiData = userClient.findThirdBindByOpenid(giteeUser.getId(), OpenAuthType.GITEE.getCode());
+            if (isBoundApiData.isSuccess()) {
+                // 此openid是否已经绑定用户
+                boolean isBound = isBoundApiData.getData();
+                String openIdKey = DateUtil.getLocalDateTimeText() + "-" + UUID.randomUUID();
+                redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_OPENID, openIdKey, giteeUser.getId());
+                context.setVariable("message", OpenAuthType.GITEE.getCode() + "|" + isBound + "|" + openIdKey);
+                context.setVariable("notificationPage", openAuthProperties.getNotificationPage());
+                return templateEngine.process(openAuthProperties.getCallbackTemplate(), context);
+            } else {
+                return templateEngine.process(openAuthProperties.getErrorCallbackTemplate(), context);
+            }
+        } catch (IOException | InterruptedException e) {
+            return templateEngine.process(openAuthProperties.getErrorCallbackTemplate(), context);
+        }
     }
 
     @ApiReturn(disable = true)

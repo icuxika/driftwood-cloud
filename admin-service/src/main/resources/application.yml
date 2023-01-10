@@ -43,8 +43,8 @@ open:
       client-id: 4efe670ba6206abdf3ad
       client-secret: a4dd39dfa16526b536bbde457d7139a2cfbfdab7
     gitee:
-      client-id: 1
-      client-secret: 2
+      client-id: 6f4427cc93279d39b0c8334c99534ee21f7053aef3bc9c9f678004e6ece840a3
+      client-secret: 2f013b690a3d5db1edfd504be1a102afa9f4d49a46acb80a8a048a50b6663896
     wechat-mini:
       client-id: 1
       client-secret: 2
