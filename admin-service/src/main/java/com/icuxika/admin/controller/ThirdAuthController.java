@@ -27,6 +27,7 @@ import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/third/auth")
@@ -76,7 +77,7 @@ public class ThirdAuthController {
                 //  2.1、已绑定，提示冲突，要先去解绑
                 //  2.2、未绑定，成功绑定
                 String openIdKey = DateUtil.getLocalDateTimeText() + "-" + UUID.randomUUID();
-                redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_OPENID, openIdKey, githubUser.getId());
+                redisTemplate.opsForValue().set(SystemConstant.REDIS_OAUTH2_OPENID + ":" + openIdKey, githubUser.getId(), 1, TimeUnit.MINUTES);
                 context.setVariable("message", OpenAuthType.GITHUB.getCode() + "|" + isBound + "|" + openIdKey);
                 context.setVariable("notificationPage", openAuthProperties.getNotificationPage());
                 return templateEngine.process(openAuthProperties.getCallbackTemplate(), context);
@@ -114,7 +115,7 @@ public class ThirdAuthController {
                 // 此openid是否已经绑定用户
                 boolean isBound = isBoundApiData.getData();
                 String openIdKey = DateUtil.getLocalDateTimeText() + "-" + UUID.randomUUID();
-                redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_OPENID, openIdKey, giteeUser.getId());
+                redisTemplate.opsForValue().set(SystemConstant.REDIS_OAUTH2_OPENID + ":" + openIdKey, giteeUser.getId(), 1, TimeUnit.MINUTES);
                 context.setVariable("message", OpenAuthType.GITEE.getCode() + "|" + isBound + "|" + openIdKey);
                 context.setVariable("notificationPage", openAuthProperties.getNotificationPage());
                 return templateEngine.process(openAuthProperties.getCallbackTemplate(), context);
