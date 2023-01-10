@@ -10,6 +10,8 @@ public class GiteeProperties {
 
     private String clientSecret;
 
+    private String redirectUri;
+
     public String getAccessTokenUrl() {
         return accessTokenUrl;
     }
@@ -40,5 +42,13 @@ public class GiteeProperties {
 
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    public String getRedirectUri() {
+        return redirectUri;
+    }
+
+    public void setRedirectUri(String redirectUri) {
+        this.redirectUri = redirectUri;
     }
 }

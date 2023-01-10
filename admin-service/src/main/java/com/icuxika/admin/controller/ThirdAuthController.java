@@ -56,7 +56,7 @@ public class ThirdAuthController {
                         "?client_id=" + openAuthProperties.getGithub().getClientId() +
                         "&client_secret=" + openAuthProperties.getGithub().getClientSecret() +
                         "&code=" + code +
-                        "&redirect_uri=http://127.0.0.1:8900/admin/third/auth/github/callback", HttpRequest.BodyPublishers.noBody()
+                        "&redirect_uri=" + openAuthProperties.getGithub().getRedirectUri(), HttpRequest.BodyPublishers.noBody()
         ).header("Accept", "application/json");
         try {
             var tokenResponse = client.send(request, MoreBodyHandlers.ofObject(GithubAccessToken.class));
@@ -101,7 +101,7 @@ public class ThirdAuthController {
                         "&client_id=" + openAuthProperties.getGitee().getClientId() +
                         "&client_secret=" + openAuthProperties.getGitee().getClientSecret() +
                         "&code=" + code +
-                        "&redirect_uri=http://127.0.0.1:8900/admin/third/auth/gitee/callback", HttpRequest.BodyPublishers.noBody()
+                        "&redirect_uri=" + openAuthProperties.getGitee().getRedirectUri(), HttpRequest.BodyPublishers.noBody()
         );
         try {
             var tokenResponse = client.send(request, MoreBodyHandlers.ofObject(GiteeAccessToken.class));
