@@ -31,11 +31,6 @@ public class SystemConstant {
     public static final String WEBSOCKET_QUERY_PARAMS_KEY = "token";
 
     /**
-     * 存储用户不同设备当前激活的AccessToken
-     */
-    public final static String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
-
-    /**
      * 生成token时携带的信息：用户权限
      */
     public final static String OAUTH2_JWT_CLAIM_KEY_AUTHORITIES = "authorities";
@@ -56,7 +51,17 @@ public class SystemConstant {
     public final static String MINIO_BUCKET_NAME = "driftwood";
 
     /**
+     * 存储用户不同设备当前激活的AccessToken
+     */
+    public final static String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
+
+    /**
      * 缓存用户登录时请求的验证码
      */
     public final static String REDIS_OAUTH2_PHONE_CODE = "DRIFTWOOD:OAUTH2:PHONE_CODE";
+
+    /**
+     * 缓存用户第三方登录时获取到的openid
+     */
+    public final static String REDIS_OAUTH2_OPENID = "DRIFTWOOD:OAUTH2:OPENID";
 }

@@ -38,10 +38,10 @@ open:
   auth:
     callback-template: callback
     error-callback-template: errorCallback
-    notification-page: http://localhost:3000/
+    notification-page: http://127.0.0.1:3000/
     github:
-      client-id: 1
-      client-secret: 2
+      client-id: 4efe670ba6206abdf3ad
+      client-secret: a4dd39dfa16526b536bbde457d7139a2cfbfdab7
     gitee:
       client-id: 1
       client-secret: 2

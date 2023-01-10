@@ -7,10 +7,14 @@ import com.icuxika.admin.config.OpenAuthProperties;
 import com.icuxika.admin.vo.GithubAccessToken;
 import com.icuxika.admin.vo.GithubUser;
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.dict.OpenAuthType;
+import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.annotation.ApiReturn;
 import com.icuxika.framework.object.modules.user.feign.UserClient;
+import com.icuxika.framework.security.annotation.Anonymous;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.TemplateEngine;
@@ -20,6 +24,7 @@ import java.io.IOException;
 import java.net.http.HttpRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/third/auth")
@@ -34,6 +39,10 @@ public class ThirdAuthController {
     @Autowired
     private UserClient userClient;
 
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    @Anonymous
     @ApiReturn(disable = true)
     @RequestMapping("/github/callback")
     public String callbackForGithub(String code) {
@@ -55,6 +64,7 @@ public class ThirdAuthController {
             GithubUser githubUser = userResponse.body();
             ApiData<Boolean> isBoundApiData = userClient.findThirdBindByOpenid(githubUser.getId(), OpenAuthType.GITHUB.getCode());
             if (isBoundApiData.isSuccess()) {
+                // 此openid是否已经绑定用户
                 boolean isBound = isBoundApiData.getData();
                 // 1、登录
                 //  1.1、已绑定，直接登录
@@ -62,9 +72,10 @@ public class ThirdAuthController {
                 // 2、已登录进行绑定
                 //  2.1、已绑定，提示冲突，要先去解绑
                 //  2.2、未绑定，成功绑定
-                if (isBound) {
-                } else {
-                }
+                String openIdKey = DateUtil.getLocalDateTimeText() + "-" + UUID.randomUUID();
+                redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_OPENID, openIdKey, githubUser.getId());
+                context.setVariable("message", OpenAuthType.GITHUB.getCode() + "|" + isBound + "|" + openIdKey);
+                context.setVariable("notificationPage", openAuthProperties.getNotificationPage());
                 return templateEngine.process(openAuthProperties.getCallbackTemplate(), context);
             } else {
                 return templateEngine.process(openAuthProperties.getErrorCallbackTemplate(), context);

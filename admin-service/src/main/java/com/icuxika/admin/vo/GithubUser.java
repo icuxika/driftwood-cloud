@@ -1,7 +1,9 @@
 package com.icuxika.admin.vo;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GithubUser {
 
     private String login;
