@@ -30,6 +30,10 @@ public class FeignRequestInterceptor implements RequestInterceptor {
             if (StringUtils.hasText(request.getHeader(PROXY_HEADER_X_FORWARDED_FOR))) {
                 requestTemplate.header(PROXY_HEADER_X_FORWARDED_FOR, request.getHeader(PROXY_HEADER_X_FORWARDED_FOR));
             }
+            // tenantId
+            if (StringUtils.hasText(request.getHeader(SystemConstant.TENANT_ID_REQUEST_HEADER_KEY))) {
+                requestTemplate.header(SystemConstant.TENANT_ID_REQUEST_HEADER_KEY, request.getHeader(SystemConstant.TENANT_ID_REQUEST_HEADER_KEY));
+            }
         }
         requestTemplate.header(SystemConstant.FEIGN_REQUEST_HEADER_KEY, SystemConstant.FEIGN_REQUEST_HEADER_VALUE);
     }

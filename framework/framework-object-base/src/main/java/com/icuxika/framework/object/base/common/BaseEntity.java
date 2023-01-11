@@ -1,6 +1,7 @@
 package com.icuxika.framework.object.base.common;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -54,7 +55,7 @@ public class BaseEntity {
      * Hibernate6 支持了基于列的多租户功能，目前需要等待Spring Data JPA升级到Hibernate 6版本
      * <a href="https://in.relation.to/2021/12/18/orm-600-beta3/">Hibernate ORM 6.0.0.Beta3 released</a>
      */
-    @Column()
+    @TenantId
     private String tenantId;
 
     public Long getId() {

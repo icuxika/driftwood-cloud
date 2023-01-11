@@ -31,6 +31,11 @@ public class SystemConstant {
     public static final String WEBSOCKET_QUERY_PARAMS_KEY = "token";
 
     /**
+     * tenantId 请求头key
+     */
+    public static final String TENANT_ID_REQUEST_HEADER_KEY = "tenant-id";
+
+    /**
      * 生成token时携带的信息：用户权限
      */
     public final static String OAUTH2_JWT_CLAIM_KEY_AUTHORITIES = "authorities";
@@ -64,4 +69,9 @@ public class SystemConstant {
      * 缓存用户第三方登录时获取到的openid
      */
     public final static String REDIS_OAUTH2_OPENID = "DRIFTWOOD:OAUTH2:OPENID";
+
+    /**
+     * 默认租户
+     */
+    public final static String DEFAULT_TENANT_ID = "driftwood";
 }
