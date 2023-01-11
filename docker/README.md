@@ -22,9 +22,9 @@ networks:
 |--------------------|------|
 | sentinel-dashboard | 8899 |
 | nginx              | 8880 |
+| minio              | 8881 |
 | rocketmq-dashboard | 8882 |
 | xxl-job-admin      | 8883 |
-| minio              | 8884 |
 
 # 服务补充说明
 

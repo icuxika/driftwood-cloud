@@ -120,8 +120,8 @@ graph TD;
 | gateway                     | 8900 |
 | authorization-server        | 8901 |
 | admin-service               | 8902 |
-| user-service                | 8904 |
-| framework-service-flowable  | 8906 |
+| user-service                | 8903 |
 | framework-service-websocket | 8910 |
 | framework-service-job       | 8911 |
 | framework-service-minio     | 8912 |
+| framework-service-flowable  | 8913 |

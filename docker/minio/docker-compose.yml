@@ -7,7 +7,7 @@ services:
     restart: always
     ports:
       - "9001:9001"
-      - "8884:9000"
+      - "8881:9000"
     environment:
       - MINIO_ROOT_USER=${ROOT_USERNAME}
       - MINIO_ROOT_PASSWORD=${ROOT_PASSWORD}

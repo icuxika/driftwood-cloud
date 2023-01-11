@@ -38,17 +38,14 @@
     </properties>
 
     <modules>
-        <module>framework</module>
-        <module>framework-service</module>
-        <module>nacos-config</module>
-        <module>service-consumer</module>
-        <module>gateway</module>
-        <module>authorization-server</module>
-        <module>user-service</module>
         <module>admin-service</module>
-        <module>seata-service</module>
-        <module>framework-extension</module>
+        <module>authorization-server</module>
         <module>everything</module>
+        <module>framework</module>
+        <module>framework-extension</module>
+        <module>framework-service</module>
+        <module>gateway</module>
+        <module>user-service</module>
     </modules>
 
     <dependencyManagement>
