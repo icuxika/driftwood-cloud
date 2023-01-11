@@ -1,9 +1,8 @@
 package com.icuxika.framework.security.config;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-
-import javax.servlet.http.HttpServletRequest;
 
 public class AuthorizeRequestMatcher implements RequestMatcher {
 

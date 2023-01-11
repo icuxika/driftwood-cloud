@@ -1,9 +1,8 @@
 package com.icuxika.framework.security.feign;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Component(value = "fvs")
 public class FeignVerifyService {

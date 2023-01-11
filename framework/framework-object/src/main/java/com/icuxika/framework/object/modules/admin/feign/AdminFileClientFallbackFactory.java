@@ -1,13 +1,12 @@
 package com.icuxika.framework.object.modules.admin.feign;
 
 import com.icuxika.framework.basic.common.ApiData;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFileClient> {

@@ -2,6 +2,7 @@ package com.icuxika.framework.service.websocket.config;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.security.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -12,7 +13,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Map;
 

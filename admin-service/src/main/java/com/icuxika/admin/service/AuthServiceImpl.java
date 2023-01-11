@@ -47,14 +47,14 @@ public class AuthServiceImpl implements AuthService {
         ResponseEntity<TokenResponse> tokenResponseResponseEntity;
         switch (supportGrantType) {
             case PASSWORD -> tokenResponseResponseEntity = authClient.tokenByPassword(
-                    buildHeaders("id_password", "secret"),
+                    buildHeaders("id_password", "secret3"),
                     SupportGrantType.PASSWORD.getType(),
                     loginDTO.getIdentifier(),
                     loginDTO.getCredentials(),
                     loginDTO.getClientType()
             );
             case PHONE -> tokenResponseResponseEntity = authClient.tokenByPhone(
-                    buildHeaders("id_phone", "secret"),
+                    buildHeaders("id_phone", "secret4"),
                     SupportGrantType.PHONE.getType(),
                     loginDTO.getIdentifier(),
                     loginDTO.getCredentials(),

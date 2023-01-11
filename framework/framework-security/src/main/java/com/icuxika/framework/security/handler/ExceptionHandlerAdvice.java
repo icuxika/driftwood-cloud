@@ -4,6 +4,7 @@ import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.common.ApiStatusCode;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.security.config.AccessDeniedHandlerImpl;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.validation.ConstraintViolationException;
 import java.text.MessageFormat;
 import java.util.Map;
 import java.util.stream.Collectors;

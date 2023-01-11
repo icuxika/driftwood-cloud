@@ -30,8 +30,8 @@ public class FrameworkResourceServerConfig {
                 .csrf().disable()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
                         // flowable-ui -> modeler
-                        .antMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
-                        .antMatchers(anonymousPathList.toArray(new String[0])).permitAll()
+                        .requestMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
+                        .requestMatchers(anonymousPathList.toArray(new String[0])).permitAll()
                         .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
                         .anyRequest().authenticated()
                 )

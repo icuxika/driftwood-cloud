@@ -1,10 +1,9 @@
 package com.icuxika.framework.object.modules.user.entity;
 
 import com.icuxika.framework.object.base.common.BaseEntity;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Table(name = "role_permission")
 @Entity

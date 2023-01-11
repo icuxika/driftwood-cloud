@@ -1,23 +1,24 @@
 package com.icuxika.framework.object.base.common;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+
 import java.time.LocalDateTime;
 
 @MappedSuperclass
 public class DeletableEntity extends BaseEntity {
 
-    @Column(name = "deleted", nullable = false, insertable = false, columnDefinition = "int default 0")
-    private Integer deleted;
+    @Column(name = "deleted", nullable = false, insertable = false, columnDefinition = "bigint default 0")
+    private Long deleted;
 
     @Column()
     private LocalDateTime deleteTime;
 
-    public Integer getDeleted() {
+    public Long getDeleted() {
         return deleted;
     }
 
-    public void setDeleted(Integer deleted) {
+    public void setDeleted(Long deleted) {
         this.deleted = deleted;
     }
 

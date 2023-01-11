@@ -3,12 +3,11 @@ package com.icuxika.framework.config.feign;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Component
 public class FeignRequestInterceptor implements RequestInterceptor {

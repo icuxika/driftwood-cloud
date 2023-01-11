@@ -9,6 +9,7 @@ import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
 import com.icuxika.framework.object.modules.user.vo.UserVO;
 import com.icuxika.user.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -18,7 +19,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;

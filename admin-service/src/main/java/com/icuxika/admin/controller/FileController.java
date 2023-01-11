@@ -2,11 +2,10 @@ package com.icuxika.admin.controller;
 
 import com.icuxika.admin.service.FileService;
 import com.icuxika.framework.basic.common.ApiData;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/file")

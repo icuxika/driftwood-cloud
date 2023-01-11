@@ -1,10 +1,10 @@
 package com.icuxika.framework.object.modules.user.entity;
 
 import com.icuxika.framework.object.base.common.BaseEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Table(name = "user_profile")

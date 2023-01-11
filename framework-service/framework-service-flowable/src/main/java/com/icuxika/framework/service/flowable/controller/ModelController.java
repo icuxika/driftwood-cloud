@@ -4,6 +4,7 @@ import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.transfer.flowable.vo.ModelVO;
 import com.icuxika.framework.security.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.flowable.bpmn.converter.BpmnXMLConverter;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.engine.RepositoryService;
@@ -12,7 +13,6 @@ import org.flowable.engine.repository.DeploymentBuilder;
 import org.flowable.ui.common.util.XmlUtil;
 import org.flowable.ui.modeler.domain.AbstractModel;
 import org.flowable.ui.modeler.domain.Model;
-import org.flowable.ui.modeler.model.ModelRepresentation;
 import org.flowable.ui.modeler.repository.ModelRepository;
 import org.flowable.ui.modeler.service.FlowableModelQueryService;
 import org.flowable.ui.modeler.serviceapi.ModelService;
@@ -24,7 +24,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import java.io.IOException;
@@ -150,10 +149,12 @@ public class ModelController {
             }
         }
 
+        // TODO 等待UI适配 Spring Boot 3
         // 调用 Flowable 独立的方式存储模型到 ACT_DE_MODEL，此处与 Flowable Modeler 新建与更新模型都不会存储 tenant id
-        ModelRepresentation modelRepresentation = modelQueryService.importProcessModel(request, file);
+//        ModelRepresentation modelRepresentation = modelQueryService.importProcessModel(request, file);
         // 从部署开始的操作应根据项目是否需要多租户功能而考虑设置存储 tenant id 信息
-        return deployModelByModelId(modelRepresentation.getId());
+//        return deployModelByModelId(modelRepresentation.getId());
+        return null;
     }
 
     /**

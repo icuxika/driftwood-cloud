@@ -8,6 +8,7 @@ import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.util.FileUtil;
 import com.icuxika.framework.oss.core.FileTemplate;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.concurrent.ThreadLocalRandom;
 

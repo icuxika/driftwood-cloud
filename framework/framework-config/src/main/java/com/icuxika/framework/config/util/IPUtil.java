@@ -1,6 +1,6 @@
 package com.icuxika.framework.config.util;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 public class IPUtil {
 

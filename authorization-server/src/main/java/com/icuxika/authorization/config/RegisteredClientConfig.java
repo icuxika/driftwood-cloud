@@ -8,8 +8,8 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.config.TokenSettings;
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class RegisteredClientConfig {
 
         RegisteredClient authorizationCodeRegisteredClient = RegisteredClient.withId("1")
                 .clientId("id_authorization_code")
-                .clientSecret("{noop}secret")
+                .clientSecret("{noop}secret1")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -33,7 +33,7 @@ public class RegisteredClientConfig {
                 .build();
         RegisteredClient clientCredentialsRegisteredClient = RegisteredClient.withId("2")
                 .clientId("id_client_credentials")
-                .clientSecret("{noop}secret")
+                .clientSecret("{noop}secret2")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -42,7 +42,7 @@ public class RegisteredClientConfig {
                 .build();
         RegisteredClient passwordRegisteredClient = RegisteredClient.withId("3")
                 .clientId("id_password")
-                .clientSecret("{noop}secret")
+                .clientSecret("{noop}secret3")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.PASSWORD)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
@@ -50,7 +50,7 @@ public class RegisteredClientConfig {
                 .build();
         RegisteredClient phoneRegisteredClient = RegisteredClient.withId("4")
                 .clientId("id_phone")
-                .clientSecret("{noop}secret")
+                .clientSecret("{noop}secret4")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(new AuthorizationGrantType("phone"))
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)

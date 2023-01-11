@@ -12,7 +12,7 @@
     <description>framework-service-flowable</description>
 
     <properties>
-        <flowable.version>6.7.2</flowable.version>
+        <flowable.version>7.0.0.M1</flowable.version>
     </properties>
 
     <dependencies>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>org.flowable</groupId>
             <artifactId>flowable-spring-boot-starter-ui-modeler</artifactId>
-            <version>${flowable.version}</version>
+            <version>6.8.0</version>
         </dependency>
     </dependencies>
 

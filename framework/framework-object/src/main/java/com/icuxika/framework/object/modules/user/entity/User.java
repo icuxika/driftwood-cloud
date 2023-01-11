@@ -1,11 +1,10 @@
 package com.icuxika.framework.object.modules.user.entity;
 
 import com.icuxika.framework.object.base.common.DeletableEntity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Table(name = "user")
 @Entity

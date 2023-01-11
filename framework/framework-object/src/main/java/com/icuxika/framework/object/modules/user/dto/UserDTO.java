@@ -2,9 +2,9 @@ package com.icuxika.framework.object.modules.user.dto;
 
 import com.icuxika.framework.object.base.common.validation.Gender;
 import com.icuxika.framework.object.base.common.validation.Phone;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 
 public class UserDTO {

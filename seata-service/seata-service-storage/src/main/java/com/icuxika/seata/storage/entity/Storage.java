@@ -1,6 +1,7 @@
 package com.icuxika.seata.storage.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Table(name = "t_storage")
