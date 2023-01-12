@@ -8,9 +8,12 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: ${NACOS_HOST:driftwood-cloud}:${NACOS_PORT:8848}
+        server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
+    openfeign:
+      circuitbreaker:
+        enabled: true
 
   config:
     import:
@@ -33,14 +36,6 @@ logging:
     com.icuxika.framework.object.modules.user.feign.UserClient: DEBUG
 
 feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 5000
-        loggerLevel: full
-  circuitbreaker:
-    enabled: true
   sentinel:
     enabled: false
     default-rule: default
