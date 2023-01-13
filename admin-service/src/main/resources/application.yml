@@ -11,41 +11,9 @@ spring:
         server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
-    openfeign:
-      circuitbreaker:
-        enabled: true
 
   config:
     import:
       - nacos:application-@profiles.active@.yml?refreshEnabled=false
       - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
       - nacos:resource-server.yml?refreshEnabled=false
-
-logging:
-  level:
-    com.alibaba.nacos.client.*: ERROR
-
-file:
-  local:
-    enable: true
-    base: /Users/icuxika/temp/driftwood
-
-open:
-  auth:
-    callback-template: callback
-    error-callback-template: errorCallback
-    notification-page: http://127.0.0.1:3000/
-    github:
-      client-id: 4efe670ba6206abdf3ad
-      client-secret: a4dd39dfa16526b536bbde457d7139a2cfbfdab7
-      redirect-uri: http://127.0.0.1:8900/admin/third/auth/github/callback
-    gitee:
-      client-id: 6f4427cc93279d39b0c8334c99534ee21f7053aef3bc9c9f678004e6ece840a3
-      client-secret: 2f013b690a3d5db1edfd504be1a102afa9f4d49a46acb80a8a048a50b6663896
-      redirect-uri: http://127.0.0.1:8900/admin/third/auth/gitee/callback
-    wechat-mini:
-      client-id: 1
-      client-secret: 2
-    alipay-mini:
-      client-id: 1
-      client-secret: 2
