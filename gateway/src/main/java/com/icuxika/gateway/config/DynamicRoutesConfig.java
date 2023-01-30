@@ -39,9 +39,13 @@ public class DynamicRoutesConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         ConfigService configService = nacosConfigManager.getConfigService();
         String content = configService.getConfig(GATEWAY_DYNAMIC_ROUTES_FILE, GATEWAY_DYNAMIC_ROUTES_FILE_GROUP, 5000);
-        L.info("开始加载网关动态路由");
+        if (L.isInfoEnabled()) {
+            L.info("开始加载网关动态路由");
+        }
         updateRoutes(content);
-        L.info("网关动态路由加载完成");
+        if (L.isInfoEnabled()) {
+            L.info("网关动态路由加载完成");
+        }
         configService.addListener(GATEWAY_DYNAMIC_ROUTES_FILE, GATEWAY_DYNAMIC_ROUTES_FILE_GROUP, new Listener() {
             @Override
             public Executor getExecutor() {
@@ -50,19 +54,27 @@ public class DynamicRoutesConfig implements InitializingBean {
 
             @Override
             public void receiveConfigInfo(String configInfo) {
-                L.info("开始清除旧的路由数据");
+                if (L.isInfoEnabled()) {
+                    L.info("开始清除旧的路由数据");
+                }
                 clean();
-                L.info("旧的路由数据清除完成");
-                L.info("开始更新网关动态路由");
+                if (L.isInfoEnabled()) {
+                    L.info("旧的路由数据清除完成");
+                    L.info("开始更新网关动态路由");
+                }
                 updateRoutes(configInfo);
-                L.info("网关动态路由更新完成");
+                if (L.isInfoEnabled()) {
+                    L.info("网关动态路由更新完成");
+                }
             }
         });
     }
 
     public void clean() {
         routeDefinitionLocator.getRouteDefinitions().subscribe(routeDefinition -> {
-            L.info("正在清除路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            if (L.isInfoEnabled()) {
+                L.info("正在清除路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            }
             routeDefinitionWriter.delete(Mono.just(routeDefinition.getId())).subscribe();
         });
     }
@@ -71,7 +83,9 @@ public class DynamicRoutesConfig implements InitializingBean {
         Yaml yaml = new Yaml();
         RouteDefinitionList routeDefinitionList = yaml.loadAs(routes, RouteDefinitionList.class);
         routeDefinitionList.getRoutes().forEach(routeDefinition -> {
-            L.info("正在更新路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            if (L.isInfoEnabled()) {
+                L.info("正在更新路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            }
             routeDefinitionWriter.save(Mono.just(routeDefinition)).subscribe();
         });
     }

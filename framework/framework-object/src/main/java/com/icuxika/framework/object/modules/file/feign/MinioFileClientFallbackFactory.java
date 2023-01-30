@@ -18,7 +18,9 @@ public class MinioFileClientFallbackFactory implements FallbackFactory<MinioFile
     @Override
     public MinioFileClient create(Throwable cause) {
 
-        L.error(cause.getMessage());
+        if (L.isErrorEnabled()) {
+            L.error(cause.getMessage());
+        }
 
         return new MinioFileClient() {
             @Override

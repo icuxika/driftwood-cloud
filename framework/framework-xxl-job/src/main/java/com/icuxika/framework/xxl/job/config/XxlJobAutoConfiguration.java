@@ -17,7 +17,9 @@ public class XxlJobAutoConfiguration {
 
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor(XxlJobProperties xxlJobProperties) {
-        L.info(">>>>>>>>>>> xxl-job config init.");
+        if (L.isInfoEnabled()) {
+            L.info(">>>>>>>>>>> xxl-job config init.");
+        }
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdmin().getAddress());
         xxlJobSpringExecutor.setAppname(xxlJobProperties.getExecutor().getAppname());

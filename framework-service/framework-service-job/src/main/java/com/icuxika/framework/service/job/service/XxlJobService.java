@@ -17,10 +17,14 @@ public class XxlJobService {
      */
     @XxlJob("demoJobHandler")
     public void demoJobHandler() throws Exception {
-        L.info("XXL-JOB, Hello World.");
+        if (L.isInfoEnabled()) {
+            L.info("XXL-JOB, Hello World.");
+        }
 
         for (int i = 0; i < 5; i++) {
-            L.info("beat at:" + i);
+            if (L.isInfoEnabled()) {
+                L.info("beat at:" + i);
+            }
             TimeUnit.SECONDS.sleep(2);
         }
     }

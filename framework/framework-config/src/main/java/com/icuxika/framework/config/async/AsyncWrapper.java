@@ -12,7 +12,9 @@ public class AsyncWrapper {
 
     @Async
     public void doAsync(String name, Runnable task) {
-        L.info("[ASYNC][" + name + "]" + Thread.currentThread().getName());
+        if (L.isInfoEnabled()) {
+            L.info("[ASYNC][" + name + "]" + Thread.currentThread().getName());
+        }
         task.run();
     }
 }

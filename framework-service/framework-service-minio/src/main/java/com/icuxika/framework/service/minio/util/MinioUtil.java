@@ -38,10 +38,14 @@ public class MinioUtil {
     private void createBucket(String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         if (!found) {
-            L.info("创建新的bucket：" + bucketName);
+            if (L.isInfoEnabled()) {
+                L.info("创建新的bucket：" + bucketName);
+            }
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         } else {
-            L.info("bucket已存在：" + bucketName);
+            if (L.isInfoEnabled()) {
+                L.info("bucket已存在：" + bucketName);
+            }
         }
     }
 
@@ -82,7 +86,9 @@ public class MinioUtil {
             fileUploadBO.setFileStoreName(objectName);
             return fileUploadBO;
         } catch (Exception e) {
-            L.error("文件上传失败：" + e.getMessage());
+            if (L.isErrorEnabled()) {
+                L.error("文件上传失败：" + e.getMessage());
+            }
             return fileUploadBO;
         }
     }
@@ -115,7 +121,9 @@ public class MinioUtil {
                             .build()
             );
         } catch (Exception e) {
-            L.error("获取文件下载链接失败：" + e.getMessage());
+            if (L.isErrorEnabled()) {
+                L.error("获取文件下载链接失败：" + e.getMessage());
+            }
             return null;
         }
     }
@@ -132,7 +140,9 @@ public class MinioUtil {
                             .build()
             );
         } catch (Exception e) {
-            L.error("获取文件下载链接失败：" + e.getMessage());
+            if (L.isErrorEnabled()) {
+                L.error("获取文件下载链接失败：" + e.getMessage());
+            }
             return null;
         }
     }

@@ -28,12 +28,16 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         if (!StringUtils.hasText(bearToken)) {
             return false;
         }
-        L.info("Bear Token: " + bearToken);
+        if (L.isInfoEnabled()) {
+            L.info("Bear Token: " + bearToken);
+        }
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest httpServletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-            L.info("token: " + httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
-            L.info("Current User Id: " + SecurityUtil.getUserId());
-            L.info("Current Client Type: " + SecurityUtil.getClientType());
+            if (L.isInfoEnabled()) {
+                L.info("token: " + httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
+                L.info("Current User Id: " + SecurityUtil.getUserId());
+                L.info("Current Client Type: " + SecurityUtil.getClientType());
+            }
             attributes.put(ATTRIBUTE_HEADER_INFO, new WebSocketSessionInfo(SecurityUtil.getUserId(), SecurityUtil.getClientType()));
             return true;
         }
@@ -44,7 +48,9 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
         if (exception != null) {
             exception.printStackTrace();
-            L.error(exception.getMessage());
+            if (L.isErrorEnabled()) {
+                L.error(exception.getMessage());
+            }
         }
     }
 }

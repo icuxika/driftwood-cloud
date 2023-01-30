@@ -15,7 +15,9 @@ public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFile
 
     @Override
     public AdminFileClient create(Throwable cause) {
-        L.error(cause.getMessage());
+        if (L.isErrorEnabled()) {
+            L.error(cause.getMessage());
+        }
         return new AdminFileClient() {
             @Override
             public ApiData<Long> uploadFile(MultipartFile file) {
@@ -24,7 +26,9 @@ public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFile
 
             @Override
             public void downloadFile(Long fileId, HttpServletResponse response) {
-                L.error("下载文件出错");
+                if (L.isErrorEnabled()) {
+                    L.error("下载文件出错");
+                }
             }
         };
     }

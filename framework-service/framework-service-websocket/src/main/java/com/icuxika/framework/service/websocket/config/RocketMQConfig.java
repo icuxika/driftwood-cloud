@@ -14,6 +14,10 @@ public class RocketMQConfig {
 
     @Bean
     public Consumer<String> websocketMessageConsumer() {
-        return s -> L.info("Receive message: " + s);
+        return s -> {
+            if (L.isInfoEnabled()) {
+                L.info("Receive message: " + s);
+            }
+        };
     }
 }

@@ -24,13 +24,17 @@ public class UserDetailsServiceImpl implements UserDetailsService, CommonUserSer
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         ApiData<UserAuthVO> userApiData = userClient.findByUsername(s);
         if (!userApiData.isSuccess()) {
-            L.error("根据用户名[" + s + "]查询用户信息请求未成功");
+            if (L.isErrorEnabled()) {
+                L.error("根据用户名[" + s + "]查询用户信息请求未成功");
+            }
             throw new UsernameNotFoundException("根据用户名查询用户信息请求未成功");
         }
 
         UserAuthVO user = userApiData.getData();
         if (user == null) {
-            L.error("该用户名[" + s + "]未注册");
+            if (L.isErrorEnabled()) {
+                L.error("该用户名[" + s + "]未注册");
+            }
             throw new UsernameNotFoundException("该用户名未注册");
         }
 

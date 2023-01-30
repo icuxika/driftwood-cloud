@@ -66,7 +66,7 @@ public class JwtDecoderConfig {
         @Override
         public OAuth2TokenValidatorResult validate(Jwt token) {
             if (!abandonLastToken) {
-                if (L.isDebugEnabled()) {
+                if (L.isInfoEnabled()) {
                     L.info("用户会话当前支持多处登录");
                 }
                 return OAuth2TokenValidatorResult.success();

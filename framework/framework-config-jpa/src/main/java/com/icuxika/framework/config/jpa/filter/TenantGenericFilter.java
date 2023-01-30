@@ -36,7 +36,9 @@ public class TenantGenericFilter extends GenericFilterBean {
             tenantId = SystemConstant.DEFAULT_TENANT_ID;
         }
         tenantIdentifierResolver.setTenantId(tenantId);
-        L.info("当前租户：" + tenantId);
+        if (L.isInfoEnabled()) {
+            L.info("当前租户：" + tenantId);
+        }
         filterChain.doFilter(request, response);
     }
 }

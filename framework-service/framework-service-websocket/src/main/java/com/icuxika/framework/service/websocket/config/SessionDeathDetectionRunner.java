@@ -20,16 +20,22 @@ public class SessionDeathDetectionRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        L.info("开始会话死亡定时检测任务");
+        if (L.isInfoEnabled()) {
+            L.info("开始会话死亡定时检测任务");
+        }
         scheduler.scheduleWithFixedDelay(() -> {
             List<ManageableWebSocketSession> userSessionList = WebSocketSessionManager.getCurrentWebSocketSessionList();
             if (userSessionList.isEmpty()) {
-                L.warn("没有用户在线");
+                if (L.isWarnEnabled()) {
+                    L.warn("没有用户在线");
+                }
             } else {
                 userSessionList.forEach(manageableWebSocketSession -> {
                     if (!manageableWebSocketSession.sendPing()) {
                         WebSocketSessionManager.closeSession(manageableWebSocketSession.getUserId(), manageableWebSocketSession.getWebSocketSession());
-                        L.info(manageableWebSocketSession.getUserId() + "超时下线");
+                        if (L.isInfoEnabled()) {
+                            L.info(manageableWebSocketSession.getUserId() + "超时下线");
+                        }
                     }
                 });
             }

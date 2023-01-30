@@ -35,7 +35,9 @@ public class WebSocketSessionManager {
         ManageableWebSocketSession manageableWebSocketSession = new ManageableWebSocketSession(webSocketSession, userId, clientType);
         SESSION_ID_MAP.put(webSocketSession.getId(), manageableWebSocketSession);
         userSessionList.add(manageableWebSocketSession);
-        L.info(userId + "[" + clientType + "]" + "上线了");
+        if (L.isInfoEnabled()) {
+            L.info(userId + "[" + clientType + "]" + "上线了");
+        }
         // TODO 同类型设备登录同账号是否踢掉、向自己的某个设备发送消息
     }
 
@@ -52,7 +54,9 @@ public class WebSocketSessionManager {
             if (manageableWebSocketSession != null) {
                 userSessionList.remove(manageableWebSocketSession);
                 SESSION_ID_MAP.remove(webSocketSession.getId());
-                L.info(userId + "下线了");
+                if (L.isInfoEnabled()) {
+                    L.info(userId + "下线了");
+                }
             }
         }
     }

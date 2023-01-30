@@ -25,7 +25,11 @@ public class AsyncConfig {
         executor.setQueueCapacity(500);
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("DriftwoodAsyncExecutor-");
-        executor.setRejectedExecutionHandler((r, e) -> L.warn("任务[" + r.toString() + "]被[" + e.toString() + "]拒绝"));
+        executor.setRejectedExecutionHandler((r, e) -> {
+            if (L.isWarnEnabled()) {
+                L.warn("任务[" + r.toString() + "]被[" + e.toString() + "]拒绝");
+            }
+        });
         executor.initialize();
         return executor;
     }

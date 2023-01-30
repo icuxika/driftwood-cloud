@@ -26,10 +26,14 @@ public class AdminInitializeRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         String adminUsername = "icuxika";
         String adminPassword = "rbj549232512";
-        L.info("管理员用户初始化");
+        if (L.isInfoEnabled()) {
+            L.info("管理员用户初始化");
+        }
         Optional<User> userOptional = userRepository.findByUsername(adminUsername);
         if (userOptional.isPresent()) {
-            L.info("管理员用户[" + adminUsername + "]已经存在");
+            if (L.isInfoEnabled()) {
+                L.info("管理员用户[" + adminUsername + "]已经存在");
+            }
         } else {
             PasswordEncoder passwordEncoder =
                     PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -47,7 +51,9 @@ public class AdminInitializeRunner implements CommandLineRunner {
             user.setUpdateTime(LocalDateTime.now());
             user.setUpdateUserId(SystemConstant.SYSTEM_CREATE_USER_ID);
             userRepository.save(user);
-            L.info("管理员用户[" + adminUsername + "]创建成功，用户 id 为：" + user.getId());
+            if (L.isInfoEnabled()) {
+                L.info("管理员用户[" + adminUsername + "]创建成功，用户 id 为：" + user.getId());
+            }
         }
     }
 
