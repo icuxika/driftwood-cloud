@@ -1,13 +1,18 @@
 <configuration>
+
+    <springProperty scope="context" name="applicationName" source="spring.application.name"
+                    defaultValue="localhost"/>
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%highlight(%-5level) %boldGreen(%d{yyyy-MM-dd HH:mm:ss.SSS}) %boldYellow([%thread]) %cyan(%logger{36}) - %highlight(%msg%n)
+            <pattern>%highlight(%-5level) %boldGreen(%d{yyyy-MM-dd HH:mm:ss.SSS}) %boldYellow([%thread])
+                %cyan(%logger{36}) - %highlight(%msg%n)
             </pattern>
         </encoder>
     </appender>
 
     <appender name="SingleFILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/gateway/application.log</file>
+        <file>logs/framework-service/${applicationName}/application.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
@@ -17,12 +22,12 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/gateway/logFile.log</file>
+        <file>logs/framework-service/${applicationName}/logFile.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>WARN</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/gateway/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/framework-service/${applicationName}/logFile.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
             <totalSizeCap>3GB</totalSizeCap>
         </rollingPolicy>
