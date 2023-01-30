@@ -1,12 +1,10 @@
 <configuration>
-
-    <springProperty scope="context" name="applicationName" source="spring.application.name"
-                    defaultValue="localhost"/>
+    <springProperty scope="context" name="applicationName" source="spring.application.name" defaultValue="localhost"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%highlight(%-5level) %boldGreen(%d{yyyy-MM-dd HH:mm:ss.SSS}) %boldYellow([%thread])
-                %cyan(%logger{36}) - %highlight(%msg%n)
+            <pattern>
+                %highlight(%-5level) %boldGreen(%d{yyyy-MM-dd HH:mm:ss.SSS}) %boldYellow([%thread]) %cyan(%logger{36}) - %highlight(%msg%n)
             </pattern>
         </encoder>
     </appender>
