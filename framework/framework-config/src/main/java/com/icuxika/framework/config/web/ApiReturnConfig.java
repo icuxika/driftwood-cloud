@@ -1,6 +1,7 @@
 package com.icuxika.framework.config.web;
 
 import com.icuxika.framework.config.handler.ApiReturnHandler;
+import com.icuxika.framework.config.handler.ResponseExcelHandler;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ public class ApiReturnConfig implements InitializingBean {
         if (returnValueHandlers != null) {
             List<HandlerMethodReturnValueHandler> handlers = new ArrayList<>(returnValueHandlers);
             handlers.add(0, new ApiReturnHandler(requestMappingHandlerAdapter.getMessageConverters()));
+            handlers.add(0, new ResponseExcelHandler(requestMappingHandlerAdapter.getMessageConverters()));
             requestMappingHandlerAdapter.setReturnValueHandlers(handlers);
         }
     }

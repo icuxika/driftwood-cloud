@@ -104,6 +104,8 @@ type CreateService = (path: string) => {
 	bindRoles: (
 		bindOneDTO: BindOneDTO
 	) => Promise<AxiosResponse<ApiData<never>>>;
+
+	exportExcel: <T extends User>(user: Partial<T>) => Promise<AxiosResponse>;
 };
 
 const createService: CreateService = (path: string) => {
@@ -130,6 +132,12 @@ const createService: CreateService = (path: string) => {
 		},
 		bindRoles(bindOneDTO) {
 			return AxiosInstance.post(path + "/bindRoles", bindOneDTO);
+		},
+		exportExcel(user) {
+			return AxiosInstance.get(path + "/export", {
+				params: user,
+				responseType: "blob",
+			});
 		},
 	};
 };

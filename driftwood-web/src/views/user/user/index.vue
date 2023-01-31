@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<h1>用户管理</h1>
+		<n-button type="info" @click="exportExcel"> 导出 </n-button>
 		<n-data-table
 			remote
 			striped
@@ -25,13 +26,15 @@ import {
 	DataTableSortState,
 	PaginationProps,
 } from "naive-ui";
-import { User } from "@/api/modules/user/user";
+import { User, userService } from "@/api/modules/user/user";
 import { ApiData, NoNullReject, Page } from "@/api";
 import { defineUserColumnList } from "@/views/user/user/data";
 import { PartialPageable, usePage } from "@/hooks/use-page";
 import { useUserStore } from "@/store/pinia/user/user";
+import { useFile } from "@/hooks/use-file";
 
 const userStore = useUserStore();
+const { downloadFile } = useFile();
 
 const data = ref<User[]>([]);
 const loading = ref(true);
@@ -132,6 +135,17 @@ onMounted(() => {
 		page: pagination.page,
 	});
 });
+
+const exportExcel = () => {
+	userService
+		.exportExcel({})
+		.then((response) => {
+			downloadFile(response);
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -5,11 +5,14 @@ import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
 import com.icuxika.framework.object.modules.user.entity.User;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
+import com.icuxika.framework.object.modules.user.vo.UserExcelVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
 import com.icuxika.framework.object.modules.user.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -39,4 +42,5 @@ public interface UserService {
 
     void uploadAvatar(MultipartFile file);
 
+    List<UserExcelVO> export(UserQueryDTO userQueryDTO);
 }

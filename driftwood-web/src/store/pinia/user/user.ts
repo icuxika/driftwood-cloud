@@ -29,5 +29,12 @@ export const useUserStore = defineStore("user", {
 		): Promise<Page<UserVO> | null> {
 			return resolveAxiosResult(() => userService.page(pageable));
 		},
+
+		/**
+		 * 导出用户数据到 excel
+		 */
+		async exportExcel<T extends User>(user: Partial<T>) {
+			return userService.exportExcel(user);
+		},
 	},
 });

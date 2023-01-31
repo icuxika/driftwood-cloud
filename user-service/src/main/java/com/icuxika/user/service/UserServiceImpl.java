@@ -12,6 +12,7 @@ import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
 import com.icuxika.framework.object.modules.user.entity.*;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
+import com.icuxika.framework.object.modules.user.vo.UserExcelVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
 import com.icuxika.framework.object.modules.user.vo.UserVO;
 import com.icuxika.framework.security.util.SecurityUtil;
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserOpenAuthRepository userOpenAuthRepository;
 
-    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, MinioFileClient minioFileClient, AdminFileClient adminFileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory, UserOpenAuthRepository userOpenAuthRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserProfileRepository userProfileRepository, UserRoleRepository userRoleRepository, RoleRepository roleRepository, RolePermissionRepository rolePermissionRepository, PermissionRepository permissionRepository, MenuPermissionRepository menuPermissionRepository, MenuRepository menuRepository, AdminFileClient adminFileClient, EntityManager entityManager, CriteriaBuilderFactory criteriaBuilderFactory, UserOpenAuthRepository userOpenAuthRepository) {
         this.userRepository = userRepository;
         this.userProfileRepository = userProfileRepository;
         this.userRoleRepository = userRoleRepository;
@@ -264,6 +265,20 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    @Override
+    public List<UserExcelVO> export(UserQueryDTO userQueryDTO) {
+        JPQLQuery<Tuple> jpqlQuery = buildQuery(userQueryDTO);
+        List<Tuple> list = jpqlQuery.fetch();
+        return list.stream().map(tuple -> {
+            User user = tuple.get(QUser.user);
+            UserExcelVO userExcelVO = new UserExcelVO();
+            userExcelVO.setUsername(user.getUsername());
+            userExcelVO.setPhone(user.getPhone());
+            userExcelVO.setNickname(user.getNickname());
+            return userExcelVO;
+        }).collect(Collectors.toList());
+    }
+
     /**
      * 查询用户详细信息（不包含密码等）
      *
@@ -316,5 +331,47 @@ public class UserServiceImpl implements UserService {
         List<Long> menuIdList = permissionIdList.isEmpty() ? Collections.emptyList() : menuPermissionRepository.findByPermissionIdIn(permissionIdList).stream().map(MenuPermission::getMenuId).distinct().collect(Collectors.toList());
         List<Menu> menuList = menuIdList.isEmpty() ? Collections.emptyList() : menuRepository.findByIdIn(menuIdList);
         menuSetter.accept(menuList);
+    }
+
+    private JPQLQuery<Tuple> buildQuery(UserQueryDTO userQueryDTO) {
+        QUser qUser = QUser.user;
+        QUserProfile qUserProfile = QUserProfile.userProfile;
+
+        // 查询条件
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        // user
+        if (StringUtils.hasText(userQueryDTO.getUsername())) {
+            // 用户名
+            booleanBuilder.and(qUser.username.like(userQueryDTO.getUsername()));
+        }
+        if (StringUtils.hasText(userQueryDTO.getPhone())) {
+            // 手机号
+            booleanBuilder.and(qUser.phone.startsWith(userQueryDTO.getPhone()));
+        }
+        if (StringUtils.hasText(userQueryDTO.getNickname())) {
+            // 昵称
+            booleanBuilder.and(qUser.nickname.like(userQueryDTO.getNickname()));
+        }
+        if (userQueryDTO.getEnabled() != null) {
+            // 账户是否禁用
+            booleanBuilder.and(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
+        }
+        // other
+        if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
+            // 出生日期
+            List<Long> range = userQueryDTO.getBirthdayRange();
+            LocalDate start = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(0)), ZoneId.systemDefault());
+            LocalDate end = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(1)), ZoneId.systemDefault());
+            booleanBuilder.and(qUserProfile.birthday.between(start, end));
+        }
+
+        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
+                .select(qUser, qUserProfile)
+                .from(qUser)
+                .leftJoin(qUserProfile)
+                .on(qUser.id.eq(qUserProfile.userId))
+                .where(booleanBuilder);
+
+        return jpqlQuery;
     }
 }

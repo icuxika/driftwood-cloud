@@ -1,11 +1,14 @@
 package com.icuxika.user.controller;
 
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.config.annotation.ApiReturn;
+import com.icuxika.framework.config.annotation.ResponseExcel;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
 import com.icuxika.framework.object.modules.user.entity.User;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
+import com.icuxika.framework.object.modules.user.vo.UserExcelVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
 import com.icuxika.framework.object.modules.user.vo.UserVO;
 import com.icuxika.user.service.UserService;
@@ -150,5 +153,12 @@ public class UserController {
     public ApiData<Void> uploadAvatar(@RequestPart("file") MultipartFile file) {
         userService.uploadAvatar(file);
         return ApiData.okMsg("头像上传成功");
+    }
+
+    @ApiReturn(disable = true)
+    @ResponseExcel
+    @GetMapping("/export")
+    public List<UserExcelVO> export(UserQueryDTO userQueryDTO) {
+        return userService.export(userQueryDTO);
     }
 }
