@@ -22,6 +22,10 @@ export const useFile = () => {
 	};
 
 	const downloadFile = (response: AxiosResponse) => {
+		if (response.data && response.data.size === 0) {
+			window.$message.error("下载出错，请重试！");
+			return;
+		}
 		const url = window.URL.createObjectURL(new Blob([response.data]));
 		const link = document.createElement("a");
 		link.href = url;
