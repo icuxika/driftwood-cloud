@@ -6,7 +6,6 @@ import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
 import com.icuxika.framework.object.modules.admin.feign.AdminFileClient;
-import com.icuxika.framework.object.modules.file.feign.MinioFileClient;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
@@ -35,9 +34,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -275,6 +272,9 @@ public class UserServiceImpl implements UserService {
             userExcelVO.setUsername(user.getUsername());
             userExcelVO.setPhone(user.getPhone());
             userExcelVO.setNickname(user.getNickname());
+            userExcelVO.setLocalDate(LocalDate.now());
+            userExcelVO.setLocalTime(LocalTime.now());
+            userExcelVO.setLocalDateTime(LocalDateTime.now());
             return userExcelVO;
         }).collect(Collectors.toList());
     }

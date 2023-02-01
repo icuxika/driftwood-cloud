@@ -2,9 +2,11 @@ package com.icuxika.user.controller;
 
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.ApiReturn;
+import com.icuxika.framework.config.annotation.RequestExcel;
 import com.icuxika.framework.config.annotation.ResponseExcel;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
+import com.icuxika.framework.object.modules.user.dto.UserExcelDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
 import com.icuxika.framework.object.modules.user.entity.User;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
@@ -160,5 +162,11 @@ public class UserController {
     @GetMapping("/export")
     public List<UserExcelVO> export(UserQueryDTO userQueryDTO) {
         return userService.export(userQueryDTO);
+    }
+
+    @PostMapping("/import")
+    public ApiData<Void> importExcel(@RequestExcel List<UserExcelDTO> userExcelDTOList) {
+        userExcelDTOList.forEach(System.out::println);
+        return ApiData.okMsg("导入成功");
     }
 }

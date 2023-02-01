@@ -1,20 +1,12 @@
-package com.icuxika.framework.object.modules.user.vo;
+package com.icuxika.framework.object.modules.user.dto;
 
-
-import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@ExcelIgnoreUnannotated
-public class UserExcelVO {
-    @ExcelProperty("用户名")
-    private String username;
-
-    @ExcelProperty("手机号")
-    private String phone;
+public class UserExcelDTO {
 
     @ExcelProperty("昵称")
     private String nickname;
@@ -28,23 +20,7 @@ public class UserExcelVO {
     @ExcelProperty("日期时间")
     private LocalDateTime localDateTime;
 
-    public UserExcelVO() {
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public UserExcelDTO() {
     }
 
     public String getNickname() {
@@ -77,5 +53,15 @@ public class UserExcelVO {
 
     public void setLocalDateTime(LocalDateTime localDateTime) {
         this.localDateTime = localDateTime;
+    }
+
+    @Override
+    public String toString() {
+        return "UserExcelDTO{" +
+                "nickname='" + nickname + '\'' +
+                ", localDate=" + localDate +
+                ", localTime=" + localTime +
+                ", localDateTime=" + localDateTime +
+                '}';
     }
 }

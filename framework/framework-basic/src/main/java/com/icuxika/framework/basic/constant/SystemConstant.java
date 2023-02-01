@@ -38,40 +38,44 @@ public class SystemConstant {
     /**
      * 生成token时携带的信息：用户权限
      */
-    public final static String OAUTH2_JWT_CLAIM_KEY_AUTHORITIES = "authorities";
+    public static final String OAUTH2_JWT_CLAIM_KEY_AUTHORITIES = "authorities";
 
     /**
      * 生成token时携带的信息：用户ID
      */
-    public final static String OAUTH2_JWT_CLAIM_KEY_USER_ID = "userId";
+    public static final String OAUTH2_JWT_CLAIM_KEY_USER_ID = "userId";
 
     /**
      * 生成token时携带的信息：设备类型
      */
-    public final static String OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE = "clientType";
+    public static final String OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE = "clientType";
 
     /**
      * MinIO 存储空间名称
      */
-    public final static String MINIO_BUCKET_NAME = "driftwood";
+    public static final String MINIO_BUCKET_NAME = "driftwood";
 
     /**
      * 存储用户不同设备当前激活的AccessToken
      */
-    public final static String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
+    public static final String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
 
     /**
      * 缓存用户登录时请求的验证码
      */
-    public final static String REDIS_OAUTH2_PHONE_CODE = "DRIFTWOOD:OAUTH2:PHONE_CODE";
+    public static final String REDIS_OAUTH2_PHONE_CODE = "DRIFTWOOD:OAUTH2:PHONE_CODE";
 
     /**
      * 缓存用户第三方登录时获取到的openid
      */
-    public final static String REDIS_OAUTH2_OPENID = "DRIFTWOOD:OAUTH2:OPENID";
+    public static final String REDIS_OAUTH2_OPENID = "DRIFTWOOD:OAUTH2:OPENID";
 
     /**
      * 默认租户
      */
-    public final static String DEFAULT_TENANT_ID = "driftwood";
+    public static final String DEFAULT_TENANT_ID = "driftwood";
+
+    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
+    public static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
+    public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 }

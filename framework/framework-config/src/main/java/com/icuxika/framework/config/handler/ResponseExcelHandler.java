@@ -3,6 +3,9 @@ package com.icuxika.framework.config.handler;
 import com.alibaba.excel.EasyExcel;
 import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.annotation.ResponseExcel;
+import com.icuxika.framework.config.converter.LocalDateConverter;
+import com.icuxika.framework.config.converter.LocalDateTimeConverter;
+import com.icuxika.framework.config.converter.LocalTimeConverter;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.ContentDisposition;
@@ -49,7 +52,11 @@ public class ResponseExcelHandler extends RequestResponseBodyMethodProcessor {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(ContentDisposition.attachment().filename(filename + ".xlsx", StandardCharsets.UTF_8).build());
         headers.toSingleValueMap().forEach(response::addHeader);
-        EasyExcel.write(response.getOutputStream()).sheet("Sheet1").doWrite((Collection<?>) returnValue);
+        EasyExcel.write(response.getOutputStream())
+                .registerConverter(new LocalDateConverter())
+                .registerConverter(new LocalTimeConverter())
+                .registerConverter(new LocalDateTimeConverter())
+                .sheet("Sheet1").doWrite((Collection<?>) returnValue);
 //        EasyExcel.write(response.getOutputStream()).sheet("Sheet1").doFill(returnValue);
     }
 }
