@@ -1,6 +1,7 @@
 package com.icuxika.framework.oss.remote;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -55,7 +56,7 @@ public class RemoteFileTemplate implements FileTemplate, InitializingBean {
         try {
             byte[] bytes = inputStream.readAllBytes();
             ObjectMetadata objectMetadata = new ObjectMetadata();
-            objectMetadata.setContentLength(inputStream.available());
+            objectMetadata.setContentLength(bytes.length);
             objectMetadata.setContentType(contextType);
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
             amazonS3.putObject(bucketName, objectName, byteArrayInputStream, objectMetadata);
@@ -88,6 +89,7 @@ public class RemoteFileTemplate implements FileTemplate, InitializingBean {
     public void afterPropertiesSet() throws Exception {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(fileProperties.getRemote().getMaxConnections());
+        clientConfiguration.setProtocol(Protocol.HTTP);
 
         AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(fileProperties.getRemote().getEndpoint(), fileProperties.getRemote().getRegion());
         AWSCredentials awsCredentials = new BasicAWSCredentials(fileProperties.getRemote().getAccessKey(), fileProperties.getRemote().getSecretKey());
