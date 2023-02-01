@@ -1,6 +1,14 @@
 package com.icuxika.framework.config.resolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.config.annotation.JsonClip;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;
@@ -20,10 +28,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.lang.reflect.Constructor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class JsonClipResolver implements HandlerMethodArgumentResolver {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    public JsonClipResolver() {
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_PATTERN)));
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_TIME_PATTERN)));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN)));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_PATTERN)));
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_TIME_PATTERN)));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN)));
+        objectMapper.registerModule(javaTimeModule);
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -40,11 +63,8 @@ public class JsonClipResolver implements HandlerMethodArgumentResolver {
         Class<?> parameterClass = parameter.getParameterType();
 
         if (contentType.toLowerCase().startsWith(MediaType.MULTIPART_FORM_DATA_VALUE)) {
-            String parameterName = parameter.getParameterName();
-            if (parameterName == null) {
-                return null;
-            }
-            String[] parameterValues = webRequest.getParameterValues(parameterName);
+            JsonClip jsonClip = parameter.getParameterAnnotation(JsonClip.class);
+            String[] parameterValues = webRequest.getParameterValues(jsonClip.name());
             if (parameterValues == null) {
                 Constructor<?> constructor = parameterClass.getDeclaredConstructor();
                 return constructor.newInstance();
