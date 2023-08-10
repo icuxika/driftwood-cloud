@@ -111,6 +111,14 @@ graph TD;
 
 > --spring.cloud.sentinel.transport.dashboard=""
 
+### 在命令行中单独运行子项目
+```
+mvn -pl authorization-server -am spring-boot:run
+mvn -pl gateway -am spring-boot:run
+mvn -pl admin-service -am spring-boot:run
+mvn -pl user-service -am spring-boot:run
+```
+
 ### 服务端口分配
 
 > 其他未列举出来的服务可能属于测试服务
