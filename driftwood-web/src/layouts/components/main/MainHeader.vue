@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import Draggable from "vuedraggable";
+import Draggable from "zhyswan-vuedraggable";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
 import { computed, ref, watch } from "vue";
 import { _RouteLocationBase, useRoute, useRouter } from "vue-router";

@@ -95,26 +95,11 @@ const naive = create({
 	],
 });
 
-import {
-	create as createVUI,
-	VBanner,
-	VButton,
-	VConfigProvider,
-	VMarkdown,
-	VVerification,
-} from "@icuxika/vue-scaffold-ui";
-import "@icuxika/vue-scaffold-ui/style.css";
-
-const vueScaffoldUI = createVUI({
-	components: [VBanner, VButton, VConfigProvider, VMarkdown, VVerification],
-});
-
 const app = createApp(App);
 app.use(router);
 app.use(store, key);
 app.use(createPinia());
 app.use(naive);
-app.use(vueScaffoldUI);
 app.use(uploader);
 router.isReady().then(() => {
 	app.mount("#app");
