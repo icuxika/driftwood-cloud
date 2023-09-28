@@ -10,14 +10,14 @@
 </template>
 
 <script setup lang="ts">
+import { fileService } from "@/api/modules/admin/file";
+import { useFile } from "@/hooks/use-file";
+import { useFileStore } from "@/store/admin/file";
 import {
 	UploadCustomRequestOptions,
 	UploadFileInfo,
 	useMessage,
 } from "naive-ui";
-import { useFileStore } from "@/store/pinia/admin/file";
-import { fileService } from "@/api/modules/admin/file";
-import { useFile } from "@/hooks/use-file";
 import { ref } from "vue";
 
 const message = useMessage();

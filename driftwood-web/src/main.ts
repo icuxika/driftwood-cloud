@@ -1,17 +1,17 @@
-import { createApp } from "vue";
 import App from "@/App.vue";
 import router from "@/router";
-import { key, store } from "@/store";
 import { createPinia } from "pinia";
+import { createApp } from "vue";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import uploader from "vue-simple-uploader";
 import "vue-simple-uploader/dist/style.css";
 
 import {
-	create,
+	NAvatar,
 	NButton,
 	NCard,
+	NColorPicker,
 	NConfigProvider,
 	NDataTable,
 	NDialogProvider,
@@ -33,6 +33,7 @@ import {
 	NMenu,
 	NMessageProvider,
 	NModal,
+	NNotificationProvider,
 	NPagination,
 	NSelect,
 	NSpace,
@@ -40,15 +41,13 @@ import {
 	NTabPane,
 	NTabs,
 	NTag,
+	NThemeEditor,
 	NTime,
 	NTimeline,
 	NTimelineItem,
 	NTree,
-	NNotificationProvider,
-	NAvatar,
-	NColorPicker,
 	NUpload,
-	NThemeEditor,
+	create,
 } from "naive-ui";
 
 const naive = create({
@@ -97,7 +96,6 @@ const naive = create({
 
 const app = createApp(App);
 app.use(router);
-app.use(store, key);
 app.use(createPinia());
 app.use(naive);
 app.use(uploader);

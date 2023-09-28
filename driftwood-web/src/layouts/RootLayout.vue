@@ -17,8 +17,8 @@
 </template>
 
 <script setup lang="ts">
+import { useSystemStore } from "@/store/system";
 import { useMessage } from "naive-ui";
-import { useSystemStore } from "@/store/pinia/system";
 
 // 在 setup 外使用 Message，挂载到window上，需要确保App.vue中本组件在n-message-provider内部
 // https://www.naiveui.com/zh-CN/os-theme/components/message#在-setup-外使用

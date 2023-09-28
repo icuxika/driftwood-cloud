@@ -23,9 +23,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useSideMenuStore } from "@/store/pinia/side-menu";
+import { useSideMenuStore } from "@/store/side-menu";
 import { MenuInst } from "naive-ui";
+import { onMounted, ref } from "vue";
 
 const sideMenuStore = useSideMenuStore();
 

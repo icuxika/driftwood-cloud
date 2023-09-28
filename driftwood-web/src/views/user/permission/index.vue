@@ -123,6 +123,14 @@
 </template>
 
 <script setup lang="ts">
+import { useObject } from "@/hooks/use-object";
+import { usePermissionStore } from "@/store/user/permission";
+import {
+	defaultPermissionFormModel,
+	defaultPermissionGroupFormModel,
+	permissionFormModel,
+	permissionGroupFormModel,
+} from "@/views/user/permission/data";
 import {
 	DropdownOption,
 	NButton,
@@ -131,14 +139,6 @@ import {
 	useMessage,
 } from "naive-ui";
 import { onMounted, ref } from "vue";
-import { usePermissionStore } from "@/store/pinia/user/permission";
-import {
-	defaultPermissionFormModel,
-	defaultPermissionGroupFormModel,
-	permissionFormModel,
-	permissionGroupFormModel,
-} from "@/views/user/permission/data";
-import { useObject } from "@/hooks/use-object";
 
 const message = useMessage();
 const permissionStore = usePermissionStore();

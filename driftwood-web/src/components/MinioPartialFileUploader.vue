@@ -21,8 +21,8 @@
 
 <script setup lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMinioFileStore } from "@/store/file/minio-file";
 import { ref } from "vue";
-import { useMinioFileStore } from "@/store/pinia/file/minio-file";
 
 const minioFileStore = useMinioFileStore();
 const uploaderRef = ref<any>(null);

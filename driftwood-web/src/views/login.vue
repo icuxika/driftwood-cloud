@@ -78,11 +78,11 @@
 </template>
 
 <script setup lang="ts">
-import { h, reactive, ref } from "vue";
-import { NSpace, NAvatar, useMessage, useNotification } from "naive-ui";
-import { useRoute, useRouter } from "vue-router";
-import { useAuthStore } from "@/store/pinia/auth";
 import { UserInfoVO } from "@/api/modules/user/user";
+import { useAuthStore } from "@/store/auth";
+import { NAvatar, NSpace, useMessage, useNotification } from "naive-ui";
+import { h, reactive, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const message = useMessage();
 const route = useRoute();

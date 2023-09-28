@@ -80,7 +80,16 @@
 </template>
 
 <script setup lang="ts">
-import { useMenuStore } from "@/store/pinia/user/menu";
+import { MenuWithId } from "@/api/modules/user/menu";
+import { useObject } from "@/hooks/use-object";
+import { useTree } from "@/hooks/use-tree";
+import { useTrick } from "@/hooks/use-trick";
+import { useMenuStore } from "@/store/user/menu";
+import {
+	MenuFormModel,
+	defaultMenuFormModel,
+	menuFormModel,
+} from "@/views/user/menu/data";
 import {
 	DropdownOption,
 	TreeDropInfo,
@@ -89,15 +98,6 @@ import {
 	useMessage,
 } from "naive-ui";
 import { onMounted, ref } from "vue";
-import {
-	MenuFormModel,
-	defaultMenuFormModel,
-	menuFormModel,
-} from "@/views/user/menu/data";
-import { useTree } from "@/hooks/use-tree";
-import { useObject } from "@/hooks/use-object";
-import { useTrick } from "@/hooks/use-trick";
-import { MenuWithId } from "@/api/modules/user/menu";
 
 const message = useMessage();
 const dialog = useDialog();

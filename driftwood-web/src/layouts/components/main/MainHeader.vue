@@ -37,11 +37,11 @@
 </template>
 
 <script setup lang="ts">
-import Draggable from "zhyswan-vuedraggable";
+import { NavRoute, useNavStore } from "@/store/nav";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
 import { computed, ref, watch } from "vue";
 import { _RouteLocationBase, useRoute, useRouter } from "vue-router";
-import { NavRoute, useNavStore } from "@/store/pinia/nav";
+import Draggable from "zhyswan-vuedraggable";
 
 const router = useRouter();
 const route = useRoute();

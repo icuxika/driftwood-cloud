@@ -41,12 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import { useLoadingBar, useMessage } from "naive-ui";
 import SideMenu from "@/layouts/components/SideMenu.vue";
-import MainHeader from "@/layouts/components/main/MainHeader.vue";
 import MainContent from "@/layouts/components/main/MainContent.vue";
+import MainHeader from "@/layouts/components/main/MainHeader.vue";
+import { useSystemStore } from "@/store/system";
+import { useLoadingBar, useMessage } from "naive-ui";
 import { CSSProperties } from "vue";
-import { useSystemStore } from "@/store/pinia/system";
 
 const message = useMessage();
 
