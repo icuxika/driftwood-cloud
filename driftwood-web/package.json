@@ -7,7 +7,7 @@
 		"mock": "vite --mode mock",
 		"build": "vue-tsc --noEmit && vite build",
 		"serve": "vite preview",
-		"lint": "eslint -c .eslintrc.json vite.config.ts \"src/**/*.{ts,tsx,vue}\" --fix"
+		"lint": "eslint -c .eslintrc.json ./ --ext .js,.ts,.tsx,.vue,.json --max-warnings=0 --fix"
 	},
 	"dependencies": {
 		"axios": "^1.5.1",
@@ -37,6 +37,7 @@
 		"@vitejs/plugin-vue-jsx": "^3.0.2",
 		"eslint": "^8.50.0",
 		"eslint-config-prettier": "^9.0.0",
+		"eslint-plugin-jsonc": "^2.9.0",
 		"eslint-plugin-prettier": "^5.0.0",
 		"eslint-plugin-vue": "^9.17.0",
 		"prettier": "3.0.3",

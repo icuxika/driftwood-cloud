@@ -8,7 +8,8 @@
 		"eslint:recommended",
 		"plugin:vue/vue3-recommended",
 		"plugin:@typescript-eslint/recommended",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"plugin:jsonc/prettier"
 	],
 	"globals": {
 		"NodeJS": true
@@ -22,6 +23,12 @@
 	"plugins": ["vue", "@typescript-eslint"],
 	"root": true,
 	"ignorePatterns": [],
+	"overrides": [
+		{
+			"files": ["*.json", "*.json5", "*.jsonc"],
+			"parser": "jsonc-eslint-parser"
+		}
+	],
 	"rules": {
 		"indent": "off",
 		"linebreak-style": ["error", "unix"],
@@ -31,6 +38,7 @@
 		"@typescript-eslint/no-empty-interface": "off",
 		"@typescript-eslint/no-empty-function": "off",
 		"vue/no-v-model-argument": "off",
-		"vue/multi-word-component-names": "off"
+		"vue/multi-word-component-names": "off",
+		"@typescript-eslint/no-explicit-any": "off"
 	}
 }
