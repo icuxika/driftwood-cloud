@@ -17,12 +17,12 @@ public interface DeletableRepository<T extends DeletableEntity, ID> extends Crud
 
     @Transactional
     @Modifying
-    @Query("update #{#entityName} set deleted = id, deleteTime = :#{T(java.time.LocalDateTime).now()} where id = :id and deleted = 0")
+    @Query("update #{#entityName} set deleted = 1, updateTime = :#{T(java.time.LocalDateTime).now()}, deleteTime = :#{T(java.time.LocalDateTime).now()} where id = :id and deleted = 0")
     int logicDeleteById(@Param("id") ID id);
 
     @Transactional
     @Modifying
-    @Query("update #{#entityName} set deleted = id, deleteTime = :#{T(java.time.LocalDateTime).now()} where id in :ids and deleted = 0")
+    @Query("update #{#entityName} set deleted = 1, updateTime = :#{T(java.time.LocalDateTime).now()}, deleteTime = :#{T(java.time.LocalDateTime).now()} where id in :ids and deleted = 0")
     int logicDeleteAllById(@Param("ids") Iterable<? extends ID> ids);
 
 }

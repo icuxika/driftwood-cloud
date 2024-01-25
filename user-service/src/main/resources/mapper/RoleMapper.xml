@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.icuxika.user.mapper.RoleMapper">
+    <select id="selectRoleJoinedWithPermission" parameterType="java.lang.Long"
+            resultType="com.icuxika.framework.object.modules.user.vo.RoleInfoVO">
+        SELECT r.id AS rid,
+               r.`name`,
+               p.id AS pid,
+               p.authority,
+               p.description
+        FROM role r
+                 LEFT JOIN role_permission rp ON r.id = rp.role_id
+                 LEFT JOIN permission p ON rp.permission_id = p.id
+        WHERE r.id = #{id}
+    </select>
+</mapper>

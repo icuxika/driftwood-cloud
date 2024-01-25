@@ -17,3 +17,13 @@ spring:
       - nacos:application-@profiles.active@.yml?refreshEnabled=false
       - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
       - nacos:resource-server.yml?refreshEnabled=false
+
+ext:
+  model-persistence-type: MyBatis
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false

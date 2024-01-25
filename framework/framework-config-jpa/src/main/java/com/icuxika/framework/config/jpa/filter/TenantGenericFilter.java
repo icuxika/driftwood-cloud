@@ -2,6 +2,7 @@ package com.icuxika.framework.config.jpa.filter;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.config.jpa.tenant.TenantIdentifierResolver;
+import com.icuxika.framework.config.tenant.TenantContextHolder;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -36,9 +37,11 @@ public class TenantGenericFilter extends GenericFilterBean {
             tenantId = SystemConstant.DEFAULT_TENANT_ID;
         }
         tenantIdentifierResolver.setTenantId(tenantId);
+        TenantContextHolder.setTenantId(tenantId);
         if (L.isInfoEnabled()) {
             L.info("当前租户：" + tenantId);
         }
         filterChain.doFilter(request, response);
+        TenantContextHolder.clear();
     }
 }

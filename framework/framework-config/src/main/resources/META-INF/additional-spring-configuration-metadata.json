@@ -1,0 +1,17 @@
+{
+  "hints": [
+    {
+      "name": "ext.model-persistence-type",
+      "values": [
+        {
+          "value": "MyBatis",
+          "description": "Using MyBatis as a persistence framework."
+        },
+        {
+          "value": "Hibernate",
+          "description": "Using Hibernate as a persistence framework."
+        }
+      ]
+    }
+  ]
+}

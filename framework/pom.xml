@@ -22,6 +22,7 @@
         <module>framework-xxl-job</module>
         <module>framework-config-jpa</module>
         <module>framework-oss</module>
+        <module>framework-config-mybatis</module>
     </modules>
 
 </project>

@@ -1,13 +1,13 @@
 package com.icuxika.framework.object.modules.user.entity;
 
-import com.icuxika.framework.object.base.common.BaseEntity;
+import com.icuxika.framework.object.base.common.DeletableEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Table(name = "role")
 @Entity
-public class Role extends BaseEntity {
+public class Role extends DeletableEntity {
 
     /**
      * 角色名称

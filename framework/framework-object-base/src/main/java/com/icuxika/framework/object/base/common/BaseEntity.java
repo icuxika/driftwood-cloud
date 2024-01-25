@@ -1,5 +1,9 @@
 package com.icuxika.framework.object.base.common;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import jakarta.persistence.*;
 import org.hibernate.annotations.TenantId;
 import org.springframework.data.annotation.CreatedBy;
@@ -20,6 +24,7 @@ public class BaseEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     /**
@@ -27,6 +32,7 @@ public class BaseEntity {
      */
     @CreatedDate
     @Column(nullable = false)
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
     /**
@@ -34,6 +40,7 @@ public class BaseEntity {
      */
     @CreatedBy
     @Column(nullable = false)
+    @TableField(fill = FieldFill.INSERT)
     private Long createUserId;
 
     /**
@@ -41,6 +48,7 @@ public class BaseEntity {
      */
     @LastModifiedDate
     @Column(nullable = false)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updateTime;
 
     /**
@@ -48,6 +56,7 @@ public class BaseEntity {
      */
     @LastModifiedBy
     @Column(nullable = false)
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Long updateUserId;
 
     /**

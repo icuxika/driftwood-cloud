@@ -10,6 +10,7 @@ import com.icuxika.user.repository.RolePermissionRepository;
 import com.icuxika.user.repository.RoleRepository;
 import com.icuxika.user.repository.UserRoleRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@ConditionalOnProperty(name = "ext.model-persistence-type", havingValue = "Hibernate")
 public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
