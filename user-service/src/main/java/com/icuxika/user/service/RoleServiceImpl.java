@@ -2,6 +2,7 @@ package com.icuxika.user.service;
 
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
+import com.icuxika.framework.config.redis.RedisCacheConstant;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.entity.Role;
 import com.icuxika.framework.object.modules.user.entity.RolePermission;
@@ -11,6 +12,8 @@ import com.icuxika.user.repository.RoleRepository;
 import com.icuxika.user.repository.UserRoleRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
@@ -49,6 +52,7 @@ public class RoleServiceImpl implements RoleService {
         return roleRepository.findAll(example, pageable);
     }
 
+    @Cacheable(cacheNames = RedisCacheConstant.USER_ROLE, key = "#id", unless = "#result == null ")
     @Override
     public Role getById(Long id) {
         return roleRepository.findById(id).orElse(null);
@@ -63,6 +67,7 @@ public class RoleServiceImpl implements RoleService {
         roleRepository.save(role);
     }
 
+    @CacheEvict(cacheNames = RedisCacheConstant.USER_ROLE, key = "#role.id")
     @Override
     public void update(Role role) {
         Role exist = roleRepository.findById(role.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
@@ -71,6 +76,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = RedisCacheConstant.USER_ROLE, key = "#id")
     @Override
     public void deleteById(Long id) {
         if (roleRepository.existsById(id)) {

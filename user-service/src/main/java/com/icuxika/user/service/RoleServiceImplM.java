@@ -2,6 +2,7 @@ package com.icuxika.user.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
+import com.icuxika.framework.config.redis.RedisCacheConstant;
 import com.icuxika.framework.object.base.util.PageableUtil;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.entity.Permission;
@@ -14,6 +15,8 @@ import com.icuxika.user.mapper.RolePermissionMapper;
 import com.icuxika.user.mapper.UserRoleMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +54,7 @@ public class RoleServiceImplM implements RoleService {
         return new PageImpl<>(pageDTO.getRecords(), pageable, pageDTO.getTotal());
     }
 
+    @Cacheable(cacheNames = RedisCacheConstant.USER_ROLE, key = "#id", unless = "#result == null ")
     @Override
     public Role getById(Long id) {
         return roleMapper.selectById(id);
@@ -65,6 +69,7 @@ public class RoleServiceImplM implements RoleService {
         roleMapper.insert(role);
     }
 
+    @CacheEvict(cacheNames = RedisCacheConstant.USER_ROLE, key = "#role.id")
     @Override
     public void update(Role role) {
         var exist = roleMapper.selectById(role.getId());
@@ -77,6 +82,7 @@ public class RoleServiceImplM implements RoleService {
     }
 
     @Transactional(rollbackFor = Exception.class)
+    @CacheEvict(cacheNames = RedisCacheConstant.USER_ROLE, key = "#id")
     @Override
     public void deleteById(Long id) {
         var exist = roleMapper.selectById(id);

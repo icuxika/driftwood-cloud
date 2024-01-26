@@ -18,6 +18,12 @@ spring:
       - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
       - nacos:resource-server.yml?refreshEnabled=false
 
+
+  cache:
+    cache-names: redis-cache
+    redis:
+      time-to-live: "3m"
+
 ext:
   model-persistence-type: MyBatis
 
