@@ -28,8 +28,8 @@
         <!-- 项目版本，更新时需要同步更新 framework/framework-dependencies/pom.xml -->
         <revision>0.0.2</revision>
 
-        <spring-boot.version>3.1.2</spring-boot.version>
-        <spring-cloud.version>2022.0.3</spring-cloud.version>
+        <spring-boot.version>3.1.8</spring-boot.version>
+        <spring-cloud.version>2022.0.5</spring-cloud.version>
         <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
 
         <spring.authorization.server>1.1.1</spring.authorization.server>
