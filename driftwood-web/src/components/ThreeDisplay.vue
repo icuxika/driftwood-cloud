@@ -36,28 +36,24 @@
 
 <script setup lang="ts">
 import {
-	Scene,
-	PerspectiveCamera,
-	WebGLRenderer,
-	Color,
-	Clock,
-	AnimationMixer,
 	AmbientLight,
+	AxesHelper,
+	Color,
 	DirectionalLight,
 	DirectionalLightHelper,
 	HemisphereLight,
 	HemisphereLightHelper,
 	Mesh,
 	MeshPhongMaterial,
-	DataTexture,
-	RGBFormat,
 	Object3D,
-	AxesHelper,
+	PerspectiveCamera,
+	Scene,
+	WebGLRenderer,
 } from "three";
-import { onMounted, reactive, ref, toRefs } from "vue";
-import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import Stats from "three/examples/jsm/libs/stats.module";
+import { GLTF, GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { onMounted, reactive, ref, toRefs } from "vue";
 
 let scene: Scene;
 let directionalLight: DirectionalLight; // 平行光
@@ -93,7 +89,6 @@ const initScene = () => {
 	scene = new Scene();
 	scene.background = new Color(0xe8eaed);
 	renderer = new WebGLRenderer({ antialias: true });
-	renderer.physicallyCorrectLights = true;
 	renderer.shadowMap.enabled = true;
 	if (threeDisplayDivRef.value) {
 		renderer.setSize(
@@ -144,9 +139,9 @@ const initControls = () => {
 
 // 显示FPS、内存占用等
 const initStats = () => {
-	stats = Stats();
+	stats = new Stats();
 	if (threeDisplayDivRef.value) {
-		threeDisplayDivRef.value.appendChild(stats.domElement);
+		threeDisplayDivRef.value.appendChild(stats.dom);
 	}
 };
 

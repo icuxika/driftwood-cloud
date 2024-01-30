@@ -14,9 +14,11 @@ public class SCGConfiguration {
     @Bean
     public BlockRequestHandler blockRequestHandler() {
         return (serverWebExchange, throwable) ->
-                ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                ServerResponse.status(HttpStatus.OK)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .body(BodyInserters.fromValue("SCS Sentinel block"));
+                        .body(BodyInserters.fromValue("""
+                                {"code":20000,"data":null,"msg":"SCS Sentinel block","success":false}
+                                """));
     }
 
 }

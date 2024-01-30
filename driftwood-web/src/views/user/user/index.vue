@@ -65,7 +65,7 @@ const pagination = reactive({
 });
 
 const rowKey = (rowData: User) => {
-	return rowData.id;
+	return rowData.id ?? 0;
 };
 
 // 非数据表属性直接对应的参数

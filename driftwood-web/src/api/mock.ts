@@ -1,5 +1,5 @@
-import { AxiosResponse } from "axios";
 import { ApiData } from "@/api/index";
+import { AxiosResponse } from "axios";
 
 const isMockMode = import.meta.env.MODE === "mock";
 
@@ -13,8 +13,8 @@ const mockResponse = <T>(mockData: T) => {
 		},
 		status: 200,
 		statusText: "",
-		headers: null,
-		config: {},
+		headers: {},
+		config: {} as any,
 	});
 };
 

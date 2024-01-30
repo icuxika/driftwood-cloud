@@ -15,7 +15,7 @@
 		"paths": {
 			"@/*": ["./src/*"]
 		},
-		"types": ["node", "naive-ui/volar", "@icuxika/vue-scaffold-ui/volar"]
+		"types": ["node", "naive-ui/volar"]
 	},
 	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
 	"references": [

@@ -11,10 +11,6 @@ spring:
         server-addr: ${NACOS_HOST:127.0.0.1}:${NACOS_PORT:8848}
       config:
         server-addr: ${spring.cloud.nacos.discovery.server-addr}
-    # https://github.com/spring-cloud/spring-cloud-commons/issues/1295
-    mvc:
-      token-relay:
-        enabled: false
 
   config:
     import:

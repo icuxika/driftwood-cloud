@@ -1,5 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import router from "@/router/index";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
 const instance = axios.create({
 	// baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -58,7 +58,7 @@ const allowRequest = (requestList: string[], config: AxiosRequestConfig) => {
  * 请求拦截器
  */
 instance.interceptors.request.use(
-	(config: AxiosRequestConfig) => {
+	(config) => {
 		const authorization = config.headers["Authorization"];
 		if (
 			typeof authorization === "undefined" &&
@@ -67,18 +67,6 @@ instance.interceptors.request.use(
 			// config.headers["Authorization"] = "Bearer " + store.state.auth.accessToken
 			config.headers["Authorization"] =
 				"Bearer " + localStorage.getItem("accessToken");
-		}
-		const repeatFlag = stopRepeatRequest(
-			requestInExecutionList,
-			config,
-			`${config.url} 请求重复`
-		);
-		if (repeatFlag) {
-			return {
-				cancelToken: new axios.CancelToken((cancel) =>
-					cancel(JSON.stringify(config))
-				),
-			};
 		}
 		return config;
 	},
@@ -92,16 +80,9 @@ instance.interceptors.request.use(
  */
 instance.interceptors.response.use(
 	(response: AxiosResponse) => {
-		allowRequest(requestInExecutionList, response.config);
 		return response;
 	},
 	(error) => {
-		if (axios.isCancel(error)) {
-			const config = JSON.parse(error.message);
-			allowRequest(requestInExecutionList, config);
-		} else {
-			allowRequest(requestInExecutionList, error.config);
-		}
 		const response = error.response;
 		if (response) {
 			switch (response.status) {

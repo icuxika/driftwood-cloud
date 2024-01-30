@@ -18,17 +18,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { Page } from "@/api";
+import { Role } from "@/api/modules/user/role";
+import { PartialPageable, usePage } from "@/hooks/use-page";
+import { defineRoleColumnList } from "@/views/user/role/data";
 import {
 	DataTableBaseColumn,
 	DataTableFilterState,
 	DataTableSortState,
 	PaginationProps,
 } from "naive-ui";
-import { defineRoleColumnList } from "@/views/user/role/data";
-import { Page } from "@/api";
-import { PartialPageable, usePage } from "@/hooks/use-page";
-import { Role } from "@/api/modules/user/role";
+import { onMounted, reactive, ref } from "vue";
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
@@ -75,7 +75,7 @@ const pagination = reactive({
 });
 
 const rowKey = (rowData: Role) => {
-	return rowData.id;
+	return rowData.id ?? 0;
 };
 
 // 非数据表属性直接对应的参数

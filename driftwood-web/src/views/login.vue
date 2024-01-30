@@ -124,7 +124,7 @@ const loginLoading = ref(false);
 interface GetCodeButtonType {
 	disabled: boolean;
 	text: string;
-	timer: NodeJS.Timer;
+	timer: NodeJS.Timeout;
 	duration: number;
 }
 
