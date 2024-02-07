@@ -9,6 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import com.icuxika.framework.config.resolver.JsonClipResolver;
 import com.icuxika.framework.config.resolver.RequestExcelResolver;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.text.SimpleDateFormat;
@@ -31,6 +33,9 @@ public class WebConfig implements WebMvcConfigurer {
     private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
     private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
     private static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
+    @Value("${file.local.resource-location:/Users/icuxika/temp/driftwood-files/}")
+    private String resourceLocation;
 
     /**
      * 使GET请求能够解析时间参数
@@ -73,4 +78,8 @@ public class WebConfig implements WebMvcConfigurer {
         resolvers.add(new RequestExcelResolver());
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/files/**").addResourceLocations("file:" + resourceLocation);
+    }
 }

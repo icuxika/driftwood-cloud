@@ -1,6 +1,7 @@
 package com.icuxika.framework.object.modules.admin.feign;
 
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFile
         }
         return new AdminFileClient() {
             @Override
-            public ApiData<Long> uploadFile(MultipartFile file) {
+            public ApiData<AdminFileVO> uploadFile(MultipartFile file) {
                 return ApiData.errorMsg("上传文件出错");
             }
 

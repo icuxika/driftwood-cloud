@@ -156,9 +156,12 @@ const loginSuccessHandler = (userInfoVO: UserInfoVO) => {
 		path: (route.query.redirect as string) || "/",
 	});
 	loginLoading.value = false;
-	let avatar =
-		userInfoVO?.userProfile?.avatar ??
-		"https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg";
+	let avatar = "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg";
+	if (userInfoVO.userProfile && userInfoVO.userProfile.avatar) {
+		avatar =
+			"http://localhost:8900/admin/files/" +
+			userInfoVO.userProfile.avatar;
+	}
 	notification.create({
 		title: "登录成功",
 		content: `${userInfoVO.nickname}，欢迎回来！`,

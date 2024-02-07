@@ -4,6 +4,7 @@ import com.icuxika.admin.service.FileService;
 import com.icuxika.admin.vo.OSSSignatureVO;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.JsonClip;
+import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import com.icuxika.framework.object.modules.user.dto.UserExcelDTO;
 import com.icuxika.framework.security.annotation.Anonymous;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,9 +20,9 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("uploadFile")
-    public ApiData<Long> uploadFile(@RequestPart("file") MultipartFile file) {
-        Long fileId = fileService.uploadFile(file);
-        return ApiData.ok(fileId);
+    public ApiData<AdminFileVO> uploadFile(@RequestPart("file") MultipartFile file) {
+        AdminFileVO adminFileVO = fileService.uploadFile(file);
+        return ApiData.ok(adminFileVO);
     }
 
     @GetMapping("/{fileId}")

@@ -16,6 +16,7 @@ import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.util.FileUtil;
+import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import com.icuxika.framework.oss.core.FileTemplate;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -43,7 +44,7 @@ public class FileServiceImpl implements FileService {
     private FileRepository fileRepository;
 
     @Override
-    public Long uploadFile(MultipartFile file) {
+    public AdminFileVO uploadFile(MultipartFile file) {
         try (
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 InputStream inputStream = file.getInputStream()
@@ -78,7 +79,11 @@ public class FileServiceImpl implements FileService {
                 adminFile.setFileExtension(fileExtension);
                 adminFile.setFileSha256(fileSha256);
                 fileRepository.save(adminFile);
-                return adminFile.getId();
+
+                AdminFileVO adminFileVO = new AdminFileVO();
+                adminFileVO.setId(adminFile.getId());
+                adminFileVO.setFilepath(SystemConstant.MINIO_BUCKET_NAME + "/" + objectName);
+                return adminFileVO;
             }
         } catch (IOException e) {
             throw new GlobalServiceException("文件上传失败：" + e.getMessage());

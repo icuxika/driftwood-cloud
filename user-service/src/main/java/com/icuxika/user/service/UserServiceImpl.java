@@ -6,6 +6,7 @@ import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
 import com.icuxika.framework.object.modules.admin.feign.AdminFileClient;
+import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
@@ -252,12 +253,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void uploadAvatar(MultipartFile file) {
-        ApiData<Long> minioFileVOApiData = adminFileClient.uploadFile(file);
+        ApiData<AdminFileVO> minioFileVOApiData = adminFileClient.uploadFile(file);
         if (!minioFileVOApiData.isSuccess()) {
             throw new GlobalServiceException("头像上传失败");
         }
         userProfileRepository.findByUserId(SecurityUtil.getUserId()).ifPresent(userProfile -> {
-            userProfile.setAvatarFileId(minioFileVOApiData.getData());
+            userProfile.setAvatarFileId(minioFileVOApiData.getData().getId());
+            userProfile.setAvatar(minioFileVOApiData.getData().getFilepath());
             userProfileRepository.save(userProfile);
         });
     }

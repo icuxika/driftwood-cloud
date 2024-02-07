@@ -10,6 +10,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,10 +28,10 @@ public class FrameworkResourceServerConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         List<String> anonymousPathList = buildAnonymousPathList();
         httpSecurity
-                .csrf().disable()
-                .authorizeRequests(authorizeRequests -> authorizeRequests
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         // flowable-ui -> modeler
-                        .requestMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**").permitAll()
+                        .requestMatchers("/actuator/**", "/druid/**", "/modeler/**", "/modeler-app/**", "/files/**").permitAll()
                         .requestMatchers(anonymousPathList.toArray(new String[0])).permitAll()
                         .requestMatchers(new AuthorizeRequestMatcher()).permitAll()
                         .anyRequest().authenticated()
