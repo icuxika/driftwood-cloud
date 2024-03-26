@@ -1,19 +1,19 @@
 <template>
-	<n-loading-bar-provider>
-		<n-notification-provider>
-			<n-config-provider
-				:theme="systemStore.naiveUITheme"
-				:locale="systemStore.naiveUILocale"
-				:date-locale="systemStore.naiveUIDateLocale"
-			>
-				<n-dialog-provider>
-					<n-theme-editor>
-						<router-view />
-					</n-theme-editor>
-				</n-dialog-provider>
-			</n-config-provider>
-		</n-notification-provider>
-	</n-loading-bar-provider>
+    <n-loading-bar-provider>
+        <n-notification-provider>
+            <n-config-provider
+                :theme="systemStore.naiveUITheme"
+                :locale="systemStore.naiveUILocale"
+                :date-locale="systemStore.naiveUIDateLocale"
+            >
+                <n-dialog-provider>
+                    <n-theme-editor>
+                        <router-view />
+                    </n-theme-editor>
+                </n-dialog-provider>
+            </n-config-provider>
+        </n-notification-provider>
+    </n-loading-bar-provider>
 </template>
 
 <script setup lang="ts">

@@ -1,7 +1,7 @@
 <template>
-	<n-message-provider>
-		<RootLayout />
-	</n-message-provider>
+    <n-message-provider>
+        <RootLayout />
+    </n-message-provider>
 </template>
 
 <script setup lang="ts">
