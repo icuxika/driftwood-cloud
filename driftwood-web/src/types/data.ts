@@ -15,36 +15,36 @@ export const U = 0b0100;
 export const D = 0b1000;
 
 export const defineDropdownCRUDOptions = (
-	operateMixed: number,
-	additionalOptions?: DropdownMixedOption[]
+    operateMixed: number,
+    additionalOptions?: DropdownMixedOption[]
 ): DropdownMixedOption[] => {
-	const options: DropdownMixedOption[] = [];
-	if (operateMixed & C) {
-		options.push({
-			label: OPTION_CREATE_NAME,
-			key: OPTION_CREATE_KEY,
-		});
-	}
-	if (operateMixed & R) {
-		options.push({
-			label: OPTION_READ_NAME,
-			key: OPTION_READ_KEY,
-		});
-	}
-	if (operateMixed & U) {
-		options.push({
-			label: OPTION_UPDATE_NAME,
-			key: OPTION_UPDATE_KEY,
-		});
-	}
-	if (operateMixed & D) {
-		options.push({
-			label: OPTION_DELETE_NAME,
-			key: OPTION_DELETE_KEY,
-		});
-	}
-	if (additionalOptions) {
-		options.push(...additionalOptions);
-	}
-	return options;
+    const options: DropdownMixedOption[] = [];
+    if (operateMixed & C) {
+        options.push({
+            label: OPTION_CREATE_NAME,
+            key: OPTION_CREATE_KEY,
+        });
+    }
+    if (operateMixed & R) {
+        options.push({
+            label: OPTION_READ_NAME,
+            key: OPTION_READ_KEY,
+        });
+    }
+    if (operateMixed & U) {
+        options.push({
+            label: OPTION_UPDATE_NAME,
+            key: OPTION_UPDATE_KEY,
+        });
+    }
+    if (operateMixed & D) {
+        options.push({
+            label: OPTION_DELETE_NAME,
+            key: OPTION_DELETE_KEY,
+        });
+    }
+    if (additionalOptions) {
+        options.push(...additionalOptions);
+    }
+    return options;
 };

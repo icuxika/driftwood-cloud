@@ -3,53 +3,53 @@ import AxiosInstance from "@/api/axios";
 import { ApiData } from "@/api";
 
 type ChunkUploadUrlMap = {
-	[key: string]: string;
+    [key: string]: string;
 };
 
 type CreateService = (path: string) => {
-	/**
-	 * 大文件分片上传-创建分片上传请求
-	 */
-	createMultipartUpload: (
-		fileName: string,
-		chunkNumber: number
-	) => Promise<AxiosResponse<ApiData<ChunkUploadUrlMap>>>;
+    /**
+     * 大文件分片上传-创建分片上传请求
+     */
+    createMultipartUpload: (
+        fileName: string,
+        chunkNumber: number
+    ) => Promise<AxiosResponse<ApiData<ChunkUploadUrlMap>>>;
 
-	/**
-	 * 大文件分片上传-合并上传完成的分片文件
-	 * @param fileName
-	 * @param uploadId
-	 */
-	completeMultipartUpload: (
-		fileName: string,
-		uploadId: string
-	) => Promise<AxiosResponse<ApiData<never>>>;
+    /**
+     * 大文件分片上传-合并上传完成的分片文件
+     * @param fileName
+     * @param uploadId
+     */
+    completeMultipartUpload: (
+        fileName: string,
+        uploadId: string
+    ) => Promise<AxiosResponse<ApiData<never>>>;
 };
 
 const createService: CreateService = (path: string) => {
-	return {
-		createMultipartUpload(fileName, chunkNumber) {
-			return AxiosInstance.get(
-				path +
-					"/createMultipartUpload" +
-					"?fileName=" +
-					fileName +
-					"&chunkNumber=" +
-					chunkNumber
-			);
-		},
+    return {
+        createMultipartUpload(fileName, chunkNumber) {
+            return AxiosInstance.get(
+                path +
+                    "/createMultipartUpload" +
+                    "?fileName=" +
+                    fileName +
+                    "&chunkNumber=" +
+                    chunkNumber
+            );
+        },
 
-		completeMultipartUpload(fileName, uploadId) {
-			return AxiosInstance.get(
-				path +
-					"/completeMultipartUpload" +
-					"?fileName=" +
-					fileName +
-					"&uploadId=" +
-					uploadId
-			);
-		},
-	};
+        completeMultipartUpload(fileName, uploadId) {
+            return AxiosInstance.get(
+                path +
+                    "/completeMultipartUpload" +
+                    "?fileName=" +
+                    fileName +
+                    "&uploadId=" +
+                    uploadId
+            );
+        },
+    };
 };
 
 const minioFileService = createService("/file/file");

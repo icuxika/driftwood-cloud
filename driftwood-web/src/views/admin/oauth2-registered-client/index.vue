@@ -1,7 +1,7 @@
 <template>
-	<div>
-		<ThreeDisplay />
-	</div>
+    <div>
+        <ThreeDisplay />
+    </div>
 </template>
 
 <script setup lang="ts">

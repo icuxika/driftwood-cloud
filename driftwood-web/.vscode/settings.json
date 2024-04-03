@@ -1,22 +1,22 @@
 {
-	"eslint.validate": [
-		"javascript",
-		"javascriptreact",
-		"typescript",
-		"typescriptreact",
-		"json",
-		"jsonc",
-		"json5"
-	],
-	"editor.codeActionsOnSave": {
-		"source.organizeImports": "explicit",
-		"source.fixAll.eslint": "explicit"
-	},
-	"editor.formatOnSave": true,
-	"editor.formatOnSaveMode": "file",
-	"editor.formatOnType": true,
-	"editor.formatOnPaste": false,
-	"[typescript]": {
-		"editor.defaultFormatter": "esbenp.prettier-vscode"
-	}
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "json",
+        "jsonc",
+        "json5"
+    ],
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll.eslint": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "file",
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": false,
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
