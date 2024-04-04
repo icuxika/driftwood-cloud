@@ -1,5 +1,10 @@
 import router from "@/router/index";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import {
+    AuthorizationGrantType,
+    CLIENT_TYPE_HTML,
+    adminAuthService,
+} from "./modules/admin/auth";
 
 const instance = axios.create({
     // baseURL: import.meta.env.VITE_APP_BASE_URL,
@@ -62,7 +67,8 @@ instance.interceptors.request.use(
         const authorization = config.headers["Authorization"];
         if (
             typeof authorization === "undefined" &&
-            config.url?.indexOf("login") == -1
+            config.url?.indexOf("login") == -1 &&
+            config.url?.indexOf("refreshToken") == -1
         ) {
             // config.headers["Authorization"] = "Bearer " + store.state.auth.accessToken
             config.headers["Authorization"] =
@@ -82,11 +88,63 @@ instance.interceptors.response.use(
     (response: AxiosResponse) => {
         return response;
     },
-    (error) => {
+    async (error) => {
         const response = error.response;
         if (response) {
             switch (response.status) {
                 case 401: {
+                    const localRefreshToken =
+                        localStorage.getItem("refreshToken");
+
+                    const isRefreshToken =
+                        (response.config.headers[
+                            "__isRefreshToken"
+                        ] as boolean) || false;
+
+                    if (localRefreshToken) {
+                        // localStorage中有token的缓存
+                        if (isRefreshToken) {
+                            // 判断是不是刷新token的请求，防止递归
+                            // 直接转登录页面
+                        } else {
+                            // 尝试手动刷新token
+                            try {
+                                const tokenInfoResponse =
+                                    await adminAuthService.refreshToken({
+                                        loginGrantType:
+                                            AuthorizationGrantType.PASSWORD,
+                                        grantType: "refresh_token",
+                                        refreshToken: localRefreshToken,
+                                        clientType: CLIENT_TYPE_HTML,
+                                    });
+                                const tokenInfoApiData = tokenInfoResponse.data;
+                                if (tokenInfoApiData.success) {
+                                    console.log("刷新token成功");
+                                    const tokenInfo = tokenInfoApiData.data;
+                                    if (tokenInfo) {
+                                        localStorage.setItem(
+                                            "accessToken",
+                                            tokenInfo.accessToken
+                                        );
+                                        localStorage.setItem(
+                                            "refreshToken",
+                                            tokenInfo.refreshToken
+                                        );
+                                        // 重新请求失败的请求
+                                        response.config.headers[
+                                            "Authorization"
+                                        ] = "Bearer " + tokenInfo.accessToken;
+                                        return instance(response.config);
+                                    }
+                                }
+                            } catch (error) {
+                                console.log("尝试刷新token出错", error);
+                            }
+                        }
+                    } else {
+                        // 未登录过，直接转登录页面
+                    }
+
                     window.$message.warning("登录失效，请重新登录");
                     // 跳转登录页面
                     localStorage.setItem("accessToken", "");

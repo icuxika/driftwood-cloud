@@ -109,6 +109,11 @@ interface BindOneDTO {
 }
 
 /**
+ * 简化接口返回值的类型声明
+ */
+type ApiDataResponse<T> = Promise<AxiosResponse<ApiData<T>>>;
+
+/**
  * 对axios请求返回结果进行解析
  * @param block 业务请求（返回结果满足ApiData<T>）
  */
@@ -148,6 +153,14 @@ const NoNullReject = () => Promise.reject("不应出现的数据为空错误");
 const IsUndefined = <T>(target: T | null): boolean =>
     typeof target === "undefined";
 
-export { resolveAxiosResult, NoNullReject };
+export { NoNullReject, resolveAxiosResult };
 
-export type { ApiData, Pageable, Page, HasId, BaseEntity, BindOneDTO };
+export type {
+    ApiData,
+    ApiDataResponse,
+    BaseEntity,
+    BindOneDTO,
+    HasId,
+    Page,
+    Pageable,
+};

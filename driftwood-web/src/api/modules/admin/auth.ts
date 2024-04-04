@@ -1,6 +1,5 @@
-import { AxiosResponse } from "axios";
+import { ApiDataResponse } from "@/api";
 import AxiosInstance from "@/api/axios";
-import { ApiData } from "@/api";
 
 /**
  * 设备类型html
@@ -62,22 +61,37 @@ interface TokenInfo {
     expiresIn: number;
 }
 
+interface RefreshTokenDTO {
+    loginGrantType: string;
+    grantType: string;
+    refreshToken: string;
+    clientType: number;
+}
+
 type CreateService = (path: string) => {
-    login: (
-        loginParam: LoginParam
-    ) => Promise<AxiosResponse<ApiData<TokenInfo>>>;
+    login: (loginParam: LoginParam) => ApiDataResponse<TokenInfo>;
+    refreshToken: (
+        refreshTokenDTO: RefreshTokenDTO
+    ) => ApiDataResponse<TokenInfo>;
 };
 
 const createService: CreateService = (path: string) => {
     return {
         login(loginParam) {
-            return AxiosInstance.post(path + "/login", loginParam);
+            return AxiosInstance.post(`${path}/login`, loginParam);
+        },
+        refreshToken(refreshTokenDTO) {
+            return AxiosInstance.post(`${path}/refreshToken`, refreshTokenDTO, {
+                headers: {
+                    __isRefreshToken: true,
+                },
+            });
         },
     };
 };
 
 const adminAuthService = createService("/admin/auth");
 
-export { adminAuthService, CLIENT_TYPE_HTML, AuthorizationGrantType };
+export { AuthorizationGrantType, CLIENT_TYPE_HTML, adminAuthService };
 
 export type { LoginParam, TokenInfo };

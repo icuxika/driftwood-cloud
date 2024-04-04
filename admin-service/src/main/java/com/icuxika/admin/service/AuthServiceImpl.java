@@ -1,6 +1,7 @@
 package com.icuxika.admin.service;
 
 import com.icuxika.admin.dto.LoginDTO;
+import com.icuxika.admin.dto.RefreshTokenDTO;
 import com.icuxika.admin.enumerate.SupportGrantType;
 import com.icuxika.admin.feign.AuthClient;
 import com.icuxika.admin.vo.TokenInfo;
@@ -73,6 +74,43 @@ public class AuthServiceImpl implements AuthService {
         }
         throw new GlobalServiceException("登录失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
     }
+
+    @Override
+    public TokenInfo refreshToken(RefreshTokenDTO refreshTokenDTO) {
+        Optional<SupportGrantType> supportGrantTypeOptional = EnumSet.allOf(SupportGrantType.class).stream().filter(p -> p.getType().equals(refreshTokenDTO.getLoginGrantType())).findFirst();
+        if (supportGrantTypeOptional.isEmpty()) {
+            throw new GlobalServiceException("不支持的登录类型");
+        }
+        SupportGrantType supportGrantType = supportGrantTypeOptional.get();
+        ResponseEntity<TokenResponse> tokenResponseResponseEntity;
+        switch (supportGrantType) {
+            case PASSWORD -> tokenResponseResponseEntity = authClient.refreshToken(
+                    buildHeaders("id_password", "secret3"),
+                    "refresh_token",
+                    refreshTokenDTO.getRefreshToken(),
+                    refreshTokenDTO.getClientType()
+
+            );
+            case PHONE -> tokenResponseResponseEntity = authClient.refreshToken(
+                    buildHeaders("id_phone", "secret4"),
+                    "refresh_token",
+                    refreshTokenDTO.getRefreshToken(),
+                    refreshTokenDTO.getClientType()
+            );
+            default -> throw new IllegalStateException("[不应出现]不支持的登录类型");
+        }
+        if (HttpStatus.OK.equals(tokenResponseResponseEntity.getStatusCode())) {
+            TokenResponse tokenResponse = tokenResponseResponseEntity.getBody();
+            if (tokenResponse == null) {
+                throw new GlobalServiceException("[不应出现]token刷新失败，授权服务器返回结果为空！");
+            }
+            TokenInfo tokenInfo = new TokenInfo();
+            BeanUtils.copyProperties(tokenResponse, tokenInfo);
+            return tokenInfo;
+        }
+        throw new GlobalServiceException("token刷新失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
+    }
+
 
     @Override
     public String generateVerificationCode(String phone) {

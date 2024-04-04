@@ -28,4 +28,12 @@ public interface AuthClient {
             @RequestParam("code") String code,
             @RequestParam("client_type") String clientType
     );
+
+    @PostMapping("/oauth2/token")
+    ResponseEntity<TokenResponse> refreshToken(
+            @RequestHeader HttpHeaders headers,
+            @RequestParam("grant_type") String grantType,
+            @RequestParam("refresh_token") String refreshToken,
+            @RequestParam("client_type") String clientType
+    );
 }

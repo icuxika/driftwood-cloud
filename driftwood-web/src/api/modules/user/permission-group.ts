@@ -1,7 +1,6 @@
+import { ApiDataResponse, BaseEntity, HasId } from "@/api";
 import AxiosInstance from "@/api/axios";
-import { ApiData, BaseEntity, HasId } from "@/api";
-import { AxiosResponse } from "axios";
-import { mockResponse, isMockMode } from "@/api/mock";
+import { isMockMode, mockResponse } from "@/api/mock";
 
 interface PermissionGroup extends BaseEntity {
     name: string;
@@ -14,34 +13,32 @@ type PermissionGroupWithId = PermissionGroup & HasId;
 type CreateService = (path: string) => {
     list: (
         permissionGroup: Partial<PermissionGroup>
-    ) => Promise<AxiosResponse<ApiData<PermissionGroupWithId[]>>>;
+    ) => ApiDataResponse<PermissionGroupWithId[]>;
 
     getById: (
         id: PermissionGroupWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<PermissionGroupWithId>>>;
+    ) => ApiDataResponse<PermissionGroupWithId>;
 
     save: (
         menu: Omit<Partial<PermissionGroup>, "id">
-    ) => Promise<AxiosResponse<ApiData<PermissionGroupWithId>>>;
+    ) => ApiDataResponse<PermissionGroupWithId>;
 
     update: (
         menu: Partial<PermissionGroup> & HasId
-    ) => Promise<AxiosResponse<ApiData<PermissionGroupWithId>>>;
+    ) => ApiDataResponse<PermissionGroupWithId>;
 
-    deleteById: (
-        id: PermissionGroupWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<never>>>;
+    deleteById: (id: PermissionGroupWithId["id"]) => ApiDataResponse<never>;
 };
 
 const createService: CreateService = (path: string) => {
     return {
         list(permissionGroup) {
-            return AxiosInstance.get(path + "/list", {
+            return AxiosInstance.get(`${path}/list`, {
                 params: permissionGroup,
             });
         },
         getById(id) {
-            return AxiosInstance.get(path + "/" + id);
+            return AxiosInstance.get(`${path}/${id}`);
         },
         save(permission) {
             return AxiosInstance.post(path, permission);
@@ -50,7 +47,7 @@ const createService: CreateService = (path: string) => {
             return AxiosInstance.put(path, permission);
         },
         deleteById(id) {
-            return AxiosInstance.delete(path + "/" + id);
+            return AxiosInstance.delete(`${path}/${id}`);
         },
     };
 };

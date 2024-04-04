@@ -18,9 +18,10 @@
 </template>
 
 <script setup lang="ts">
-import { Page } from "@/api";
+import { NoNullReject, Page } from "@/api";
 import { Role } from "@/api/modules/user/role";
 import { PartialPageable, usePage } from "@/hooks/use-page";
+import { useRoleStore } from "@/store/user/role";
 import { defineRoleColumnList } from "@/views/user/role/data";
 import {
     DataTableBaseColumn,
@@ -45,6 +46,8 @@ const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(
         };
     }
 );
+
+const roleStore = useRoleStore();
 
 const data = ref<Role[]>([]);
 const loading = ref(true);
@@ -82,24 +85,23 @@ const rowKey = (rowData: Role) => {
 interface RoleQuery extends Role {}
 interface RoleResult extends Role {}
 
-const query = (pageable: PartialPageable<Role>): Promise<Page<Role>> => {
-    return new Promise((resolve) => {
-        const pagedData = roleData.slice(
-            (pageable.page - 1) * pageable.size,
-            pageable.page * pageable.size
-        );
-        const total = roleData.length;
-        const pageCount = Math.ceil(total / pageable.size);
-        setTimeout(() => {
-            resolve({
-                content: pagedData,
-                totalPages: pageCount,
-                totalElements: total,
-                size: pageable.size,
-                number: pageable.page,
-            });
-        }, 500);
+const query = async (pageable: PartialPageable<Role>): Promise<Page<Role>> => {
+    const rolePage = await roleStore.page({
+        ...pageable,
+        sort: "id,desc",
+        page: pageable.page - 1,
+        size: pageable.size,
     });
+    if (rolePage) {
+        return {
+            content: rolePage.content,
+            totalPages: rolePage.totalPages,
+            totalElements: rolePage.totalElements,
+            size: rolePage.size,
+            number: rolePage.number,
+        };
+    }
+    return NoNullReject();
 };
 
 const { refreshPage } = usePage<RoleQuery, RoleResult>(

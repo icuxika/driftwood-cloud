@@ -1,6 +1,7 @@
 package com.icuxika.admin.controller;
 
 import com.icuxika.admin.dto.LoginDTO;
+import com.icuxika.admin.dto.RefreshTokenDTO;
 import com.icuxika.admin.service.AuthService;
 import com.icuxika.admin.vo.TokenInfo;
 import com.icuxika.framework.basic.common.ApiData;
@@ -25,6 +26,13 @@ public class AuthController {
     @PostMapping("/login")
     public ApiData<TokenInfo> login(@RequestBody LoginDTO loginDTO) {
         TokenInfo tokenInfo = authService.login(loginDTO);
+        return ApiData.ok(tokenInfo);
+    }
+
+    @Anonymous
+    @PostMapping("/refreshToken")
+    public ApiData<TokenInfo> refreshToken(@RequestBody RefreshTokenDTO refreshTokenDTO) {
+        TokenInfo tokenInfo = authService.refreshToken(refreshTokenDTO);
         return ApiData.ok(tokenInfo);
     }
 

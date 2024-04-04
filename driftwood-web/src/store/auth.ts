@@ -1,12 +1,12 @@
-import { defineStore } from "pinia";
+import { resolveAxiosResult } from "@/api";
 import {
     adminAuthService,
     AuthorizationGrantType,
     CLIENT_TYPE_HTML,
     TokenInfo,
 } from "@/api/modules/admin/auth";
-import { resolveAxiosResult } from "@/api";
-import { userService, UserInfoVO } from "@/api/modules/user/user";
+import { UserInfoVO, userService } from "@/api/modules/user/user";
+import { defineStore } from "pinia";
 
 interface AuthState {
     /**
@@ -39,6 +39,7 @@ export const useAuthStore = defineStore("auth", {
             this.expiresIn = tokenInfo.expiresIn;
 
             localStorage.setItem("accessToken", tokenInfo.accessToken);
+            localStorage.setItem("refreshToken", tokenInfo.refreshToken);
         },
 
         /**
@@ -92,6 +93,29 @@ export const useAuthStore = defineStore("auth", {
                 return Promise.reject(error);
             }
             return null;
+        },
+
+        async refreshTokenGracefully(): Promise<boolean> {
+            const localRefreshToken = localStorage.getItem("refreshToken");
+            if (localRefreshToken) {
+                console.log("刷新token");
+                const tokenInfo = await resolveAxiosResult(() =>
+                    adminAuthService.refreshToken({
+                        loginGrantType: AuthorizationGrantType.PASSWORD,
+                        grantType: "refresh_token",
+                        refreshToken: localRefreshToken,
+                        clientType: CLIENT_TYPE_HTML,
+                    })
+                );
+                if (tokenInfo) {
+                    this.setTokenInfo(tokenInfo);
+                    return true;
+                }
+                console.log("刷新token失败");
+                return false;
+            }
+            console.log("localStorage中不存在refreshToken");
+            return false;
         },
     },
 });

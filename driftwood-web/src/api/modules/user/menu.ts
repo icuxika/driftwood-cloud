@@ -1,6 +1,5 @@
+import { ApiDataResponse, BaseEntity, BindOneDTO, HasId } from "@/api";
 import AxiosInstance from "@/api/axios";
-import { ApiData, BaseEntity, BindOneDTO, HasId } from "@/api";
-import { AxiosResponse } from "axios";
 import { isMockMode, mockResponse } from "@/api/mock";
 
 /**
@@ -19,38 +18,26 @@ interface Menu extends BaseEntity {
 type MenuWithId = Menu & HasId;
 
 type CreateService = (path: string) => {
-    list: (
-        menu: Partial<Menu>
-    ) => Promise<AxiosResponse<ApiData<MenuWithId[]>>>;
+    list: (menu: Partial<Menu>) => ApiDataResponse<MenuWithId[]>;
 
-    getById: (
-        id: MenuWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<MenuWithId>>>;
+    getById: (id: MenuWithId["id"]) => ApiDataResponse<MenuWithId>;
 
-    save: (
-        menu: Omit<Partial<Menu>, "id">
-    ) => Promise<AxiosResponse<ApiData<MenuWithId>>>;
+    save: (menu: Omit<Partial<Menu>, "id">) => ApiDataResponse<MenuWithId>;
 
-    update: (
-        menu: Partial<Menu> & HasId
-    ) => Promise<AxiosResponse<ApiData<MenuWithId>>>;
+    update: (menu: Partial<Menu> & HasId) => ApiDataResponse<MenuWithId>;
 
-    deleteById: (
-        id: MenuWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<never>>>;
+    deleteById: (id: MenuWithId["id"]) => ApiDataResponse<never>;
 
-    bindAuthorities: (
-        bindOneDTO: BindOneDTO
-    ) => Promise<AxiosResponse<ApiData<never>>>;
+    bindAuthorities: (bindOneDTO: BindOneDTO) => ApiDataResponse<never>;
 };
 
 const createService: CreateService = (path: string) => {
     return {
         list(menu) {
-            return AxiosInstance.get(path + "/list", { params: menu });
+            return AxiosInstance.get(`${path}/list`, { params: menu });
         },
         getById(id) {
-            return AxiosInstance.get(path + "/" + id);
+            return AxiosInstance.get(`${path}/${id}`);
         },
         save(menu) {
             return AxiosInstance.post(path, menu);
@@ -59,10 +46,10 @@ const createService: CreateService = (path: string) => {
             return AxiosInstance.put(path, menu);
         },
         deleteById(id) {
-            return AxiosInstance.delete(path + "/" + id);
+            return AxiosInstance.delete(`${path}/${id}`);
         },
         bindAuthorities(bindOneDTO) {
-            return AxiosInstance.post(path + "/bindAuthorities", bindOneDTO);
+            return AxiosInstance.post(`${path}/bindAuthorities`, bindOneDTO);
         },
     };
 };

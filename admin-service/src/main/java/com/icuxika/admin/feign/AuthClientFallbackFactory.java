@@ -50,6 +50,11 @@ public class AuthClientFallbackFactory implements FallbackFactory<AuthClient> {
             public ResponseEntity<TokenResponse> tokenByPhone(HttpHeaders headers, String grantType, String username, String password, String clientType) {
                 return ResponseEntity.status(finalStatus).body(tokenResponse);
             }
+
+            @Override
+            public ResponseEntity<TokenResponse> refreshToken(HttpHeaders headers, String grantType, String refreshToken, String clientType) {
+                return ResponseEntity.status(finalStatus).body(tokenResponse);
+            }
         };
     }
 }

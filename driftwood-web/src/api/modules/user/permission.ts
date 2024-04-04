@@ -1,6 +1,5 @@
+import { ApiDataResponse, BaseEntity, HasId } from "@/api";
 import AxiosInstance from "@/api/axios";
-import { ApiData, BaseEntity, HasId } from "@/api";
-import { AxiosResponse } from "axios";
 import { isMockMode, mockResponse } from "@/api/mock";
 
 /**
@@ -19,32 +18,28 @@ type PermissionWithId = Permission & HasId;
 type CreateService = (path: string) => {
     list: (
         permission: Partial<Permission>
-    ) => Promise<AxiosResponse<ApiData<PermissionWithId[]>>>;
+    ) => ApiDataResponse<PermissionWithId[]>;
 
-    getById: (
-        id: PermissionWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<PermissionWithId>>>;
+    getById: (id: PermissionWithId["id"]) => ApiDataResponse<PermissionWithId>;
 
     save: (
         menu: Omit<Partial<Permission>, "id">
-    ) => Promise<AxiosResponse<ApiData<PermissionWithId>>>;
+    ) => ApiDataResponse<PermissionWithId>;
 
     update: (
         menu: Partial<Permission> & HasId
-    ) => Promise<AxiosResponse<ApiData<PermissionWithId>>>;
+    ) => ApiDataResponse<PermissionWithId>;
 
-    deleteById: (
-        id: PermissionWithId["id"]
-    ) => Promise<AxiosResponse<ApiData<never>>>;
+    deleteById: (id: PermissionWithId["id"]) => ApiDataResponse<never>;
 };
 
 const createService: CreateService = (path: string) => {
     return {
         list(permission) {
-            return AxiosInstance.get(path + "/list", { params: permission });
+            return AxiosInstance.get(`${path}/list`, { params: permission });
         },
         getById(id) {
-            return AxiosInstance.get(path + "/" + id);
+            return AxiosInstance.get(`${path}/${id}`);
         },
         save(permission) {
             return AxiosInstance.post(path, permission);
@@ -53,7 +48,7 @@ const createService: CreateService = (path: string) => {
             return AxiosInstance.put(path, permission);
         },
         deleteById(id) {
-            return AxiosInstance.delete(path + "/" + id);
+            return AxiosInstance.delete(`${path}/${id}`);
         },
     };
 };
