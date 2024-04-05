@@ -47,7 +47,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
     }
 
     @Override
-    public void save(PermissionGroup permissionGroup) {
+    public PermissionGroup save(PermissionGroup permissionGroup) {
         permissionGroupRepository.findByName(permissionGroup.getName()).ifPresent(exist -> {
             throw new GlobalServiceException("权限分组[" + permissionGroup.getName() + "]已经存在");
         });
@@ -55,11 +55,11 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
             throw new GlobalServiceException("父权限分组不存在");
         }
 
-        permissionGroupRepository.save(permissionGroup);
+        return permissionGroupRepository.save(permissionGroup);
     }
 
     @Override
-    public void update(PermissionGroup permissionGroup) {
+    public PermissionGroup update(PermissionGroup permissionGroup) {
         PermissionGroup exist = permissionGroupRepository.findById(permissionGroup.getId()).orElseThrow(() -> new GlobalServiceException("权限分组不存在"));
         if (permissionGroup.getParentId() != null && !permissionGroup.getParentId().equals(exist.getParentId()) && !permissionGroup.getParentId().equals(SystemConstant.TREE_ROOT_ID)) {
             if (permissionGroupRepository.findById(permissionGroup.getParentId()).isEmpty()) {
@@ -67,7 +67,7 @@ public class PermissionGroupServiceImpl implements PermissionGroupService {
             }
         }
         BeanUtils.copyProperties(permissionGroup, exist, BeanExUtil.getIgnorePropertyArray(permissionGroup));
-        permissionGroupRepository.save(exist);
+        return permissionGroupRepository.save(exist);
     }
 
     @Override

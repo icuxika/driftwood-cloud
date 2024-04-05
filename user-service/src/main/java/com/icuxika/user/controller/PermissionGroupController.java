@@ -46,15 +46,15 @@ public class PermissionGroupController {
     }
 
     @PostMapping
-    public ApiData<Void> save(@RequestBody PermissionGroup permissionGroup) {
-        permissionGroupService.save(permissionGroup);
-        return ApiData.okMsg("保存成功");
+    public ApiData<PermissionGroup> save(@RequestBody PermissionGroup permissionGroup) {
+        PermissionGroup newPermissionGroup = permissionGroupService.save(permissionGroup);
+        return ApiData.ok(newPermissionGroup);
     }
 
     @PutMapping
-    public ApiData<Void> update(@RequestBody PermissionGroup permissionGroup) {
-        permissionGroupService.update(permissionGroup);
-        return ApiData.okMsg("更新成功");
+    public ApiData<PermissionGroup> update(@RequestBody PermissionGroup permissionGroup) {
+        PermissionGroup newPermissionGroup = permissionGroupService.update(permissionGroup);
+        return ApiData.ok(newPermissionGroup);
     }
 
     @DeleteMapping("/{id}")

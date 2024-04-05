@@ -1,5 +1,6 @@
 package com.icuxika.user.service;
 
+import com.icuxika.framework.object.modules.user.dto.AllPermissionDTO;
 import com.icuxika.framework.object.modules.user.entity.Permission;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +14,11 @@ public interface PermissionService {
 
     Permission getById(Long id);
 
-    void save(Permission permission);
+    Permission save(Permission permission);
 
-    void update(Permission permission);
+    Permission update(Permission permission);
 
     void deleteById(Long id);
 
+    void updateAllPermission(AllPermissionDTO allPermissionDTO);
 }

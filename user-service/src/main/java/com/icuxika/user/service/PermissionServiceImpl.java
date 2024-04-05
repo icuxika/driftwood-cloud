@@ -2,7 +2,9 @@ package com.icuxika.user.service;
 
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.BeanExUtil;
+import com.icuxika.framework.object.modules.user.dto.AllPermissionDTO;
 import com.icuxika.framework.object.modules.user.entity.Permission;
+import com.icuxika.framework.object.modules.user.entity.PermissionGroup;
 import com.icuxika.user.repository.PermissionGroupRepository;
 import com.icuxika.user.repository.PermissionRepository;
 import org.springframework.beans.BeanUtils;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,16 +49,16 @@ public class PermissionServiceImpl implements PermissionService {
     }
 
     @Override
-    public void save(Permission permission) {
+    public Permission save(Permission permission) {
         permissionRepository.findByName(permission.getName()).ifPresent(p -> {
             throw new GlobalServiceException("权限名已被使用");
         });
 
-        permissionRepository.save(permission);
+        return permissionRepository.save(permission);
     }
 
     @Override
-    public void update(Permission permission) {
+    public Permission update(Permission permission) {
         Permission exist = permissionRepository.findById(permission.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
         if (permission.getGroupId() != null && !permission.getGroupId().equals(exist.getGroupId())) {
             if (permissionGroupRepository.findById(permission.getGroupId()).isEmpty()) {
@@ -63,13 +66,26 @@ public class PermissionServiceImpl implements PermissionService {
             }
         }
         BeanUtils.copyProperties(permission, exist, BeanExUtil.getIgnorePropertyArray(permission));
-        permissionRepository.save(exist);
+        return permissionRepository.save(exist);
     }
 
     @Override
     public void deleteById(Long id) {
         if (permissionRepository.existsById(id)) {
             permissionRepository.deleteById(id);
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateAllPermission(AllPermissionDTO allPermissionDTO) {
+        List<PermissionGroup> permissionGroupList = allPermissionDTO.getPermissionGroupList();
+        List<Permission> permissionList = allPermissionDTO.getPermissionList();
+        if (!permissionGroupList.isEmpty()) {
+            permissionGroupRepository.saveAll(permissionGroupList);
+        }
+        if (!permissionList.isEmpty()) {
+            permissionRepository.saveAll(permissionList);
         }
     }
 }

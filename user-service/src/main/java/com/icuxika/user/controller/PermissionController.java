@@ -1,6 +1,7 @@
 package com.icuxika.user.controller;
 
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.object.modules.user.dto.AllPermissionDTO;
 import com.icuxika.framework.object.modules.user.entity.Permission;
 import com.icuxika.user.service.PermissionService;
 import org.springframework.data.domain.Page;
@@ -39,15 +40,15 @@ public class PermissionController {
     }
 
     @PostMapping
-    public ApiData<Void> save(@RequestBody Permission permission) {
-        permissionService.save(permission);
-        return ApiData.okMsg("新增成功");
+    public ApiData<Permission> save(@RequestBody Permission permission) {
+        Permission newPermission = permissionService.save(permission);
+        return ApiData.ok(newPermission);
     }
 
     @PutMapping
-    public ApiData<Void> update(@RequestBody Permission permission) {
-        permissionService.update(permission);
-        return ApiData.okMsg("更新成功");
+    public ApiData<Permission> update(@RequestBody Permission permission) {
+        Permission newPermission = permissionService.update(permission);
+        return ApiData.ok(newPermission);
     }
 
     @DeleteMapping("/{id}")
@@ -56,4 +57,9 @@ public class PermissionController {
         return ApiData.okMsg("删除成功");
     }
 
+    @PostMapping("/updateAllPermission")
+    public ApiData<Void> updateAllPermission(@RequestBody AllPermissionDTO allPermissionDTO) {
+        permissionService.updateAllPermission(allPermissionDTO);
+        return ApiData.okMsg("更新成功");
+    }
 }

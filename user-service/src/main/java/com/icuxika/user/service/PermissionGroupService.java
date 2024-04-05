@@ -17,9 +17,9 @@ public interface PermissionGroupService {
 
     PermissionGroup getById(Long id);
 
-    void save(PermissionGroup permissionGroup);
+    PermissionGroup save(PermissionGroup permissionGroup);
 
-    void update(PermissionGroup permissionGroup);
+    PermissionGroup update(PermissionGroup permissionGroup);
 
     void deleteById(Long id);
 
