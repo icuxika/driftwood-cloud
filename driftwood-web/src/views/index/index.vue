@@ -3,11 +3,15 @@
         <FileUpload />
         <button type="button" @click="openGithubLoginWindow">GitHub</button>
         <button type="button" @click="openGiteeLoginWindow">Gitee</button>
+        <button type="button" @click="testPromiseAll">testPromiseAll</button>
     </div>
 </template>
 <script setup lang="ts">
 import FileUpload from "@/components/FileUpload.vue";
-import { onMounted } from "vue";
+import { useUserStore } from "@/store/user/user";
+import { onMounted, onUnmounted } from "vue";
+const userStore = useUserStore();
+
 const openGithubLoginWindow = () => {
     let width = 480;
     let height = 480;
@@ -62,8 +66,22 @@ const listener = (e: MessageEvent) => {
     }
 };
 
+const testPromiseAll = () => {
+    Promise.all([userStore.getUserInfo(), userStore.page({})])
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
+
 onMounted(() => {
     window.addEventListener("message", listener);
+});
+
+onUnmounted(() => {
+    window.removeEventListener("message", listener);
 });
 </script>
 <style lang="scss" scoped></style>
