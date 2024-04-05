@@ -1,21 +1,21 @@
-import { defineStore } from "pinia";
-import { NTag, TreeOption } from "naive-ui";
-import {
-    PermissionGroup,
-    permissionGroupService,
-    PermissionGroupWithId,
-} from "@/api/modules/user/permission-group";
-import { h } from "vue";
+import { HasId, resolveAxiosResult } from "@/api";
 import {
     Permission,
-    permissionService,
     PermissionWithId,
+    permissionService,
 } from "@/api/modules/user/permission";
-import { HasId, resolveAxiosResult } from "@/api";
+import {
+    PermissionGroup,
+    PermissionGroupWithId,
+    permissionGroupService,
+} from "@/api/modules/user/permission-group";
 import {
     PermissionFormModel,
     PermissionGroupFormModel,
 } from "@/views/user/permission/data";
+import { NTag, TreeOption } from "naive-ui";
+import { defineStore } from "pinia";
+import { h } from "vue";
 
 const renderPrefix = (isGroup: boolean) => {
     return h(
@@ -34,7 +34,13 @@ const renderSuffix = (isGroup: boolean, authority: string) => {
 
 interface DPermissionState {
     permissionData: TreeOption[];
+    /**
+     * 缓存权限分组列表
+     */
     cachePermissionGroupList: PermissionGroupWithId[];
+    /**
+     * 缓存权限列表
+     */
     cachePermissionList: PermissionWithId[];
 }
 
@@ -46,12 +52,12 @@ export const usePermissionStore = defineStore("permission", {
     }),
     getters: {},
     actions: {
-        async refreshPermission(
-            permissionGroupList: PermissionGroupWithId[],
-            permissionList: PermissionWithId[]
-        ) {
+        /**
+         * 刷新权限
+         */
+        async refreshPermission() {
             const treeOptionList: TreeOption[] = [];
-            const map = permissionGroupList.reduce<{
+            const map = this.cachePermissionGroupList.reduce<{
                 [key: number]: TreeOption;
             }>((previousValue, currentValue) => {
                 previousValue[currentValue.id] = {
@@ -65,7 +71,7 @@ export const usePermissionStore = defineStore("permission", {
                 return previousValue;
             }, {});
 
-            permissionGroupList.forEach((permissionGroup) => {
+            this.cachePermissionGroupList.forEach((permissionGroup) => {
                 if (permissionGroup.parentId === 0) {
                     treeOptionList.push(map[permissionGroup.id]);
                 } else {
@@ -76,7 +82,7 @@ export const usePermissionStore = defineStore("permission", {
                 }
             });
 
-            permissionList.forEach((permission) => {
+            this.cachePermissionList.forEach((permission) => {
                 const treeOption: TreeOption = {
                     label: permission.name,
                     key: permission.id,
@@ -94,6 +100,49 @@ export const usePermissionStore = defineStore("permission", {
             this.permissionData = treeOptionList;
         },
 
+        /**
+         * 递归查询permissionData及其children中的数据得到权限分组和权限数据
+         */
+        async saveAllPermissionGroupAndPermission() {
+            const treeOptionList: TreeOption[] = [];
+            const flattenTree = (tree: TreeOption[], parentId: number) => {
+                tree.forEach((treeOption) => {
+                    treeOptionList.push(treeOption);
+                    if (treeOption.isGroup) {
+                        const childParentId = Number(
+                            (treeOption.key as string).substring(1)
+                        );
+                        const cachePermissionGroup =
+                            this.getCachePermissionGroupById(childParentId);
+                        if (cachePermissionGroup) {
+                            cachePermissionGroup.parentId = parentId;
+                        }
+                        if (treeOption.children) {
+                            flattenTree(treeOption.children, childParentId);
+                        }
+                    } else {
+                        const cachePermission = this.getCachePermissionById(
+                            treeOption.key as number
+                        );
+                        if (cachePermission) {
+                            cachePermission.groupId = parentId;
+                        }
+                    }
+                });
+            };
+            flattenTree(this.permissionData, 0);
+            console.log(treeOptionList);
+            this.refreshPermission();
+            await this.updateAllPermission(
+                this.cachePermissionGroupList,
+                this.cachePermissionList
+            );
+        },
+
+        /**
+         * 获取权限分组列表
+         * @param permissionGroup 权限分组
+         */
         async listPermissionGroup(
             permissionGroup: Partial<PermissionGroup> = {}
         ) {
@@ -102,25 +151,49 @@ export const usePermissionStore = defineStore("permission", {
             );
         },
 
+        /**
+         * 获取权限列表
+         * @param permission 权限
+         */
         async listPermission(permission: Partial<Permission> = {}) {
             return resolveAxiosResult(() => permissionService.list(permission));
         },
 
+        async updateAllPermission(
+            permissionGroupList: PermissionGroupWithId[],
+            permissionList: PermissionWithId[]
+        ) {
+            return resolveAxiosResult(() =>
+                permissionService.updateAllPermission({
+                    permissionGroupList,
+                    permissionList,
+                })
+            );
+        },
+
+        /**
+         * 保存权限分组
+         */
         async savePermissionGroup(
             permissionGroupFormModel: PermissionGroupFormModel
         ) {
             const newPermissionGroup = await resolveAxiosResult(() =>
                 permissionGroupService.save({
                     name: permissionGroupFormModel.name,
+                    parentId: permissionGroupFormModel.parentId,
                     description: permissionGroupFormModel.description,
                 })
             );
             if (newPermissionGroup) {
                 this.saveCachePermissionGroup(newPermissionGroup);
             }
+            this.refreshPermission();
             return newPermissionGroup;
         },
 
+        /**
+         * 保存权限
+         */
         async savePermission(permissionFormModel: PermissionFormModel) {
             const newPermission = await resolveAxiosResult(() =>
                 permissionService.save({
@@ -134,9 +207,13 @@ export const usePermissionStore = defineStore("permission", {
             if (newPermission) {
                 this.saveCachePermission(newPermission);
             }
+            this.refreshPermission();
             return newPermission;
         },
 
+        /**
+         * 更新权限分组
+         */
         async updatePermissionGroup(
             permissionGroupFormModel: PermissionGroupFormModel
         ) {
@@ -152,9 +229,13 @@ export const usePermissionStore = defineStore("permission", {
             if (newPermissionGroup) {
                 this.updateCachePermissionGroup(newPermissionGroup);
             }
+            this.refreshPermission();
             return newPermissionGroup;
         },
 
+        /**
+         * 更新权限
+         */
         async updatePermission(permissionFormModel: PermissionFormModel) {
             const permissionFormModelWithId =
                 permissionFormModel as PermissionFormModel & HasId;
@@ -168,6 +249,11 @@ export const usePermissionStore = defineStore("permission", {
                     description: permissionFormModelWithId.description,
                 })
             );
+            if (newPermission) {
+                this.updateCachePermission(newPermission);
+            }
+            this.refreshPermission();
+            return newPermission;
         },
 
         initCachePermissionGroup(permissionGroupList: PermissionGroupWithId[]) {

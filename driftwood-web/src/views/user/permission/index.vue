@@ -1,11 +1,20 @@
 <template>
     <div>
         <h1>权限管理</h1>
+        <n-button v-if="!draggable" type="info" @click="handleEnableDrag">
+            调整
+        </n-button>
+        <n-button v-if="draggable" type="success" @click="handleSaveTree">
+            保存
+        </n-button>
+        <n-button v-if="draggable" type="info" @click="handleDisableDrag">
+            取消
+        </n-button>
         <n-tree
             block-line
             cascade
-            checkable
-            draggable
+            :checkable="false"
+            :draggable="draggable"
             :data="permissionStore.permissionData"
             :node-props="nodeProps"
             @update:checked-keys="updateCheckedKeys"
@@ -40,6 +49,13 @@
                     <n-form-item label="名称">
                         <n-input
                             v-model:value="permissionGroupFormModelRef.name"
+                        />
+                    </n-form-item>
+                    <n-form-item label="所属分组">
+                        <n-select
+                            v-model:value="permissionGroupFormModelRef.parentId"
+                            :options="permissionGroupDict"
+                            :disabled="!permissionGroupModalEditModeIsUpdate"
                         />
                     </n-form-item>
                     <n-form-item label="描述">
@@ -97,6 +113,12 @@
                             :options="permissionTypeDict"
                         />
                     </n-form-item>
+                    <n-form-item label="所属分组">
+                        <n-select
+                            v-model:value="permissionFormModelRef.groupId"
+                            :options="permissionGroupDict"
+                        />
+                    </n-form-item>
                     <n-form-item label="描述">
                         <n-input
                             v-model:value="permissionFormModelRef.description"
@@ -138,7 +160,7 @@ import {
     TreeOption,
     useMessage,
 } from "naive-ui";
-import { onMounted, ref } from "vue";
+import { ComputedRef, computed, onMounted, ref } from "vue";
 
 const message = useMessage();
 const permissionStore = usePermissionStore();
@@ -233,8 +255,25 @@ const handleDrop = ({ node, dragNode, dropPosition }: TreeDropInfo) => {
         }
         nodeSiblings.splice(nodeIndex + 1, 0, dragNode);
     }
+    console.log("tree", JSON.stringify(permissionStore.permissionData));
     permissionStore.permissionData = Array.from(permissionStore.permissionData);
     console.log("tree", JSON.stringify(permissionStore.permissionData));
+};
+
+// 范围更新，此时不支持右键菜单的功能
+const draggable = ref(false);
+const handleEnableDrag = async () => {
+    draggable.value = true;
+};
+const handleSaveTree = async () => {
+    await permissionStore.saveAllPermissionGroupAndPermission();
+    await refreshPermission();
+    draggable.value = false;
+    message.success("保存成功");
+};
+const handleDisableDrag = async () => {
+    draggable.value = false;
+    permissionStore.refreshPermission();
 };
 
 // 树节点右键菜单
@@ -267,6 +306,9 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                     permissionGroupFormModel,
                                     defaultPermissionGroupFormModel
                                 );
+                                permissionGroupFormModel.parentId = Number(
+                                    (option.key as string).substring(1)
+                                );
                             },
                         },
                     },
@@ -284,6 +326,10 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                             (option.key as string).substring(1)
                                         )
                                     );
+                                console.log(
+                                    "cachePermissionGroup",
+                                    cachePermissionGroup
+                                );
                                 if (cachePermissionGroup) {
                                     Object.keys(
                                         permissionGroupFormModel
@@ -357,6 +403,27 @@ const permissionGroupModalEditModeIsUpdate = ref(true);
 const showPermissionGroupModal = ref(false);
 // 权限分组数据model
 const permissionGroupFormModelRef = ref(permissionGroupFormModel);
+const permissionGroupDict: ComputedRef<{ label: string; value: number }[]> =
+    computed(() => {
+        return permissionStore.cachePermissionGroupList.reduce<
+            { label: string; value: number }[]
+        >(
+            (p, c) => {
+                p.push({
+                    label: c.name,
+                    value: c.id,
+                });
+                return p;
+            },
+            [
+                {
+                    label: "根节点",
+                    value: 0,
+                },
+            ]
+        );
+    });
+
 // 是不是编辑模式
 const permissionModalEditModeIsUpdate = ref(true);
 // 是否展示权限编辑模态框
@@ -375,15 +442,36 @@ const permissionTypeDict = [
     },
 ];
 
+// 保存或更新权限分组
 const handleSaveOrUpdatePermissionGroup = async () => {
-    console.log(JSON.stringify(permissionGroupFormModelRef.value));
+    if (!permissionGroupModalEditModeIsUpdate.value) {
+        await permissionStore.savePermissionGroup(
+            permissionGroupFormModelRef.value
+        );
+        message.success("新增权限分组成功");
+    } else {
+        await permissionStore.updatePermissionGroup(
+            permissionGroupFormModelRef.value
+        );
+        message.success("更新权限分组成功");
+    }
+    hidePermissionGroupModal();
 };
 const hidePermissionGroupModal = () => {
     showPermissionGroupModal.value = false;
 };
 
+// 保存或更新权限
 const handleSaveOrUpdatePermission = async () => {
     console.log(JSON.stringify(permissionFormModelRef.value));
+    if (!permissionModalEditModeIsUpdate.value) {
+        await permissionStore.savePermission(permissionFormModelRef.value);
+        message.success("新增权限成功");
+    } else {
+        await permissionStore.updatePermission(permissionFormModelRef.value);
+        message.success("更新权限成功");
+    }
+    hidePermissionModal();
 };
 const hidePermissionModal = () => {
     showPermissionModal.value = false;
@@ -397,10 +485,7 @@ const refreshPermission = async () => {
     if (permissionGroupList && permissionList) {
         permissionStore.initCachePermissionGroup(permissionGroupList);
         permissionStore.initCachePermission(permissionList);
-        await permissionStore.refreshPermission(
-            permissionGroupList,
-            permissionList
-        );
+        await permissionStore.refreshPermission();
     }
 };
 

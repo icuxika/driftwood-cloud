@@ -1,9 +1,12 @@
 interface PermissionGroupFormModel {
+    id: number;
     name: string;
+    parentId: number;
     description: string;
 }
 
 interface PermissionFormModel {
+    id: number;
     name: string;
     authority: string;
     type: number;
@@ -12,11 +15,14 @@ interface PermissionFormModel {
 }
 
 const defaultPermissionGroupFormModel: PermissionGroupFormModel = {
+    id: 0,
     name: "新增",
-    description: "描述",
+    parentId: 1,
+    description: "模块",
 };
 
 const defaultPermissionFormModel: PermissionFormModel = {
+    id: 0,
     name: "新增",
     authority: "user:user:add",
     type: 1,
@@ -33,9 +39,9 @@ const permissionFormModel: PermissionFormModel = {
 };
 
 export {
-    defaultPermissionGroupFormModel,
     defaultPermissionFormModel,
-    permissionGroupFormModel,
+    defaultPermissionGroupFormModel,
     permissionFormModel,
+    permissionGroupFormModel,
 };
-export type { PermissionGroupFormModel, PermissionFormModel };
+export type { PermissionFormModel, PermissionGroupFormModel };

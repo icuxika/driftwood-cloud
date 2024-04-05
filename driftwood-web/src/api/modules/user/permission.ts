@@ -1,6 +1,7 @@
 import { ApiDataResponse, BaseEntity, HasId } from "@/api";
 import AxiosInstance from "@/api/axios";
 import { isMockMode, mockResponse } from "@/api/mock";
+import { PermissionGroupWithId } from "./permission-group";
 
 /**
  * 权限
@@ -11,6 +12,11 @@ interface Permission extends BaseEntity {
     type: number;
     groupId: number;
     description: string;
+}
+
+interface AllPermissionDTO {
+    permissionGroupList: PermissionGroupWithId[];
+    permissionList: PermissionWithId[];
 }
 
 type PermissionWithId = Permission & HasId;
@@ -31,6 +37,10 @@ type CreateService = (path: string) => {
     ) => ApiDataResponse<PermissionWithId>;
 
     deleteById: (id: PermissionWithId["id"]) => ApiDataResponse<never>;
+
+    updateAllPermission: (
+        allPermissionDTO: AllPermissionDTO
+    ) => ApiDataResponse<never>;
 };
 
 const createService: CreateService = (path: string) => {
@@ -49,6 +59,12 @@ const createService: CreateService = (path: string) => {
         },
         deleteById(id) {
             return AxiosInstance.delete(`${path}/${id}`);
+        },
+        updateAllPermission(allPermissionDTO: AllPermissionDTO) {
+            return AxiosInstance.post(
+                `${path}/updateAllPermission`,
+                allPermissionDTO
+            );
         },
     };
 };
