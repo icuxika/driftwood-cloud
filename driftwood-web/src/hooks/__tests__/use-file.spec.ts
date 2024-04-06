@@ -1,14 +1,14 @@
+import { useFile } from "@/hooks/use-file";
 import { describe, expect, test } from "vitest";
-import { useFile } from "../use-file";
 const { cutFile } = useFile();
 
-describe("Banner", () => {
-    test("equals", { timeout: 600 * 1000 }, async () => {
+describe("useFile", () => {
+    test("cutFile", { timeout: 60 * 1000 }, async () => {
         const arrayBuffer = await fetch(
-            "https://dldir1.qq.com/qqfile/qq/QQNT/Windows/QQ_9.9.7_240305_x64_01.exe",
+            "https://mirrors.tuna.tsinghua.edu.cn/github-release/cmderdev/cmder/v1.3.24/cmder_mini.zip",
             { method: "GET" }
         ).then((response) => response.arrayBuffer());
-        const file = new File([arrayBuffer], "qq.exe", {
+        const file = new File([arrayBuffer], "cmder_mini.zip", {
             lastModified: new Date().getTime(),
         });
         const fileSize = file.size;
@@ -16,7 +16,7 @@ describe("Banner", () => {
         console.log("arrayBuffer length: ", arrayBuffer.byteLength);
         expect(fileSize).toBe(arrayBuffer.byteLength);
 
-        // 一直超时，暂时无法解决
+        // 暂时不知道vitest如何正确调用包含Web Worker逻辑的函数
         const result = await cutFile(file);
         const resultSize = result.reduce<number>((pre, cur) => {
             pre += cur.blob.size;

@@ -9,7 +9,7 @@
         "build": "vue-tsc --noEmit && vite build",
         "serve": "vite preview",
         "lint": "eslint -c .eslintrc.json ./ --ext .js,.ts,.tsx,.vue,.json --max-warnings=0 --fix",
-        "test:unit": "vitest --environment jsdom"
+        "test:unit": "vitest run"
     },
     "dependencies": {
         "axios": "^1.5.1",
