@@ -18,6 +18,11 @@
     </div>
 </template>
 
+<script lang="ts">
+export default {
+    name: "User",
+};
+</script>
 <script setup lang="ts">
 import { NoNullReject, Page } from "@/api";
 import { User, userService } from "@/api/modules/user/user";

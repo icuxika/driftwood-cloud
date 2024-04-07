@@ -30,7 +30,7 @@ export const userRoutes: RouteRecordRaw[] = [
     },
     {
         path: "user/menu",
-        name: "Menu",
+        name: "Menu0",
         component: () => import("@/views/user/menu/index.vue"),
         meta: {
             title: "菜单",

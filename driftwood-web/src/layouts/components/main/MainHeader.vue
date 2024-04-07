@@ -91,14 +91,6 @@ watch(
     { immediate: true }
 );
 
-// 传递给vue.draggable.next(https://github.com/SortableJS/vue.draggable.next)依赖的Sortable(https://github.com/SortableJS/Sortable)的参数
-const dragOptions = {
-    group: "description",
-    animation: 250,
-    disabled: false,
-    ghostClass: "ghost",
-};
-
 // 导航
 const goto = (item: _RouteLocationBase) => {
     if (item.path === activePath.value) return;

@@ -144,6 +144,11 @@
     </div>
 </template>
 
+<script lang="ts">
+export default {
+    name: "Permission",
+};
+</script>
 <script setup lang="ts">
 import { useObject } from "@/hooks/use-object";
 import { usePermissionStore } from "@/store/user/permission";
@@ -326,21 +331,11 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                             (option.key as string).substring(1)
                                         )
                                     );
-                                console.log(
-                                    "cachePermissionGroup",
-                                    cachePermissionGroup
-                                );
                                 if (cachePermissionGroup) {
-                                    Object.keys(
-                                        permissionGroupFormModel
-                                    ).forEach((key) => {
-                                        permissionGroupFormModel[
-                                            key as keyof typeof permissionGroupFormModel
-                                        ] = getPropertyValue(
-                                            cachePermissionGroup,
-                                            key as keyof typeof cachePermissionGroup
-                                        );
-                                    });
+                                    Object.assign(
+                                        permissionGroupFormModel,
+                                        cachePermissionGroup
+                                    );
                                 }
                             },
                         },
@@ -374,15 +369,9 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                         option.key as number
                                     );
                                 if (cachePermission) {
-                                    Object.keys(permissionFormModel).forEach(
-                                        (key) => {
-                                            permissionFormModel[
-                                                key as keyof typeof permissionFormModel
-                                            ] = getPropertyValue(
-                                                cachePermission,
-                                                key as keyof typeof cachePermission
-                                            );
-                                        }
+                                    Object.assign(
+                                        permissionFormModel,
+                                        cachePermission
                                     );
                                 }
                             },

@@ -17,6 +17,11 @@
     </div>
 </template>
 
+<script lang="ts">
+export default {
+    name: "Role",
+};
+</script>
 <script setup lang="ts">
 import { NoNullReject, Page } from "@/api";
 import { Role } from "@/api/modules/user/role";

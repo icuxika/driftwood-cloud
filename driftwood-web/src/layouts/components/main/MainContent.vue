@@ -4,7 +4,7 @@
             <router-view v-slot="{ Component }">
                 <template v-if="Component">
                     <transition mode="out-in">
-                        <keep-alive>
+                        <keep-alive :include="navStore.keepAliveInclude">
                             <suspense>
                                 <component :is="Component"></component>
                                 <template #fallback>
@@ -19,7 +19,10 @@
     </n-el>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useNavStore } from "@/store/nav";
+const navStore = useNavStore();
+</script>
 
 <style lang="scss">
 .main-content-el {

@@ -79,6 +79,11 @@
     </div>
 </template>
 
+<script lang="ts">
+export default {
+    name: "Menu0",
+};
+</script>
 <script setup lang="ts">
 import { MenuWithId } from "@/api/modules/user/menu";
 import { useObject } from "@/hooks/use-object";
@@ -207,14 +212,7 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                 option.key as number
                             );
                             if (cacheMenu) {
-                                Object.keys(menuFormModel).forEach((key) => {
-                                    menuFormModel[
-                                        key as keyof typeof menuFormModel
-                                    ] = getPropertyValue(
-                                        cacheMenu,
-                                        key as keyof typeof cacheMenu
-                                    );
-                                });
+                                Object.assign(menuFormModel, cacheMenu);
                             }
                         },
                     },
