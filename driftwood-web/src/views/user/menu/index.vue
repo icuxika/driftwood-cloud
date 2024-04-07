@@ -86,9 +86,7 @@ export default {
 </script>
 <script setup lang="ts">
 import { MenuWithId } from "@/api/modules/user/menu";
-import { useObject } from "@/hooks/use-object";
 import { useTree } from "@/hooks/use-tree";
-import { useTrick } from "@/hooks/use-trick";
 import { useMenuStore } from "@/store/user/menu";
 import {
     MenuFormModel,
@@ -108,8 +106,6 @@ const message = useMessage();
 const dialog = useDialog();
 const menuStore = useMenuStore();
 const { findSiblingsAndIndex, getParentTreeOption } = useTree();
-const { getPropertyValue } = useObject();
-const { sleep } = useTrick();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
     console.log(checkedKeys);

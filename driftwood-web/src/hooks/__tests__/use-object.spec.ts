@@ -9,7 +9,7 @@ describe("useObject", () => {
             age: 18,
         };
         Object.keys(person).forEach((key) => {
-            expect(getPropertyValue(person, key as keyof typeof person)).toBe(
+            expect(getPropertyValue(person, key)).toBe(
                 person[key as keyof typeof person]
             );
         });

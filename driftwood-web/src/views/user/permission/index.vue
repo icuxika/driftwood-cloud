@@ -150,7 +150,6 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { useObject } from "@/hooks/use-object";
 import { usePermissionStore } from "@/store/user/permission";
 import {
     defaultPermissionFormModel,
@@ -169,7 +168,6 @@ import { ComputedRef, computed, onMounted, ref } from "vue";
 
 const message = useMessage();
 const permissionStore = usePermissionStore();
-const { getPropertyValue } = useObject();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
     console.log(checkedKeys);
