@@ -55,7 +55,21 @@
                         <n-input v-model:value="menuFormModelRef.name" />
                     </n-form-item>
                     <n-form-item label="图标">
-                        <n-input v-model:value="menuFormModelRef.icon" />
+                        <n-input v-model:value="menuFormModelRef.icon">
+                            <template #suffix>
+                                <n-button
+                                    strong
+                                    circle
+                                    secondary
+                                    type="info"
+                                    @click="chooseIcon"
+                                >
+                                    <template #icon>
+                                        <n-icon><search-icon /></n-icon>
+                                    </template>
+                                </n-button>
+                            </template>
+                        </n-input>
                     </n-form-item>
                     <n-form-item label="路径">
                         <n-input v-model:value="menuFormModelRef.path" />
@@ -76,6 +90,49 @@
                 </template>
             </n-card>
         </n-modal>
+        <n-modal v-model:show="showIconChooseModal">
+            <n-card
+                style="width: 600px"
+                title="选择图标"
+                :bordered="false"
+                size="huge"
+                role="dialog"
+                aria-modal="true"
+            >
+                <template #header-extra>
+                    <component :is="iconComponent" />
+                </template>
+                <n-select
+                    v-model:value="iconSelectedValue"
+                    filterable
+                    placeholder="选择图标"
+                    :options="iconOptions"
+                    @update:value="handleIconUpdate"
+                />
+                <n-button
+                    text
+                    tag="a"
+                    href="https://www.xicons.org/#/zh-CN"
+                    target="_blank"
+                    type="primary"
+                >
+                    在https://www.xicons.org/#/zh-CN中选择ionicons5分类进行搜索
+                </n-button>
+                <template #footer>
+                    <n-space justify="end">
+                        <n-button type="success" @click="handleIconChoose">
+                            确定</n-button
+                        >
+                        <n-button
+                            type="warning"
+                            @click="showIconChooseModal = false"
+                        >
+                            取消</n-button
+                        >
+                    </n-space>
+                </template>
+            </n-card>
+        </n-modal>
     </div>
 </template>
 
@@ -85,6 +142,7 @@ export default {
 };
 </script>
 <script setup lang="ts">
+import { useIcon } from "@/hooks/use-icon";
 import { useTree } from "@/hooks/use-tree";
 import { useMenuStore } from "@/store/user/menu";
 import {
@@ -92,19 +150,23 @@ import {
     defaultMenuFormModel,
     menuFormModel,
 } from "@/views/user/menu/data";
+import { Search as SearchIcon } from "@vicons/ionicons5";
 import {
     DropdownOption,
+    NIcon,
+    SelectOption,
     TreeDropInfo,
     TreeOption,
     useDialog,
     useMessage,
 } from "naive-ui";
-import { onMounted, ref } from "vue";
+import { h, onMounted, ref } from "vue";
 
 const message = useMessage();
 const dialog = useDialog();
 const menuStore = useMenuStore();
 const { findSiblingsAndIndex, getParentTreeOption } = useTree();
+const { loadIonicons5 } = useIcon();
 
 const updateCheckedKeys = (checkedKeys: string[]) => {
     console.log(checkedKeys);
@@ -290,6 +352,30 @@ const hideMenuEditModal = () => {
     showMenuModal.value = false;
 };
 
+// 图标选择模态框
+const showIconChooseModal = ref(false);
+const chooseIcon = async () => {
+    iconSelectedValue.value = menuFormModelRef.value.icon;
+    showIconChooseModal.value = true;
+};
+const iconSelectedValue = ref<string>("");
+const iconOptions = ref<SelectOption[]>([]);
+const handleIconUpdate = async (value: string, option: SelectOption) => {
+    let selectedIcon = cacheIcons.filter(
+        (icon) => (icon as any).name === value
+    );
+    iconComponent.value = h(
+        NIcon,
+        { size: 32 },
+        { default: () => h(selectedIcon[0]) }
+    );
+};
+const iconComponent = ref<object | null>(null);
+const handleIconChoose = async () => {
+    menuFormModelRef.value.icon = iconSelectedValue.value;
+    showIconChooseModal.value = false;
+};
+
 // 刷新菜单
 const refreshMenu = async () => {
     let menuList = await menuStore.listMenu();
@@ -299,8 +385,25 @@ const refreshMenu = async () => {
     }
 };
 
+// 缓存图标
+const cacheIcons: object[] = [];
+// 初始化图表数据
+const loadIconOptions = async () => {
+    const icons = await loadIonicons5();
+    let options: SelectOption[] = [];
+    icons.forEach((icon) => {
+        cacheIcons.push(icon);
+        options.push({
+            label: (icon as any).name,
+            value: (icon as any).name,
+        });
+    });
+    iconOptions.value = options;
+};
+
 const initialize = async () => {
     await refreshMenu();
+    await loadIconOptions();
 };
 onMounted(initialize);
 </script>

@@ -13,7 +13,9 @@
             ref="menuRef"
             :collapsed="collapsed"
             :collapsed-width="64"
-            :collapsed-icon-size="22"
+            :collapsed-icon-size="24"
+            :default-expand-all="true"
+            :watch-props="['defaultExpandedKeys']"
             :options="sideMenuStore.menuOptions"
             key-field="key"
             label-field="label"
@@ -24,16 +26,18 @@
 
 <script setup lang="ts">
 import { useSideMenuStore } from "@/store/side-menu";
+import { useMenuStore } from "@/store/user/menu";
 import { MenuInst } from "naive-ui";
 import { onMounted, ref } from "vue";
 
 const sideMenuStore = useSideMenuStore();
+const menuStore = useMenuStore();
 
 const menuRef = ref<MenuInst | null>(null);
 const collapsed = ref(false);
 
 const initialize = async () => {
-    const menuList = [
+    const defaultMenuList = [
         {
             id: 2,
             createTime: "2022-08-31 13:59:37",
@@ -147,7 +151,12 @@ const initialize = async () => {
             status: 0,
         },
     ];
-    await sideMenuStore.refreshMenu(menuList);
+    let menuList = await menuStore.listMenu();
+    if (menuList) {
+        await sideMenuStore.refreshMenu(menuList);
+    } else {
+        await sideMenuStore.refreshMenu(defaultMenuList);
+    }
 };
 onMounted(initialize);
 </script>
