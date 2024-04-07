@@ -107,6 +107,7 @@
                     filterable
                     placeholder="选择图标"
                     :options="iconOptions"
+                    :render-label="iconRenderLabel"
                     @update:value="handleIconUpdate"
                 />
                 <n-button
@@ -160,7 +161,7 @@ import {
     useDialog,
     useMessage,
 } from "naive-ui";
-import { h, onMounted, ref } from "vue";
+import { VNodeChild, h, onMounted, ref } from "vue";
 
 const message = useMessage();
 const dialog = useDialog();
@@ -371,6 +372,24 @@ const handleIconUpdate = async (value: string, option: SelectOption) => {
     );
 };
 const iconComponent = ref<object | null>(null);
+const iconRenderLabel = (option: SelectOption): VNodeChild => {
+    let selectedIcon = cacheIcons.filter(
+        (icon) => (icon as any).name === option.label
+    );
+    return [
+        h(
+            NIcon,
+            {
+                style: {
+                    verticalAlign: "-0.15em",
+                    marginRight: "4px",
+                },
+            },
+            { default: () => h(selectedIcon[0]) }
+        ),
+        option.label as string,
+    ];
+};
 const handleIconChoose = async () => {
     menuFormModelRef.value.icon = iconSelectedValue.value;
     showIconChooseModal.value = false;
