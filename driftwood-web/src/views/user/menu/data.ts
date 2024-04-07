@@ -1,19 +1,21 @@
 interface MenuFormModel {
-    id: number | null;
+    id: number;
     parentId: number;
     type: number;
     name: string;
     icon: string;
     path: string;
+    sequence: number;
 }
 
 const defaultMenuFormModel: MenuFormModel = {
-    id: null,
+    id: 0,
     parentId: 0,
     type: 1,
     name: "",
     icon: "",
     path: "",
+    sequence: 0,
 };
 
 const menuFormModel: MenuFormModel = {

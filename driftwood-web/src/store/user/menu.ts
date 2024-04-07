@@ -1,10 +1,10 @@
-import { defineStore } from "pinia";
-import { NTag, TreeOption } from "naive-ui";
-import { Menu, menuService, MenuWithId } from "@/api/modules/user/menu";
 import { HasId, resolveAxiosResult } from "@/api";
-import { h } from "vue";
-import { MenuFormModel } from "@/views/user/menu/data";
+import { Menu, MenuWithId, menuService } from "@/api/modules/user/menu";
 import { useTrick } from "@/hooks/use-trick";
+import { MenuFormModel } from "@/views/user/menu/data";
+import { NTag, TreeOption } from "naive-ui";
+import { defineStore } from "pinia";
+import { h } from "vue";
 
 const renderPrefix = (type: number) => {
     return h(
@@ -111,9 +111,9 @@ export const useMenuStore = defineStore("menu", {
         /**
          * 刷新菜单
          */
-        async refreshMenu(menuList: MenuWithId[]) {
+        async refreshMenu() {
             const treeOptionList: TreeOption[] = [];
-            const map = menuList.reduce<{
+            const map = this.cacheMenuList.reduce<{
                 [key: number]: TreeOption;
             }>((previousValue, currentValue) => {
                 previousValue[currentValue.id] =
@@ -121,7 +121,7 @@ export const useMenuStore = defineStore("menu", {
                 return previousValue;
             }, {});
 
-            menuList.forEach((menu) => {
+            this.cacheMenuList.forEach((menu) => {
                 if (menu.parentId === 0) {
                     treeOptionList.push(map[menu.id]);
                 } else {
@@ -151,11 +151,13 @@ export const useMenuStore = defineStore("menu", {
                     name: menuFormModel.name,
                     icon: menuFormModel.icon,
                     path: menuFormModel.path,
+                    sequence: menuFormModel.sequence,
                 })
             );
             if (newMenu) {
-                await this.saveCacheMenu(newMenu);
+                this.saveCacheMenu(newMenu);
             }
+            this.refreshMenu();
             return newMenu;
         },
 
@@ -172,11 +174,13 @@ export const useMenuStore = defineStore("menu", {
                     name: menuFormModelWithId.name,
                     icon: menuFormModelWithId.icon,
                     path: menuFormModelWithId.path,
+                    sequence: menuFormModelWithId.sequence,
                 })
             );
             if (newMenu) {
                 this.updateCacheMenu(newMenu);
             }
+            this.refreshMenu();
             return newMenu;
         },
 
@@ -184,11 +188,9 @@ export const useMenuStore = defineStore("menu", {
          * 删除菜单
          */
         async deleteMenu(id: MenuWithId["id"]) {
-            return sleep()
-                .then(() => sleep())
-                .then(() => {
-                    console.log("delete: ", id);
-                });
+            await resolveAxiosResult(() => menuService.deleteById(id));
+            this.removeCacheMenu(id);
+            await this.refreshMenu();
         },
 
         /**

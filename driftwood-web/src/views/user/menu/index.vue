@@ -48,7 +48,7 @@
                         <n-select
                             v-model:value="menuFormModelRef.parentId"
                             :options="menuStore.menuDict"
-                            disabled
+                            :disabled="!menuModalEditModeIsUpdate"
                         />
                     </n-form-item>
                     <n-form-item label="名称">
@@ -85,7 +85,6 @@ export default {
 };
 </script>
 <script setup lang="ts">
-import { MenuWithId } from "@/api/modules/user/menu";
 import { useTree } from "@/hooks/use-tree";
 import { useMenuStore } from "@/store/user/menu";
 import {
@@ -191,7 +190,7 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                           defaultMenuFormModel
                                       );
                                       menuFormModel.parentId =
-                                          option.parentId as number;
+                                          option.key as number;
                                   },
                               },
                           },
@@ -225,7 +224,7 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
                                 negativeText: "不确定",
                                 onPositiveClick: () => {
                                     d.loading = true;
-                                    return menuStore.deleteMenu(
+                                    return handleDeleteMenu(
                                         option.key as number
                                     );
                                 },
@@ -267,39 +266,36 @@ const menuTypeDict = [
     },
 ];
 
+// 保存或更新菜单
 const handleSaveOrUpdateMenu = async () => {
-    let newMenu: MenuWithId | null;
     const isUpdate = menuModalEditModeIsUpdate.value;
     if (isUpdate) {
-        newMenu = await menuStore.updateMenu(menuFormModel);
+        await menuStore.updateMenu(menuFormModel);
+        message.success("更新菜单成功");
     } else {
-        newMenu = await menuStore.saveMenu(menuFormModel);
+        await menuStore.saveMenu(menuFormModel);
+        message.success("新增菜单成功");
     }
-    if (newMenu) {
-        // await refreshMenu();
-        const parent = getParentTreeOption(
-            newMenu.parentId,
-            menuStore.menuData
-        );
-        if (parent) {
-            if (isUpdate) {
-                menuStore.updateTreeOption(parent, newMenu);
-            } else {
-                menuStore.addTreeOption(parent, newMenu);
-            }
-        }
-    }
+    hideMenuEditModal();
 };
 
+// 删除菜单
+const handleDeleteMenu = async (id: number) => {
+    await menuStore.deleteMenu(id);
+    message.success("删除菜单成功");
+};
+
+// 隐藏菜单编辑模态框
 const hideMenuEditModal = () => {
     showMenuModal.value = false;
 };
 
+// 刷新菜单
 const refreshMenu = async () => {
     let menuList = await menuStore.listMenu();
     if (menuList) {
         menuStore.initCacheMenu(menuList);
-        await menuStore.refreshMenu(menuList);
+        await menuStore.refreshMenu();
     }
 };
 
