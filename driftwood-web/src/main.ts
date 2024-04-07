@@ -16,6 +16,8 @@ import {
     NDataTable,
     NDialogProvider,
     NDropdown,
+    NElement,
+    NFlex,
     NForm,
     NFormItem,
     NFormItemRow,
@@ -52,6 +54,8 @@ import {
 
 const naive = create({
     components: [
+        NFlex,
+        NElement,
         NThemeEditor,
         NColorPicker,
         NDataTable,

@@ -24,18 +24,20 @@
                 </a>
             </div>
         </n-layout-header>
-        <n-layout-content>
-            <n-layout has-sider class="basic-wrapper">
+        <div class="basic-wrapper">
+            <n-layout has-sider class="content-wrapper">
                 <!-- 侧栏菜单 -->
                 <SideMenu />
-                <n-layout>
+                <div class="main-wrapper">
                     <!-- 导航 -->
                     <MainHeader />
-                    <!-- 内容 -->
-                    <MainContent />
-                </n-layout>
+                    <n-layout has-sider>
+                        <!-- 内容 -->
+                        <MainContent />
+                    </n-layout>
+                </div>
             </n-layout>
-        </n-layout-content>
+        </div>
         <n-layout-footer bordered>成府路</n-layout-footer>
     </div>
 </template>
@@ -127,11 +129,17 @@ const handleUpdateValue = (value: boolean) => {
     }
 }
 
-.n-layout-content {
+.basic-wrapper {
+    height: calc(100% - 96px);
     margin-top: 48px;
-
-    & .basic-wrapper {
+    & .content-wrapper {
         height: 100%;
+        & .main-wrapper {
+            width: 100%;
+            & .n-layout {
+                height: calc(100% - 48px);
+            }
+        }
     }
 }
 

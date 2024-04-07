@@ -1,47 +1,41 @@
 <template>
-    <n-space>
-        <Draggable
-            v-model="navRouteList"
-            class="draggable-container"
-            tag="transition-group"
-            :component-data="{
-                tag: 'div',
-                name: !dragging ? 'flip-list' : null,
-            }"
-            v-bind="dragOptions"
-            item-key="path"
-            @start="dragging = true"
-            @end="dragging = false"
-        >
-            <template #item="{ element }">
+    <n-el>
+        <n-flex>
+            <VueDraggable
+                ref="el"
+                v-model="navRouteList"
+                class="draggable-container"
+            >
                 <div
+                    v-for="item in navRouteList"
+                    :key="item.path"
                     class="draggable-container-item"
                     :class="{
                         'draggable-container-item-active':
-                            element.path === activePath,
+                            item.path === activePath,
                     }"
-                    @click.stop="goto(element)"
+                    @click.stop="goto(item as any)"
                 >
-                    <span>{{ element.meta.title }}</span>
+                    <span>{{ item.meta.title }}</span>
                     <n-icon
-                        v-if="!element.meta.fixed"
+                        v-if="!item.meta.fixed"
                         size="16"
-                        @click.stop="closeTab(element)"
+                        @click.stop="closeTab(item as any)"
                     >
                         <CloseIcon />
                     </n-icon>
                 </div>
-            </template>
-        </Draggable>
-    </n-space>
+            </VueDraggable>
+        </n-flex>
+    </n-el>
 </template>
 
 <script setup lang="ts">
 import { NavRoute, useNavStore } from "@/store/nav";
 import { CloseOutline as CloseIcon } from "@vicons/ionicons5";
 import { computed, ref, watch } from "vue";
+import { VueDraggable } from "vue-draggable-plus";
 import { _RouteLocationBase, useRoute, useRouter } from "vue-router";
-import Draggable from "zhyswan-vuedraggable";
 
 const router = useRouter();
 const route = useRoute();
@@ -105,10 +99,6 @@ const dragOptions = {
     ghostClass: "ghost",
 };
 
-// 是否处于拖拽，此判断影响是否给<transition-group>指定name属性，目前来自于vue.draggable.next的示例(https://github.com/SortableJS/vue.draggable.next/blob/master/example/components/transition-example-2.vue)
-// 实际测试，不使用列表的移动过渡(.flip-list-move),底层的Sortable似乎已经提供应有的效果了，待后期测试
-const dragging = ref(false);
-
 // 导航
 const goto = (item: _RouteLocationBase) => {
     if (item.path === activePath.value) return;
@@ -129,8 +119,8 @@ const closeTab = (item: _RouteLocationBase) => {
 </script>
 
 <style lang="scss" scoped>
-.n-space {
-    background: #e9ebec;
+.n-flex {
+    background: var(--tab-color);
     padding: 8px;
 
     & .draggable-container {
@@ -139,8 +129,8 @@ const closeTab = (item: _RouteLocationBase) => {
         & .draggable-container-item {
             display: flex;
             align-items: center;
-            background: white;
-            color: black;
+            background: var(--base-color);
+            color: var(--text-color-base);
             margin-right: 8px;
             height: 32px;
             padding: 4px 8px;
@@ -149,16 +139,8 @@ const closeTab = (item: _RouteLocationBase) => {
         }
 
         & .draggable-container-item-active {
-            color: dodgerblue;
+            color: var(--primary-color);
         }
     }
-}
-
-.flip-list-move {
-    transition: transform 0.2s ease;
-}
-
-.ghost {
-    opacity: 0.5;
 }
 </style>
