@@ -47,15 +47,15 @@ public class MenuController {
     }
 
     @PostMapping
-    public ApiData<Void> save(@RequestBody Menu menu) {
-        menuService.save(menu);
-        return ApiData.okMsg("新增成功");
+    public ApiData<Menu> save(@RequestBody Menu menu) {
+        Menu newMenu = menuService.save(menu);
+        return ApiData.ok(newMenu);
     }
 
     @PutMapping
-    public ApiData<Void> update(@RequestBody Menu menu) {
-        menuService.update(menu);
-        return ApiData.okMsg("更新成功");
+    public ApiData<Menu> update(@RequestBody Menu menu) {
+        Menu newMenu = menuService.update(menu);
+        return ApiData.ok(newMenu);
     }
 
     @DeleteMapping("/{id}")

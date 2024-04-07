@@ -58,15 +58,15 @@ public class MenuServiceImpl implements MenuService {
     }
 
     @Override
-    public void save(Menu menu) {
+    public Menu save(Menu menu) {
         if (!SystemConstant.TREE_ROOT_ID.equals(menu.getParentId()) && menuRepository.findById(menu.getParentId()).isEmpty()) {
             throw new GlobalServiceException("父菜单不存在");
         }
-        menuRepository.save(menu);
+        return menuRepository.save(menu);
     }
 
     @Override
-    public void update(Menu menu) {
+    public Menu update(Menu menu) {
         Menu exist = menuRepository.findById(menu.getId()).orElseThrow(() -> new GlobalServiceException("数据不存在"));
         if (menu.getParentId() != null && !menu.getParentId().equals(exist.getParentId()) && !menu.getParentId().equals(SystemConstant.TREE_ROOT_ID)) {
             if (menuRepository.findById(menu.getParentId()).isEmpty()) {
@@ -74,7 +74,7 @@ public class MenuServiceImpl implements MenuService {
             }
         }
         BeanUtils.copyProperties(menu, exist, BeanExUtil.getIgnorePropertyArray(menu));
-        menuRepository.save(exist);
+        return menuRepository.save(exist);
     }
 
     @Override

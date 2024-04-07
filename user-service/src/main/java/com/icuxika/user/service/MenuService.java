@@ -17,9 +17,9 @@ public interface MenuService {
 
     Menu getById(Long id);
 
-    void save(Menu menu);
+    Menu save(Menu menu);
 
-    void update(Menu menu);
+    Menu update(Menu menu);
 
     void deleteById(Long id);
 
