@@ -137,6 +137,9 @@ const createMockService: CreateService = (path: string) => {
             }
             return mockResponse("" as never);
         },
+        updateAllPermission(allPermissionDTO: AllPermissionDTO) {
+            return mockResponse("" as never);
+        },
     };
 };
 
