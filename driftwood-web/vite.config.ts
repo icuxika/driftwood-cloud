@@ -2,16 +2,21 @@
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import * as path from "path";
+import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
+import Components from "unplugin-vue-components/vite";
 import { defineConfig, loadEnv } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
     // 读取对应mode下 .env 中的环境变量
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+    const NaiveUiComponents = Components({
+        resolvers: [NaiveUiResolver()],
+    });
     if (command === "serve") {
         // dev,serve命令下执行
         return {
-            plugins: [vue(), vueJsx({})],
+            plugins: [vue(), vueJsx({}), NaiveUiComponents],
             resolve: {
                 alias: {
                     "@": path.resolve(__dirname, "./src"),
@@ -40,7 +45,7 @@ export default defineConfig(({ command, mode }) => {
     } else {
         // build 命令下执行
         return {
-            plugins: [vue(), vueJsx({})],
+            plugins: [vue(), vueJsx({}), NaiveUiComponents],
             resolve: {
                 alias: {
                     "@": path.resolve(__dirname, "./src"),
