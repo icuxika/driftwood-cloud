@@ -54,6 +54,11 @@
             </dependency>
             <dependency>
                 <groupId>com.icuxika</groupId>
+                <artifactId>framework-logback-config</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.icuxika</groupId>
                 <artifactId>framework-object</artifactId>
                 <version>${revision}</version>
             </dependency>

@@ -23,6 +23,7 @@
         <module>framework-config-jpa</module>
         <module>framework-oss</module>
         <module>framework-config-mybatis</module>
+        <module>framework-logback-config</module>
     </modules>
 
 </project>
