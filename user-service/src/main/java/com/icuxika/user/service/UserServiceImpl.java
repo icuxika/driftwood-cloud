@@ -22,6 +22,8 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
 import jakarta.persistence.EntityManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -44,6 +46,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger L = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -126,6 +130,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserVO> getPage(Pageable pageable, UserQueryDTO userQueryDTO) {
+        L.info("查询用户分页");
+
         QUser qUser = QUser.user;
         QUserProfile qUserProfile = QUserProfile.userProfile;
 

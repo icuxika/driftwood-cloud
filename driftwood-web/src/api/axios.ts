@@ -17,6 +17,13 @@ const instance = axios.create({
     responseType: "json",
 });
 
+const randomUUID = (): string => {
+    const temp = URL.createObjectURL(new Blob());
+    const uuid = temp.toString();
+    URL.revokeObjectURL(temp);
+    return uuid.substring(uuid.lastIndexOf("/") + 1);
+};
+
 /**
  * 请求拦截器
  */
@@ -32,6 +39,7 @@ instance.interceptors.request.use(
             config.headers["Authorization"] =
                 "Bearer " + localStorage.getItem("accessToken");
         }
+        config.headers["Trace-Id"] = randomUUID();
         return config;
     },
     (error) => {

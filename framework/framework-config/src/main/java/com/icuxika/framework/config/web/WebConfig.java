@@ -7,6 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
+import com.icuxika.framework.basic.constant.SystemConstant;
+import com.icuxika.framework.config.interceptor.LogTraceInterceptor;
 import com.icuxika.framework.config.resolver.JsonClipResolver;
 import com.icuxika.framework.config.resolver.RequestExcelResolver;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -30,10 +33,6 @@ import java.util.TimeZone;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
-    private static final String DEFAULT_TIME_PATTERN = "HH:mm:ss";
-    private static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
-
     @Value("${file.local.resource-location:/Users/icuxika/temp/driftwood-files/}")
     private String resourceLocation;
 
@@ -43,9 +42,9 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addFormatters(FormatterRegistry registry) {
         DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
-        registrar.setDateFormatter(DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN));
-        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(DEFAULT_TIME_PATTERN));
-        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN));
+        registrar.setDateFormatter(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_PATTERN));
+        registrar.setTimeFormatter(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_TIME_PATTERN));
+        registrar.setDateTimeFormatter(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
         registrar.registerFormatters(registry);
     }
 
@@ -59,15 +58,15 @@ public class WebConfig implements WebMvcConfigurer {
             jacksonObjectMapperBuilder.locale(Locale.CHINA);
             jacksonObjectMapperBuilder.timeZone(TimeZone.getTimeZone(ZoneId.of("CTT", ZoneId.SHORT_IDS)));
             jacksonObjectMapperBuilder.serializers(
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN)),
-                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_PATTERN)),
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN)),
-                    new DateSerializer(false, new SimpleDateFormat(DEFAULT_DATE_TIME_PATTERN))
+                    new LocalDateSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_PATTERN)),
+                    new LocalTimeSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_TIME_PATTERN)),
+                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN)),
+                    new DateSerializer(false, new SimpleDateFormat(SystemConstant.DEFAULT_DATE_TIME_PATTERN))
             );
             jacksonObjectMapperBuilder.deserializers(
-                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN)),
-                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_PATTERN)),
-                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN))
+                    new LocalDateDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_PATTERN)),
+                    new LocalTimeDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_TIME_PATTERN)),
+                    new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN))
             );
         };
     }
@@ -81,5 +80,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/files/**").addResourceLocations("file:" + resourceLocation);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(new LogTraceInterceptor()).addPathPatterns("/**");
     }
 }
