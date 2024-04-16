@@ -11,7 +11,7 @@ services:
       context: ./gateway
       args:
         buildno: 1
-    image: icuxika.com/driftwood/gateway
+    image: icuxika/driftwood-gateway
     container_name: gateway
     restart: always
     volumes:
@@ -30,7 +30,7 @@ services:
       context: ./authorization-server
       args:
         buildno: 1
-    image: icuxika.com/driftwood/authorization-server
+    image: icuxika/driftwood-authorization-server
     container_name: authorization-server
     restart: always
     volumes:
@@ -50,7 +50,7 @@ services:
       context: ./admin-service
       args:
         buildno: 1
-    image: icuxika.com/driftwood/admin-service
+    image: icuxika/driftwood-admin-service
     container_name: admin-service
     restart: always
     volumes:
@@ -69,7 +69,7 @@ services:
       context: ./user-service
       args:
         buildno: 1
-    image: icuxika.com/driftwood/user-service
+    image: icuxika/driftwood-user-service
     container_name: user-service
     restart: always
     volumes:
@@ -88,7 +88,7 @@ services:
       context: ./framework-service/framework-service-flowable
       args:
         buildno: 1
-    image: icuxika.com/driftwood/framework-service-flowable
+    image: icuxika/driftwood-framework-service-flowable
     container_name: framework-service-flowable
     restart: always
     volumes:
@@ -107,7 +107,7 @@ services:
       context: ./framework-service/framework-service-websocket
       args:
         buildno: 1
-    image: icuxika.com/driftwood/framework-service-websocket
+    image: icuxika/driftwood-framework-service-websocket
     container_name: framework-service-websocket
     restart: always
     volumes:
@@ -126,7 +126,7 @@ services:
       context: ./framework-service/framework-service-job
       args:
         buildno: 1
-    image: icuxika.com/driftwood/framework-service-job
+    image: icuxika/driftwood-framework-service-job
     container_name: framework-service-job
     restart: always
     volumes:
@@ -145,7 +145,7 @@ services:
       context: ./framework-service/framework-service-minio
       args:
         buildno: 1
-    image: icuxika.com/driftwood/framework-service-minio
+    image: icuxika/driftwood-framework-service-minio
     container_name: framework-service-minio
     restart: always
     volumes:
@@ -164,7 +164,7 @@ services:
       context: ./driftwood-web/docker
       args:
         buildno: 1
-    image: icuxika.com/driftwood/driftwood-web
+    image: icuxika/driftwood-web
     container_name: driftwood-web
     restart: always
     volumes:

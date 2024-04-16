@@ -1,12 +1,7 @@
-FROM openjdk:17-alpine
+FROM openjdk:21-slim
 LABEL MAINTAINER=icuxika@outlook.com
 
 ENV TZ=Asia/Shanghai
-
-RUN apk add tzdata \
-    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo ${TZ} > /etc/timezone \
-    && apk del tzdata
 
 ENV JAR_FILE=target/user-service.jar
 ENV JAVA_OPTS="-Duser.timezone=${TZ} -XX:+ShowCodeDetailsInExceptionMessages -Dcsp.sentinel.log.dir=logs/user-service/sentinel -DJM.LOG.PATH=logs/user-service -DJM.SNAPSHOT.PATH=logs/user-service"
