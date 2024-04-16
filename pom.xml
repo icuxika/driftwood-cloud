@@ -31,7 +31,7 @@
         <spring-cloud.version>2023.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2023.0.0.0-RC1</spring-cloud-alibaba.version>
 
-        <spring.authorization.server>1.1.1</spring.authorization.server>
+        <spring.authorization.server>1.2.3</spring.authorization.server>
 
         <skipTests>true</skipTests>
     </properties>
