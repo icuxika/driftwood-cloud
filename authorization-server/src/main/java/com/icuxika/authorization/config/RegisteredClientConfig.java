@@ -1,5 +1,7 @@
 package com.icuxika.authorization.config;
 
+import com.icuxika.authorization.config.password.PasswordAuthenticationProvider;
+import com.icuxika.authorization.config.phone.PhoneAuthenticationProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +29,7 @@ public class RegisteredClientConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("https://www.baidu.com/baidu.html")
+                .redirectUri("http://driftwood-cloud:8900/admin/auth/authorizationCode")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .tokenSettings(tokenSettings())
                 .build();
@@ -44,7 +46,7 @@ public class RegisteredClientConfig {
                 .clientId("id_password")
                 .clientSecret("{noop}secret3")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.PASSWORD)
+                .authorizationGrantType(new AuthorizationGrantType(PasswordAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PASSWORD_VALUE))
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .tokenSettings(tokenSettings())
                 .build();
@@ -52,7 +54,7 @@ public class RegisteredClientConfig {
                 .clientId("id_phone")
                 .clientSecret("{noop}secret4")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(new AuthorizationGrantType("phone"))
+                .authorizationGrantType(new AuthorizationGrantType(PhoneAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PHONE_VALUE))
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .tokenSettings(tokenSettings())
                 .build();

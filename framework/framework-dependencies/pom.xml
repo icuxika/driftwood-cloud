@@ -27,6 +27,7 @@
         <aviator.version>5.3.1</aviator.version>
         <aws.java.sdk.s3.version>1.12.305</aws.java.sdk.s3.version>
         <easyexcel.version>3.2.0</easyexcel.version>
+        <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -189,6 +190,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

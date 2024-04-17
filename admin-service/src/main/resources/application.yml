@@ -17,3 +17,7 @@ spring:
       - nacos:application-@profiles.active@.yml?refreshEnabled=false
       - nacos:${spring.application.name}-@profiles.active@.yml?refreshEnabled=false
       - nacos:resource-server.yml?refreshEnabled=false
+
+logging:
+  level:
+    com.icuxika.admin.feign.AuthClient: DEBUG

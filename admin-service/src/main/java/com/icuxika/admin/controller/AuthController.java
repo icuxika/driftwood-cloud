@@ -5,6 +5,7 @@ import com.icuxika.admin.dto.RefreshTokenDTO;
 import com.icuxika.admin.service.AuthService;
 import com.icuxika.admin.vo.TokenInfo;
 import com.icuxika.framework.basic.common.ApiData;
+import com.icuxika.framework.config.annotation.ApiReturn;
 import com.icuxika.framework.security.annotation.Anonymous;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,12 @@ public class AuthController {
     public ApiData<String> code(@RequestParam("phone") String phone) {
         String code = authService.generateVerificationCode(phone);
         return ApiData.ok(code);
+    }
+
+    @Anonymous
+    @ApiReturn(disable = true)
+    @GetMapping("authorizationCode")
+    public String authorizationCode(String code) {
+        return authService.authorizationCode(code);
     }
 }

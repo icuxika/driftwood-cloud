@@ -16,7 +16,7 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -27,6 +27,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,7 +53,6 @@ import org.springframework.security.oauth2.server.authorization.web.authenticati
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2RefreshTokenAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import java.util.Arrays;
 import java.util.List;
@@ -61,41 +61,44 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration(proxyBeanMethods = false)
+@RequiredArgsConstructor
 public class AuthorizationServerConfig {
 
-    @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    @Autowired
-    private PhoneUserDetailsService phoneUserDetailsService;
+    private final PhoneUserDetailsService phoneUserDetailsService;
 
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
-        http.apply(authorizationServerConfigurer.tokenEndpoint(oAuth2TokenEndpointConfigurer ->
-                oAuth2TokenEndpointConfigurer
-                        .accessTokenRequestConverter(new DelegatingAuthenticationConverter(
-                                        Arrays.asList(
-                                                new OAuth2AuthorizationCodeAuthenticationConverter(),
-                                                new OAuth2RefreshTokenAuthenticationConverter(),
-                                                new OAuth2ClientCredentialsAuthenticationConverter(),
-                                                new PasswordAuthenticationConverter(),
-                                                new PhoneAuthenticationConverter()
-                                        )
+        http.with(authorizationServerConfigurer.tokenEndpoint(oAuth2TokenEndpointConfigurer -> oAuth2TokenEndpointConfigurer
+                .accessTokenRequestConverter(new DelegatingAuthenticationConverter(
+                                Arrays.asList(
+                                        new OAuth2AuthorizationCodeAuthenticationConverter(),
+                                        new OAuth2RefreshTokenAuthenticationConverter(),
+                                        new OAuth2ClientCredentialsAuthenticationConverter(),
+                                        new PasswordAuthenticationConverter(),
+                                        new PhoneAuthenticationConverter()
                                 )
                         )
-                        .accessTokenResponseHandler(authenticationSuccessHandler)));
+                )
+                .accessTokenResponseHandler(authenticationSuccessHandler)), Customizer.withDefaults());
 
         authorizationServerConfigurer.oidc(Customizer.withDefaults());
-        RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
-        http
-                .securityMatcher(endpointsMatcher)
-                .authorizeRequests(authorizeRequests -> authorizeRequests.anyRequest().authenticated())
-                .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
-                .apply(authorizationServerConfigurer);
 
-        SecurityFilterChain securityFilterChain = http.formLogin(Customizer.withDefaults()).build();
+        http.csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/assets/**", "/login").permitAll()
+                                .anyRequest().authenticated()
+                );
+
+        http.formLogin(formLogin ->
+                formLogin.loginPage("/login")
+        );
+
+        SecurityFilterChain securityFilterChain = http.build();
         // 添加自定义验证模式
         addCustomProviders(http);
         return securityFilterChain;
@@ -168,7 +171,7 @@ public class AuthorizationServerConfig {
                         clientType = getClientType(oAuth2RefreshTokenAuthenticationToken.getAdditionalParameters());
                     }
 
-                    if (authorizationGrantType == AuthorizationGrantType.PASSWORD) {
+                    if (authorizationGrantType.equals(new AuthorizationGrantType(PasswordAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PASSWORD_VALUE))) {
                         PasswordAuthenticationToken passwordAuthenticationToken = context.getAuthorizationGrant();
                         clientType = getClientType(passwordAuthenticationToken.getAdditionalParameters());
                     }

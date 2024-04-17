@@ -29,6 +29,8 @@ import java.util.stream.Collectors;
 
 public class PasswordAuthenticationProvider extends AbstractCommonAuthenticationProvider implements AuthenticationProvider {
 
+    public static final String AUTHORIZATION_GRANT_TYPE_PASSWORD_VALUE = "password";
+
     public PasswordAuthenticationProvider(AuthenticationManager authenticationManager, OAuth2AuthorizationService authorizationService, OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator) {
         super(authenticationManager, authorizationService, tokenGenerator);
     }

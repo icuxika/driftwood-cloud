@@ -10,4 +10,6 @@ public interface AuthService {
     TokenInfo refreshToken(RefreshTokenDTO refreshTokenDTO);
 
     String generateVerificationCode(String phone);
+
+    String authorizationCode(String code);
 }

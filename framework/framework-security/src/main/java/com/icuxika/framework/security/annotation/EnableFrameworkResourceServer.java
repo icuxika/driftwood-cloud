@@ -3,6 +3,7 @@ package com.icuxika.framework.security.annotation;
 import com.icuxika.framework.security.config.FrameworkResourceServerConfig;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import java.lang.annotation.ElementType;
@@ -16,7 +17,7 @@ import java.lang.annotation.Target;
 @EnableWebSecurity
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity()
 @Import(FrameworkResourceServerConfig.class)
 public @interface EnableFrameworkResourceServer {
 }

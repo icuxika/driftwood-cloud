@@ -25,7 +25,7 @@ public class PasswordAuthenticationConverter implements AuthenticationConverter 
     @Override
     public Authentication convert(HttpServletRequest request) {
         String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
-        if (!AuthorizationGrantType.PASSWORD.getValue().equals(grantType)) {
+        if (!PasswordAuthenticationProvider.AUTHORIZATION_GRANT_TYPE_PASSWORD_VALUE.equals(grantType)) {
             return null;
         } else {
             Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();

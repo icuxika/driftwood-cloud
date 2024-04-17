@@ -73,15 +73,21 @@
                     </n-button>
                 </n-tab-pane>
             </n-tabs>
+            <div>
+                <button type="button" @click="openAuthorizationCodeLoginWindow">
+                    Code
+                </button>
+            </div>
         </n-card>
     </div>
 </template>
 
 <script setup lang="ts">
+import { TokenInfo } from "@/api/modules/admin/auth";
 import { UserInfoVO } from "@/api/modules/user/user";
 import { useAuthStore } from "@/store/auth";
 import { NAvatar, NSpace, useMessage, useNotification } from "naive-ui";
-import { h, reactive, ref } from "vue";
+import { h, onMounted, onUnmounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const message = useMessage();
@@ -236,6 +242,40 @@ const handleBeforeLeave = (tabName: string) => {
 };
 
 const handleUpdateValue = (tabName: string) => {};
+
+const openAuthorizationCodeLoginWindow = () => {
+    let width = 480;
+    let height = 480;
+    let positionLeft = (window.screen.availWidth - width) / 2;
+    let positionTop = (window.screen.availHeight - height) / 2;
+    window.open(
+        "http://localhost:8901/oauth2/authorize?response_type=code&client_id=id_authorization_code",
+        "login",
+        "height=" +
+            height +
+            ", width= " +
+            height +
+            ", top=" +
+            positionTop +
+            ", left=" +
+            positionLeft +
+            ", toolbar=no, menubar=no, scrollbars=no, resizable=no ,location=no, status=no"
+    );
+};
+const listener = (e: MessageEvent) => {
+    if (e && e.data && e.data.type) {
+        console.log(e.data.type);
+        const tokenInfo: TokenInfo = JSON.parse(atob(e.data.payload));
+        console.log(tokenInfo);
+        console.log(tokenInfo.accessToken);
+    }
+};
+onMounted(() => {
+    window.addEventListener("message", listener);
+});
+onUnmounted(() => {
+    window.removeEventListener("message", listener);
+});
 </script>
 
 <style lang="scss" scoped>

@@ -3,10 +3,13 @@ package com.icuxika.admin.feign;
 import com.icuxika.admin.vo.TokenResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Map;
 
 @FeignClient(value = "authorization-server", contextId = "authClient", fallbackFactory = AuthClientFallbackFactory.class)
 public interface AuthClient {
@@ -35,5 +38,14 @@ public interface AuthClient {
             @RequestParam("grant_type") String grantType,
             @RequestParam("refresh_token") String refreshToken,
             @RequestParam("client_type") String clientType
+    );
+
+    /**
+     * Map的第二个类型必须要为?
+     */
+    @PostMapping(value = "/oauth2/token", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    ResponseEntity<TokenResponse> tokenByAuthorizationCode(
+            @RequestHeader HttpHeaders headers,
+            Map<String, ?> map
     );
 }

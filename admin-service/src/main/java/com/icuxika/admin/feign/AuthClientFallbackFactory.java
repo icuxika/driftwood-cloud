@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 public class AuthClientFallbackFactory implements FallbackFactory<AuthClient> {
 
@@ -53,6 +55,11 @@ public class AuthClientFallbackFactory implements FallbackFactory<AuthClient> {
 
             @Override
             public ResponseEntity<TokenResponse> refreshToken(HttpHeaders headers, String grantType, String refreshToken, String clientType) {
+                return ResponseEntity.status(finalStatus).body(tokenResponse);
+            }
+
+            @Override
+            public ResponseEntity<TokenResponse> tokenByAuthorizationCode(HttpHeaders headers, Map<String, ?> map) {
                 return ResponseEntity.status(finalStatus).body(tokenResponse);
             }
         };

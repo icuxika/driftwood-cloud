@@ -8,7 +8,8 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.JWTParser;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -31,16 +32,15 @@ import java.util.*;
  * 自定义AccessToken响应输出，主要代码来自 org.springframework.security.oauth2.server.authorization.web.OAuth2TokenEndpointFilter#sendAccessTokenResponse(HttpServletRequest, HttpServletResponse, Authentication)
  */
 @Configuration
+@RequiredArgsConstructor
+@Slf4j
 public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHandler {
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    private UserClient userClient;
+    private final UserClient userClient;
 
-    @Autowired
-    private AsyncWrapper asyncWrapper;
+    private final AsyncWrapper asyncWrapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -77,7 +77,6 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
      * 一次登录产生的AccessToken及由RefreshToken刷新得到的AccessToken组成的集合作为当前用户的激活会话
      * 再次登录会重置此集合
      * Resource Server 根据此集合来验证 AccessToken是否处于激活状态，来决定是否允许同设备多处登录
-     * TODO:
      */
     private void activateUserSession(HttpServletRequest request, OAuth2AccessToken accessToken) {
         String grantType = request.getParameter("grant_type");
@@ -103,7 +102,7 @@ public class AuthenticationSuccessHandlerImpl implements AuthenticationSuccessHa
             String ip = Optional.ofNullable(IPUtil.getIP(request)).orElse("127.0.0.1");
             asyncWrapper.doAsync("更新用户最近登录ip地址", () -> updateUserIP(userId, ip));
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("存储用户accessToken信息时出现错误，出现此错误也代表用户将无法正常登录", e);
         }
     }
 
