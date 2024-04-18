@@ -74,9 +74,9 @@
                 </n-tab-pane>
             </n-tabs>
             <div>
-                <button type="button" @click="openAuthorizationCodeLoginWindow">
-                    Code
-                </button>
+                <n-button type="info" @click="openAuthorizationCodeLoginWindow">
+                    授权码登录
+                </n-button>
             </div>
         </n-card>
     </div>
@@ -249,7 +249,8 @@ const openAuthorizationCodeLoginWindow = () => {
     let positionLeft = (window.screen.availWidth - width) / 2;
     let positionTop = (window.screen.availHeight - height) / 2;
     window.open(
-        "http://localhost:8901/oauth2/authorize?response_type=code&client_id=id_authorization_code",
+        import.meta.env.VITE_APP_BASE_URL +
+            "oauth2/authorize?response_type=code&client_id=id_authorization_code",
         "login",
         "height=" +
             height +
