@@ -15,7 +15,7 @@ export const useTrick = () => {
      * @param fn 需要进行防抖的目标函数
      * @param delay 延迟时间，默认1000ms
      */
-    const debounce = <T extends (...args: any[]) => any>(
+    const debounce0 = <T extends (...args: any[]) => any>(
         fn: T,
         delay = 1000,
         ...args1: any[]
@@ -30,6 +30,24 @@ export const useTrick = () => {
     };
 
     /**
+     * 函数防抖，返回的函数的参数类型与fn一致
+     * @param fn 需要进行防抖的目标函数
+     * @param delay 延迟时间，默认1000ms
+     */
+    const debounce = <T extends any[], R>(
+        fn: (...args: T) => R,
+        delay = 1000
+    ): ((...args: T) => void) => {
+        let timer: NodeJS.Timeout;
+        return (...args: T) => {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                fn(...args);
+            }, delay);
+        };
+    };
+
+    /**
      * ref Vue组件时自动获取其类型
      */
     const componentRef = <T extends abstract new (...args: any[]) => any>(
@@ -38,6 +56,7 @@ export const useTrick = () => {
 
     return {
         sleep,
+        debounce0,
         debounce,
         componentRef,
     };

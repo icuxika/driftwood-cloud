@@ -1,25 +1,26 @@
 import { useTrick } from "@/hooks/use-trick";
 import { mount } from "@vue/test-utils";
-import { describe, test } from "vitest";
+import { describe, expect, test } from "vitest";
 import { defineComponent } from "vue";
 
-const { debounce, sleep, componentRef } = useTrick();
+const { debounce0, debounce, sleep, componentRef } = useTrick();
 
 describe("useTrick", () => {
-    test("debounce", async () => {
-        const f = debounce(
-            function (a, b, c, d) {
-                console.log(a, b, c, d);
-            },
-            2000,
-            1,
-            2
-        );
+    test("debounce", { timeout: 10 * 1000 }, async () => {
+        const target = (a: number, b: number, c: number) => {
+            console.log(a, b, c);
+        };
+        const f = debounce0(target, 1000, 1, 2);
         f(3, 4);
         f(3, 4);
         f(3, 4);
+        await sleep(2000);
         f();
-        await sleep(4000);
+        await sleep(1000);
+
+        const f1 = debounce(target);
+        f1(1, 2, 3);
+        await sleep(2000);
     });
 
     test("componentRef", async () => {
@@ -48,6 +49,6 @@ describe("useTrick", () => {
         const wrapper = mount(TestComponent, {
             attachTo: document.body,
         });
-        console.log(wrapper.vm.$refs.demoRef);
+        expect((wrapper.vm.$refs.demoRef as any).title).toBe("demo");
     });
 });

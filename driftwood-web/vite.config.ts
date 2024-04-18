@@ -39,7 +39,7 @@ export default defineConfig(({ command, mode }) => {
                     log: string,
                     type: "stdout" | "stderr"
                 ): boolean | void {
-                    console.log(log);
+                    // console.log(log);
                 },
             },
         };
