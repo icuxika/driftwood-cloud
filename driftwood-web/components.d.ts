@@ -7,6 +7,7 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Demo: typeof import('./src/components/Demo.vue')['default']
     FileUpload: typeof import('./src/components/FileUpload.vue')['default']
     MinioPartialFileUploader: typeof import('./src/components/MinioPartialFileUploader.vue')['default']
     NButton: typeof import('naive-ui')['NButton']
@@ -43,6 +44,7 @@ declare module 'vue' {
     NUpload: typeof import('naive-ui')['NUpload']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Test: typeof import('./src/components/Test.vue')['default']
     ThreeDisplay: typeof import('./src/components/ThreeDisplay.vue')['default']
   }
 }

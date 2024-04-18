@@ -1,3 +1,5 @@
+import { ref } from "vue";
+
 export const useTrick = () => {
     /**
      * 阻塞函数
@@ -27,8 +29,16 @@ export const useTrick = () => {
         };
     };
 
+    /**
+     * ref Vue组件时自动获取其类型
+     */
+    const componentRef = <T extends abstract new (...args: any[]) => any>(
+        _component: T
+    ) => ref<InstanceType<T>>();
+
     return {
         sleep,
         debounce,
+        componentRef,
     };
 };
