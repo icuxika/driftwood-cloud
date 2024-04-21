@@ -1,7 +1,6 @@
 package com.icuxika.framework.service.websocket.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.ArrayList;
@@ -9,10 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 public class WebSocketSessionManager {
-
-    private static final Logger L = LoggerFactory.getLogger(WebSocketSessionManager.class);
-
     /**
      * 用户ID <-> 多个设备登录的会话信息
      */
@@ -35,8 +32,8 @@ public class WebSocketSessionManager {
         ManageableWebSocketSession manageableWebSocketSession = new ManageableWebSocketSession(webSocketSession, userId, clientType);
         SESSION_ID_MAP.put(webSocketSession.getId(), manageableWebSocketSession);
         userSessionList.add(manageableWebSocketSession);
-        if (L.isInfoEnabled()) {
-            L.info(userId + "[" + clientType + "]" + "上线了");
+        if (log.isInfoEnabled()) {
+            log.info("{}[{}]上线了", userId, clientType);
         }
         // TODO 同类型设备登录同账号是否踢掉、向自己的某个设备发送消息
     }
@@ -54,8 +51,8 @@ public class WebSocketSessionManager {
             if (manageableWebSocketSession != null) {
                 userSessionList.remove(manageableWebSocketSession);
                 SESSION_ID_MAP.remove(webSocketSession.getId());
-                if (L.isInfoEnabled()) {
-                    L.info(userId + "下线了");
+                if (log.isInfoEnabled()) {
+                    log.info("{}下线了", userId);
                 }
             }
         }

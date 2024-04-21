@@ -1,7 +1,10 @@
 package com.icuxika.framework.service.websocket.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.AbstractWebSocketHandler;
@@ -9,10 +12,11 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 import java.util.Optional;
 
 @Component(value = "defaultWebSocketHandler")
+@RequiredArgsConstructor
+@Slf4j
 public class WebSocketHandler extends AbstractWebSocketHandler {
 
-    @Autowired
-    private StreamBridge streamBridge;
+    private final StreamBridge streamBridge;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -27,7 +31,9 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        streamBridge.send("websocketMessageConsumer-out-0", message.getPayload());
+        WebSocketSessionInfo info = (WebSocketSessionInfo) session.getAttributes().get(WebSocketHandshakeInterceptor.ATTRIBUTE_HEADER_INFO);
+        Message<SimpleMessage> msg = new GenericMessage<>(new SimpleMessage(info.getUserId(), info.getClientType(), message.getPayload()));
+        streamBridge.send("websocketMessageConsumer-out-0", msg);
     }
 
     @Override

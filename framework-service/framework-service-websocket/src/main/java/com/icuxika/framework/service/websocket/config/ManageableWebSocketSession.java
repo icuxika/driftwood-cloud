@@ -1,7 +1,7 @@
 package com.icuxika.framework.service.websocket.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -11,20 +11,22 @@ import java.io.IOException;
 /**
  * 对一个会话进行管理，检测是否在线、网络是否依旧正常等
  */
+@Slf4j
 public class ManageableWebSocketSession {
 
-    private static final Logger L = LoggerFactory.getLogger(ManageableWebSocketSession.class);
-
+    @Getter
     private final WebSocketSession webSocketSession;
 
     /**
      * 用户ID
      */
+    @Getter
     private final Long userId;
 
     /**
      * 设备类型
      */
+    @Getter
     private final Integer clientType;
 
     private long pingCount = 0L;
@@ -46,7 +48,7 @@ public class ManageableWebSocketSession {
         try {
             webSocketSession.sendMessage(new TextMessage(message));
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("向[{}]发送消息时遇到错误", userId, e);
         }
     }
 
@@ -56,7 +58,7 @@ public class ManageableWebSocketSession {
             webSocketSession.sendMessage(new PingMessage());
             pingCount++;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("向[{}]发送ping时遇到错误", userId, e);
         }
         return offline();
     }
@@ -71,21 +73,10 @@ public class ManageableWebSocketSession {
      * @return 是否
      */
     public boolean offline() {
-        if (L.isTraceEnabled()) {
-            L.trace("[" + userId + "]" + "ping: " + pingCount + ", pong: " + pongCount);
+        if (log.isTraceEnabled()) {
+            log.trace("[{}]ping: {}, pong: {}", userId, pingCount, pongCount);
         }
         return pingCount - pongCount < 3;
     }
 
-    public WebSocketSession getWebSocketSession() {
-        return webSocketSession;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public Integer getClientType() {
-        return clientType;
-    }
 }

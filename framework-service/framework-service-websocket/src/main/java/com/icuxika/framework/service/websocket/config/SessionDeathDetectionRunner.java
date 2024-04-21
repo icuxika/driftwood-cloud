@@ -1,7 +1,6 @@
 package com.icuxika.framework.service.websocket.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -12,29 +11,28 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class SessionDeathDetectionRunner implements ApplicationRunner {
-
-    private static final Logger L = LoggerFactory.getLogger(SessionDeathDetectionRunner.class);
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
     public void run(ApplicationArguments args) {
-        if (L.isInfoEnabled()) {
-            L.info("开始会话死亡定时检测任务");
+        if (log.isInfoEnabled()) {
+            log.info("开始会话死亡定时检测任务");
         }
         scheduler.scheduleWithFixedDelay(() -> {
             List<ManageableWebSocketSession> userSessionList = WebSocketSessionManager.getCurrentWebSocketSessionList();
             if (userSessionList.isEmpty()) {
-                if (L.isWarnEnabled()) {
-                    L.warn("没有用户在线");
+                if (log.isWarnEnabled()) {
+                    log.warn("没有用户在线");
                 }
             } else {
                 userSessionList.forEach(manageableWebSocketSession -> {
                     if (!manageableWebSocketSession.sendPing()) {
                         WebSocketSessionManager.closeSession(manageableWebSocketSession.getUserId(), manageableWebSocketSession.getWebSocketSession());
-                        if (L.isInfoEnabled()) {
-                            L.info(manageableWebSocketSession.getUserId() + "超时下线");
+                        if (log.isInfoEnabled()) {
+                            log.info("{}超时下线", manageableWebSocketSession.getUserId());
                         }
                     }
                 });

@@ -3,8 +3,7 @@ package com.icuxika.framework.service.websocket.config;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.security.util.SecurityUtil;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -16,9 +15,8 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 import java.util.Collections;
 import java.util.Map;
 
+@Slf4j
 public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
-
-    private static final Logger L = LoggerFactory.getLogger(WebSocketHandshakeInterceptor.class);
 
     public static final String ATTRIBUTE_HEADER_INFO = "websocket-session-info";
 
@@ -28,15 +26,15 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         if (!StringUtils.hasText(bearToken)) {
             return false;
         }
-        if (L.isInfoEnabled()) {
-            L.info("Bear Token: " + bearToken);
+        if (log.isInfoEnabled()) {
+            log.info("Bear Token: {}", bearToken);
         }
         if (request instanceof ServletServerHttpRequest) {
             HttpServletRequest httpServletRequest = ((ServletServerHttpRequest) request).getServletRequest();
-            if (L.isInfoEnabled()) {
-                L.info("token: " + httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
-                L.info("Current User Id: " + SecurityUtil.getUserId());
-                L.info("Current Client Type: " + SecurityUtil.getClientType());
+            if (log.isInfoEnabled()) {
+                log.info("token: {}", httpServletRequest.getParameter(SystemConstant.WEBSOCKET_QUERY_PARAMS_KEY));
+                log.info("Current User Id: {}", SecurityUtil.getUserId());
+                log.info("Current Client Type: {}", SecurityUtil.getClientType());
             }
             attributes.put(ATTRIBUTE_HEADER_INFO, new WebSocketSessionInfo(SecurityUtil.getUserId(), SecurityUtil.getClientType()));
             return true;
@@ -47,9 +45,8 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Exception exception) {
         if (exception != null) {
-            exception.printStackTrace();
-            if (L.isErrorEnabled()) {
-                L.error(exception.getMessage());
+            if (log.isErrorEnabled()) {
+                log.error(exception.getMessage(), exception);
             }
         }
     }

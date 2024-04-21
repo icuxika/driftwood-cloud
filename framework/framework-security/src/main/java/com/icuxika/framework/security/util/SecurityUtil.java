@@ -10,7 +10,7 @@ public interface SecurityUtil {
         return (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
-    static <T> T getClaim(Jwt jwt, String claim, Class<T> clazz) {
+    static <T> T getClaim(Jwt jwt, String claim) {
         T value = null;
         if (jwt.hasClaim(claim)) {
             value = jwt.getClaim(claim);
@@ -24,7 +24,7 @@ public interface SecurityUtil {
      * @return user id
      */
     static Long getUserId() {
-        return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID, Long.class);
+        return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_USER_ID);
     }
 
     /**
@@ -33,7 +33,8 @@ public interface SecurityUtil {
      * @return user id
      */
     static Integer getClientType() {
-        return getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE, Integer.class);
+        long clientType = getClaim(getJwt(), SystemConstant.OAUTH2_JWT_CLAIM_KEY_CLIENT_TYPE);
+        return (int) clientType;
     }
 
     /**
