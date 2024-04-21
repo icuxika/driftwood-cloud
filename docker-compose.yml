@@ -40,10 +40,12 @@ services:
       - MYSQL_HOST=${MYSQL_HOST}
       - REDIS_HOST=${REDIS_HOST}
       - JAVA_TOOL_OPTIONS=-XX:+PrintCommandLineFlags
+      - DEBUG_JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:18901
     extra_hosts:
       - "driftwood-cloud:${DRIFTWOOD_CLOUD_HOST}"
     ports:
       - "8901:8901"
+      - "18901:18901"
 
   admin-service:
     build:
