@@ -69,7 +69,7 @@ public class FileServiceImpl implements FileService {
                 String fileExtension = FilenameUtils.getExtension(originalFilename) == null ? "" : "." + FilenameUtils.getExtension(originalFilename);
                 // 文件名
                 String fileName = DateUtil.getLocalDateTimeText() + "_" + DigestUtils.md5Hex(md5HexStream) + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
-                String objectName = DateUtil.getLocalDateText() + File.separator + fileName;
+                String objectName = DateUtil.getLocalDateText() + "/" + fileName;
                 fileTemplate.createBucket(SystemConstant.MINIO_BUCKET_NAME);
                 fileTemplate.putObject(SystemConstant.MINIO_BUCKET_NAME, objectName, fileStream);
 

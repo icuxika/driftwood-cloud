@@ -1,6 +1,7 @@
 package com.icuxika.framework.oss.local;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.icuxika.framework.oss.core.FileProperties;
@@ -108,5 +109,13 @@ public class LocalFileTemplate implements FileTemplate {
             s3ObjectSummary.setKey(file.getName());
             return s3ObjectSummary;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ObjectMetadata getObjectMetadata(String bucketName, String objectName) {
+        File file = new File(fileProperties.getLocal().getBase() + FILE_SEPARATOR + bucketName + FILE_SEPARATOR + objectName);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(file.length());
+        return objectMetadata;
     }
 }

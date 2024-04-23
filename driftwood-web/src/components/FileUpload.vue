@@ -71,7 +71,7 @@ const handleRemove = ({
 const download = async () => {
     loading.value = true;
     fileService
-        .downloadFile(19)
+        .downloadFile(27)
         .then((response) => {
             loading.value = false;
             downloadFile(response);
@@ -82,7 +82,7 @@ const download = async () => {
 };
 
 const downloadByUrl = async () => {
-    const vo = await fileStore.getFilePath(19);
+    const vo = await fileStore.getFilePath(27);
     if (vo) {
         const filePath =
             import.meta.env.VITE_APP_BASE_URL_PLACEHOLDER +

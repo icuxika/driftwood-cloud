@@ -1,6 +1,7 @@
 package com.icuxika.framework.oss.core;
 
 import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
@@ -27,4 +28,6 @@ public interface FileTemplate {
     void removeObject(String bucketName, String objectName);
 
     List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix, boolean recursive);
+
+    ObjectMetadata getObjectMetadata(String bucketName, String objectName);
 }

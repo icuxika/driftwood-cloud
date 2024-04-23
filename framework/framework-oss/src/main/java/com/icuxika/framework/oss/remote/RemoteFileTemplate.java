@@ -86,6 +86,11 @@ public class RemoteFileTemplate implements FileTemplate, InitializingBean {
     }
 
     @Override
+    public ObjectMetadata getObjectMetadata(String bucketName, String objectName) {
+        return amazonS3.getObjectMetadata(bucketName, objectName);
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(fileProperties.getRemote().getMaxConnections());
