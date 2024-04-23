@@ -6,6 +6,9 @@
         <n-button :loading="loading" type="info" @click="download">
             下载
         </n-button>
+        <n-button :loading="loading" type="info" @click="downloadByUrl">
+            下载ByUrl
+        </n-button>
     </div>
 </template>
 
@@ -22,7 +25,7 @@ import { ref } from "vue";
 
 const message = useMessage();
 const fileStore = useFileStore();
-const { downloadFile } = useFile();
+const { downloadFile, downloadFileByUrl } = useFile();
 const loading = ref(false);
 
 // UploadFileInfo:id -> 后端 id
@@ -38,9 +41,9 @@ const customRequest = ({
         .uploadFile(file.file as File, (percent) => {
             onProgress({ percent: percent });
         })
-        .then((id) => {
-            if (id) {
-                fileIdMap[file.id] = id;
+        .then((vo) => {
+            if (vo) {
+                fileIdMap[file.id] = vo.id;
                 message.success("文件上传成功");
                 onFinish();
             }
@@ -65,10 +68,10 @@ const handleRemove = ({
     delete fileIdMap[file.id];
 };
 
-const download = () => {
+const download = async () => {
     loading.value = true;
     fileService
-        .downloadFile(1)
+        .downloadFile(19)
         .then((response) => {
             loading.value = false;
             downloadFile(response);
@@ -76,6 +79,18 @@ const download = () => {
         .catch((error) => {
             loading.value = false;
         });
+};
+
+const downloadByUrl = async () => {
+    const vo = await fileStore.getFilePath(19);
+    if (vo) {
+        const filePath =
+            import.meta.env.VITE_APP_BASE_URL_PLACEHOLDER +
+            "/admin/files/" +
+            vo.filepath;
+        const fileName = "new-" + vo.originalFilename;
+        downloadFileByUrl(filePath, fileName);
+    }
 };
 </script>
 

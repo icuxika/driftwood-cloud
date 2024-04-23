@@ -5,11 +5,12 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
 import java.io.InputStream;
+import java.nio.file.FileSystems;
 import java.util.List;
 
 public interface FileTemplate {
 
-    String FILE_SEPARATOR = System.getProperty("file.separator");
+    String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
 
     void createBucket(String bucketName);
 

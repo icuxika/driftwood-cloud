@@ -5,6 +5,7 @@ import com.icuxika.admin.vo.OSSSignatureVO;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.JsonClip;
 import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
+import com.icuxika.framework.object.modules.admin.vo.FileVO;
 import com.icuxika.framework.object.modules.user.dto.UserExcelDTO;
 import com.icuxika.framework.security.annotation.Anonymous;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +29,11 @@ public class FileController {
     @GetMapping("/{fileId}")
     public void downloadFile(@PathVariable("fileId") Long fileId, HttpServletResponse response) {
         fileService.downloadFile(fileId, response);
+    }
+
+    @GetMapping("getFilePath/{fileId}")
+    public ApiData<FileVO> getFilePath(@PathVariable("fileId") Long fileId) {
+        return ApiData.ok(fileService.getFilePath(fileId));
     }
 
     @PostMapping("uploadFileWithJSON")

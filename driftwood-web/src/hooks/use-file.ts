@@ -37,6 +37,15 @@ export const useFile = () => {
         URL.revokeObjectURL(url);
     };
 
+    const downloadFileByUrl = async (url: string, name: string) => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     // 定义切片大小为5MB
     const CHUNK_SIZE = 1024 * 1024 * 5; // 5MB
     // 获取系统硬件并发数或默认设置为4
@@ -110,6 +119,7 @@ export const useFile = () => {
 
     return {
         downloadFile,
+        downloadFileByUrl,
         cutFile,
     };
 };

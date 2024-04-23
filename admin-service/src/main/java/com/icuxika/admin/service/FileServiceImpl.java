@@ -17,8 +17,11 @@ import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.config.util.FileUtil;
 import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
+import com.icuxika.framework.object.modules.admin.vo.FileVO;
 import com.icuxika.framework.oss.core.FileTemplate;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +38,13 @@ import java.util.Date;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class FileServiceImpl implements FileService {
 
-    @Autowired
-    private FileTemplate fileTemplate;
+    private final FileTemplate fileTemplate;
 
-    @Autowired
-    private FileRepository fileRepository;
+    private final FileRepository fileRepository;
 
     @Override
     public AdminFileVO uploadFile(MultipartFile file) {
@@ -96,7 +99,8 @@ public class FileServiceImpl implements FileService {
         try (S3Object s3Object = fileTemplate.getObject(SystemConstant.MINIO_BUCKET_NAME, adminFile.getObjectName())) {
             FileUtil.responseFile(response, adminFile.getOriginalFilename(), outputStream -> {
                 try {
-                    StreamUtils.copy(s3Object.getObjectContent(), outputStream);
+                    int size = StreamUtils.copy(s3Object.getObjectContent(), outputStream);
+                    log.info("file size :[{}], write: [{}]", adminFile.getFileSize(), size);
                 } catch (IOException e) {
                     throw new GlobalServiceException("文件写出失败：" + e.getMessage());
                 }
@@ -104,6 +108,12 @@ public class FileServiceImpl implements FileService {
         } catch (IOException e) {
             throw new GlobalServiceException("文件下载失败：" + e.getMessage());
         }
+    }
+
+    @Override
+    public FileVO getFilePath(Long fileId) {
+        AdminFile adminFile = fileRepository.findById(fileId).orElseThrow(() -> new GlobalServiceException("文件信息不存在"));
+        return new FileVO(fileId, SystemConstant.MINIO_BUCKET_NAME + "/" + adminFile.getObjectName(), adminFile.getOriginalFilename());
     }
 
     @Override

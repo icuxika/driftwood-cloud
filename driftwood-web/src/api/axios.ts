@@ -7,8 +7,7 @@ import {
 } from "./modules/admin/auth";
 
 const instance = axios.create({
-    // baseURL: import.meta.env.VITE_APP_BASE_URL,
-    baseURL: "/api",
+    baseURL: import.meta.env.VITE_APP_BASE_URL_PLACEHOLDER,
     validateStatus: function (status) {
         // 此处决定请求响应status不满足该条件时进入error分支
         return status >= 200 && status < 300;

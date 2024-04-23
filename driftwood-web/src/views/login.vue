@@ -165,8 +165,8 @@ const loginSuccessHandler = (userInfoVO: UserInfoVO) => {
     let avatar = "https://07akioni.oss-cn-beijing.aliyuncs.com/07akioni.jpeg";
     if (userInfoVO.userProfile && userInfoVO.userProfile.avatar) {
         avatar =
-            import.meta.env.VITE_APP_BASE_URL +
-            "admin/files/" +
+            import.meta.env.VITE_APP_BASE_URL_PLACEHOLDER +
+            "/admin/files/" +
             userInfoVO.userProfile.avatar;
     }
     notification.create({
