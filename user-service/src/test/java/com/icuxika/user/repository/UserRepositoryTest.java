@@ -25,7 +25,12 @@ import org.springframework.data.jpa.repository.support.Querydsl;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -110,5 +115,78 @@ class UserRepositoryTest {
         Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
         Page<User> userPage = userRepository.findAll(booleanBuilder, pageable);
         Assertions.assertEquals(1, userPage.getTotalElements());
+    }
+
+    @Test
+    void generateUserData() {
+        String url = "jdbc:mysql://127.0.0.1:3306/driftwood-cloud?serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true";
+        String username = "root";
+        String password = "ALLURE_love921";
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        long startId = 1000001L;
+        long endId = startId + 100000L;
+
+        long currentTimeMillis = System.currentTimeMillis();
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, username, password);
+
+            connection.setAutoCommit(false);
+
+            String sql = """
+                    insert into user(id,create_time,create_user_id,tenant_id,update_time,update_user_id,delete_time,deleted,is_account_non_expired,is_account_non_locked,is_credential_is_non_expired,is_enabled,nickname,password,phone,username) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    """;
+            preparedStatement = connection.prepareStatement(sql);
+
+            for (int i = 0; i < 100; i++) {
+                String beginTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
+                while (startId < endId) {
+                    preparedStatement.setLong(1, startId);
+                    preparedStatement.setTimestamp(2, new Timestamp(currentTimeMillis));
+                    preparedStatement.setLong(3, 1L);
+                    preparedStatement.setString(4, SystemConstant.DEFAULT_TENANT_ID);
+                    preparedStatement.setTimestamp(5, new Timestamp(currentTimeMillis));
+                    preparedStatement.setLong(6, 1L);
+                    preparedStatement.setTimestamp(7, null);
+                    preparedStatement.setBoolean(8, false);
+                    preparedStatement.setBoolean(9, true);
+                    preparedStatement.setBoolean(10, true);
+                    preparedStatement.setBoolean(11, true);
+                    preparedStatement.setBoolean(12, true);
+                    preparedStatement.setString(13, "nickname_" + startId);
+                    preparedStatement.setString(14, "password_" + startId);
+                    preparedStatement.setString(15, "phone_" + startId);
+                    preparedStatement.setString(16, "username_" + startId);
+                    preparedStatement.addBatch();
+                    startId++;
+                }
+                preparedStatement.executeBatch();
+                connection.commit();
+
+                endId += 100000L;
+
+                String endTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
+                System.out.println("第" + i + "批数据->[" + beginTime + "]" + "to [" + endTime + "]");
+            }
+
+            System.out.println("总耗时->" + (System.currentTimeMillis() - currentTimeMillis));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
     }
 }
