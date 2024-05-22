@@ -32,6 +32,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -188,5 +189,17 @@ class UserRepositoryTest {
                 System.err.println(e.getMessage());
             }
         }
+    }
+
+    @Test
+    void generateUserDataVT() {
+        long start = 1000000;
+        long end = start + 100000;
+        String beginTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
+        Collection<GeneratedUser> generatedUsers = GeneratedUser.generate(start, end);
+        String endTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
+        System.out.println(STR."[\{beginTime}] to [\{endTime}]");
+        long size = generatedUsers.stream().map(GeneratedUser::id).toList().size();
+        Assertions.assertEquals(100000, size);
     }
 }
