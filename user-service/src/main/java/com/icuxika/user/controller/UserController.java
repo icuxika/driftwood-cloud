@@ -8,7 +8,6 @@ import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserExcelDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
-import com.icuxika.framework.object.modules.user.entity.User;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
 import com.icuxika.framework.object.modules.user.vo.UserExcelVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
@@ -122,9 +121,9 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ApiData<User> getById(@PathVariable("id") Long id) {
-        User user = userService.getById(id);
-        return ApiData.ok(user);
+    public ApiData<UserVO> getById(@PathVariable("id") Long id) {
+        UserVO userVO = userService.getById(id);
+        return ApiData.ok(userVO);
     }
 
     @PostMapping

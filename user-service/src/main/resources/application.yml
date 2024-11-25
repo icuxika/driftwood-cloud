@@ -33,3 +33,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     banner: false
+
+logging:
+  level:
+    org.hibernate.orm.jdbc.bind: TRACE

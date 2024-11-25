@@ -3,7 +3,6 @@ package com.icuxika.user.service;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
 import com.icuxika.framework.object.modules.user.dto.UserDTO;
 import com.icuxika.framework.object.modules.user.dto.UserQueryDTO;
-import com.icuxika.framework.object.modules.user.entity.User;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
 import com.icuxika.framework.object.modules.user.vo.UserExcelVO;
 import com.icuxika.framework.object.modules.user.vo.UserInfoVO;
@@ -30,7 +29,7 @@ public interface UserService {
 
     Page<UserVO> getPage(Pageable pageable, UserQueryDTO userQueryDTO);
 
-    User getById(Long id);
+    UserVO getById(Long id);
 
     void save(UserDTO userDTO);
 

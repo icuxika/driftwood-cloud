@@ -18,7 +18,6 @@ import com.icuxika.framework.object.modules.user.vo.UserVO;
 import com.icuxika.framework.security.util.SecurityUtil;
 import com.icuxika.user.repository.*;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.PathBuilderFactory;
 import com.querydsl.jpa.JPQLQuery;
 import jakarta.persistence.EntityManager;
@@ -33,11 +32,12 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -134,55 +134,18 @@ public class UserServiceImpl implements UserService {
 
         QUser qUser = QUser.user;
         QUserProfile qUserProfile = QUserProfile.userProfile;
-
-        // 查询条件
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
-        // user
-        if (StringUtils.hasText(userQueryDTO.getUsername())) {
-            // 用户名
-            booleanBuilder.and(qUser.username.like(userQueryDTO.getUsername()));
-        }
-        if (StringUtils.hasText(userQueryDTO.getPhone())) {
-            // 手机号
-            booleanBuilder.and(qUser.phone.startsWith(userQueryDTO.getPhone()));
-        }
-        if (StringUtils.hasText(userQueryDTO.getNickname())) {
-            // 昵称
-            booleanBuilder.and(qUser.nickname.like(userQueryDTO.getNickname()));
-        }
-        if (userQueryDTO.getEnabled() != null) {
-            // 账户是否禁用
-            booleanBuilder.and(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
-        }
-        // other
-        if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
-            // 出生日期
-            List<Long> range = userQueryDTO.getBirthdayRange();
-            LocalDate start = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(0)), ZoneId.systemDefault());
-            LocalDate end = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(1)), ZoneId.systemDefault());
-            booleanBuilder.and(qUserProfile.birthday.between(start, end));
-        }
-
-        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
-                .select(qUser, qUserProfile)
-                .from(qUser)
-                .leftJoin(qUserProfile)
-                .on(qUser.id.eq(qUserProfile.userId))
-                .where(booleanBuilder);
+        JPQLQuery<User> jpqlQuery = buildQuery(userQueryDTO, qUser, qUserProfile);
 
         // 获取总数
         long fetchCount = jpqlQuery.fetchCount();
         // 应用分页（会自动应用相关排序）
         Querydsl querydsl = new Querydsl(entityManager, (new PathBuilderFactory()).create(User.class));
         jpqlQuery = querydsl.applyPagination(pageable, jpqlQuery);
-        List<Tuple> list = jpqlQuery.fetch();
+        List<User> list = jpqlQuery.fetch();
 
-        List<UserVO> userVOList = list.stream().map(tuple -> {
-            User user = tuple.get(qUser);
-            UserProfile userProfile = tuple.get(qUserProfile);
+        List<UserVO> userVOList = list.stream().map(user -> {
             UserVO userVO = new UserVO();
-            Optional.ofNullable(user).ifPresent(u -> BeanUtils.copyProperties(u, userVO));
-            Optional.ofNullable(userProfile).ifPresent(userVO::setUserProfile);
+            BeanUtils.copyProperties(user, userVO);
             return userVO;
         }).collect(Collectors.toList());
 
@@ -190,8 +153,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(Long id) {
-        return userRepository.findById(id).orElse(null);
+    public UserVO getById(Long id) {
+        var userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            return null;
+        }
+        UserVO userVO = new UserVO();
+        User user = userOptional.get();
+        BeanUtils.copyProperties(user, userVO);
+        userProfileRepository.findByUserId(user.getId()).ifPresent(userVO::setUserProfile);
+        return userVO;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -272,10 +243,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserExcelVO> export(UserQueryDTO userQueryDTO) {
-        JPQLQuery<Tuple> jpqlQuery = buildQuery(userQueryDTO);
-        List<Tuple> list = jpqlQuery.fetch();
-        return list.stream().map(tuple -> {
-            User user = tuple.get(QUser.user);
+        QUser qUser = QUser.user;
+        QUserProfile qUserProfile = QUserProfile.userProfile;
+        JPQLQuery<User> jpqlQuery = buildQuery(userQueryDTO, qUser, qUserProfile);
+        List<User> list = jpqlQuery.fetch();
+        return list.stream().map(user -> {
             UserExcelVO userExcelVO = new UserExcelVO();
             userExcelVO.setUsername(user.getUsername());
             userExcelVO.setPhone(user.getPhone());
@@ -341,16 +313,13 @@ public class UserServiceImpl implements UserService {
         menuSetter.accept(menuList);
     }
 
-    private JPQLQuery<Tuple> buildQuery(UserQueryDTO userQueryDTO) {
-        QUser qUser = QUser.user;
-        QUserProfile qUserProfile = QUserProfile.userProfile;
-
+    private JPQLQuery<User> buildQuery(UserQueryDTO userQueryDTO, QUser qUser, QUserProfile qUserProfile) {
         // 查询条件
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         // user
         if (StringUtils.hasText(userQueryDTO.getUsername())) {
             // 用户名
-            booleanBuilder.and(qUser.username.like(userQueryDTO.getUsername()));
+            booleanBuilder.and(qUser.username.startsWith(userQueryDTO.getUsername()));
         }
         if (StringUtils.hasText(userQueryDTO.getPhone())) {
             // 手机号
@@ -358,26 +327,16 @@ public class UserServiceImpl implements UserService {
         }
         if (StringUtils.hasText(userQueryDTO.getNickname())) {
             // 昵称
-            booleanBuilder.and(qUser.nickname.like(userQueryDTO.getNickname()));
+            booleanBuilder.and(qUser.nickname.startsWith(userQueryDTO.getNickname()));
         }
         if (userQueryDTO.getEnabled() != null) {
             // 账户是否禁用
             booleanBuilder.and(qUser.isEnabled.eq(userQueryDTO.getEnabled()));
         }
-        // other
-        if (!CollectionUtils.isEmpty(userQueryDTO.getBirthdayRange())) {
-            // 出生日期
-            List<Long> range = userQueryDTO.getBirthdayRange();
-            LocalDate start = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(0)), ZoneId.systemDefault());
-            LocalDate end = LocalDate.ofInstant(Instant.ofEpochMilli(range.get(1)), ZoneId.systemDefault());
-            booleanBuilder.and(qUserProfile.birthday.between(start, end));
-        }
 
-        JPQLQuery<Tuple> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
-                .select(qUser, qUserProfile)
+        JPQLQuery<User> jpqlQuery = new BlazeJPAQuery<>(entityManager, criteriaBuilderFactory)
+                .select(qUser)
                 .from(qUser)
-                .leftJoin(qUserProfile)
-                .on(qUser.id.eq(qUserProfile.userId))
                 .where(booleanBuilder);
 
         return jpqlQuery;
