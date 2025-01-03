@@ -17,7 +17,7 @@ public class AsyncConfig {
     private static final Logger L = LoggerFactory.getLogger(AsyncConfig.class);
 
     @Bean
-    @ConditionalOnExpression("!'${spring.application.name}'.equals('framework-service-flowable')")
+    @ConditionalOnExpression("!'${spring.application.name}'.equals('framework-service-flowable') && !'${spring.application.name}'.equals('framework-service-activiti')")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(24);
