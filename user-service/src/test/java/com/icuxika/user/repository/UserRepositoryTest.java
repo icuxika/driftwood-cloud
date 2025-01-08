@@ -30,7 +30,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,9 +130,9 @@ class UserRepositoryTest {
         Example<User> example = Example.of(query, matcher);
         Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
         Page<User> userPage = userRepository.findAll(example, pageable);
-        System.out.println(STR."总数->\{userPage.getTotalElements()}");
+        System.out.println("总数->" + userPage.getTotalElements());
         List<UserProfile> userProfileList = userProfileRepository.findByUserIdIn(userPage.getContent().stream().map(User::getId).toList());
-        System.out.println(STR."总数->\{userProfileList.size()}");
+        System.out.println("总数->" + userProfileList.size());
         stopWatch.stop();
 
         stopWatch.start();
@@ -145,7 +144,7 @@ class UserRepositoryTest {
         Querydsl querydsl = new Querydsl(entityManager, (new PathBuilderFactory()).create(User.class));
         userJPQLQuery = querydsl.applyPagination(pageable, userJPQLQuery);
         List<User> userList = userJPQLQuery.fetch();
-        System.out.println(STR."总数->\{fetchCount}");
+        System.out.println("总数->" + fetchCount);
         stopWatch.stop();
         System.out.println(stopWatch.prettyPrint());
     }
@@ -298,17 +297,5 @@ class UserRepositoryTest {
                 System.err.println(e.getMessage());
             }
         }
-    }
-
-    @Test
-    void generateUserDataVT() {
-        long start = 1000000;
-        long end = start + 100000;
-        String beginTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
-        Collection<GeneratedUser> generatedUsers = GeneratedUser.generate(start, end);
-        String endTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern(SystemConstant.DEFAULT_DATE_TIME_PATTERN));
-        System.out.println(STR."[\{beginTime}] to [\{endTime}]");
-        long size = generatedUsers.stream().map(GeneratedUser::id).toList().size();
-        Assertions.assertEquals(100000, size);
     }
 }

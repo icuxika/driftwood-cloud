@@ -19,7 +19,10 @@ type CreateService = (path: string) => {
         progress: (percent: number) => void
     ) => ApiDataResponse<AdminFileVO>;
 
-    downloadFile: (fileId: number) => Promise<AxiosResponse>;
+    downloadFile: (
+        fileId: number,
+        progress: (percent: number) => void
+    ) => Promise<AxiosResponse>;
 
     getFilePath: (fileId: number) => ApiDataResponse<FileVO>;
 };
@@ -33,6 +36,7 @@ const createService: CreateService = (path: string) => {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
+                timeout: 1000 * 50,
                 onUploadProgress: function (progressEvent: AxiosProgressEvent) {
                     if (progressEvent.total) {
                         progress(
@@ -43,9 +47,19 @@ const createService: CreateService = (path: string) => {
             });
         },
 
-        downloadFile(fileId) {
+        downloadFile(fileId, progress) {
             return AxiosInstance.get(`${path}/${fileId}`, {
                 responseType: "blob",
+                timeout: 1000 * 50,
+                onDownloadProgress: function (
+                    progressEvent: AxiosProgressEvent
+                ) {
+                    if (progressEvent.total) {
+                        progress(
+                            (progressEvent.loaded / progressEvent.total) * 100
+                        );
+                    }
+                },
             });
         },
 

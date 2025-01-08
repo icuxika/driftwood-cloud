@@ -24,12 +24,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -97,7 +99,7 @@ public class FileServiceImpl implements FileService {
     public void downloadFile(Long fileId, HttpServletResponse response) {
         AdminFile adminFile = fileRepository.findById(fileId).orElseThrow(() -> new GlobalServiceException("文件信息不存在"));
         try (S3Object s3Object = fileTemplate.getObject(SystemConstant.MINIO_BUCKET_NAME, adminFile.getObjectName())) {
-            FileUtil.responseFile(response, adminFile.getOriginalFilename(), outputStream -> {
+            FileUtil.responseFile(response, adminFile.getOriginalFilename(), adminFile.getFileSize(), outputStream -> {
                 try {
                     int size = StreamUtils.copy(s3Object.getObjectContent(), outputStream);
                     log.info("file size :[{}], write: [{}]", adminFile.getFileSize(), size);

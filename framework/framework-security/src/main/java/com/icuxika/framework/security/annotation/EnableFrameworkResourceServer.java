@@ -2,7 +2,6 @@ package com.icuxika.framework.security.annotation;
 
 import com.icuxika.framework.security.config.FrameworkResourceServerConfig;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 

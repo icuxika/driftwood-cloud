@@ -17,12 +17,14 @@ public class FileUtil {
      *
      * @param response HttpServletResponse
      * @param filename 文件名
+     * @param fileSize 文件大小
      * @param consumer 交由调用方写入文件数据到 OutputStream
      * @throws IOException
      */
-    public static void responseFile(HttpServletResponse response, String filename, Consumer<OutputStream> consumer) throws IOException {
+    public static void responseFile(HttpServletResponse response, String filename, long fileSize, Consumer<OutputStream> consumer) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         // content-disposition: attachment; filename*=UTF-8''%E7%AE%80%E5%8E%86.md
+        headers.setContentLength(fileSize);
         headers.setContentDisposition(ContentDisposition.attachment().filename(filename, StandardCharsets.UTF_8).build());
         // content-disposition: attachment; filename="%E7%AE%80%E5%8E%86.md"
 //        headers.setContentDisposition(ContentDisposition.attachment().filename(URLEncoder.encode(filename, StandardCharsets.UTF_8)).build());

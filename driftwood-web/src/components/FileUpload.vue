@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { fileService } from "@/api/modules/admin/file";
 import { useFile } from "@/hooks/use-file";
 import { useFileStore } from "@/store/admin/file";
 import {
@@ -69,9 +68,12 @@ const handleRemove = ({
 };
 
 const download = async () => {
+    console.log("开始下载");
     loading.value = true;
-    fileService
-        .downloadFile(27)
+    fileStore
+        .downloadFile(28, (percent) => {
+            console.log(percent);
+        })
         .then((response) => {
             loading.value = false;
             downloadFile(response);
@@ -82,7 +84,7 @@ const download = async () => {
 };
 
 const downloadByUrl = async () => {
-    const vo = await fileStore.getFilePath(27);
+    const vo = await fileStore.getFilePath(28);
     if (vo) {
         const filePath =
             import.meta.env.VITE_APP_BASE_URL_PLACEHOLDER +
