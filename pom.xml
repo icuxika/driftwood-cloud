@@ -168,7 +168,6 @@
                 <version>3.13.0</version>
                 <configuration>
                     <parameters>true</parameters>
-                    <compilerArgs>--enable-preview</compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
