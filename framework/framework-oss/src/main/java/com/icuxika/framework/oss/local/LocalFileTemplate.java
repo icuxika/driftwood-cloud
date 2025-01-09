@@ -6,13 +6,12 @@ import com.icuxika.framework.oss.core.FileTemplate;
 import com.icuxika.framework.oss.core.FileUploadPart;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class LocalFileTemplate implements FileTemplate {
@@ -119,17 +118,97 @@ public class LocalFileTemplate implements FileTemplate {
 
     @Override
     public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName) {
-        return null;
+        String uuid = UUID.randomUUID().toString();
+        String bucketPath = fileProperties.getLocal().getBase() + FILE_SEPARATOR + bucketName;
+        File bucket = new File(bucketPath);
+        if (!bucket.exists()) {
+            createBucket(bucketName);
+        }
+        File file = new File(bucketPath + FILE_SEPARATOR + objectName);
+        try {
+            Path path = file.toPath();
+            Path multiPartUploadPath = path.getParent().resolve(Path.of("multi_part_upload")).resolve(Path.of(uuid));
+            Files.createDirectories(multiPartUploadPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        InitiateMultipartUploadResult initiateMultipartUploadResult = new InitiateMultipartUploadResult();
+        initiateMultipartUploadResult.setUploadId(uuid);
+        initiateMultipartUploadResult.setBucketName(bucketName);
+        initiateMultipartUploadResult.setKey(objectName);
+        return initiateMultipartUploadResult;
     }
 
     @Override
     public UploadPartResult uploadPart(String bucketName, String objectName, InputStream inputStream, FileUploadPart fileUploadPart) {
-        return null;
+        String bucketPath = fileProperties.getLocal().getBase() + FILE_SEPARATOR + bucketName;
+        File file = new File(bucketPath + FILE_SEPARATOR + objectName);
+        Path multiPartUploadPath = file.toPath().getParent().resolve(Path.of("multi_part_upload").resolve(Path.of(fileUploadPart.getUploadId())));
+        String tag = UUID.randomUUID().toString();
+        Path partPath = multiPartUploadPath.resolve(fileUploadPart.getPartNumber() + "_" + tag + "_" + file.getName());
+        try {
+            Files.copy(inputStream, partPath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        UploadPartResult uploadPartResult = new UploadPartResult();
+        uploadPartResult.setPartNumber(fileUploadPart.getPartNumber());
+        uploadPartResult.setETag(tag);
+        return uploadPartResult;
     }
 
     @Override
     public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partETags) {
-        return null;
+        String bucketPath = fileProperties.getLocal().getBase() + FILE_SEPARATOR + bucketName;
+        File file = new File(bucketPath + FILE_SEPARATOR + objectName);
+        Path multiPartUploadPath = file.toPath().getParent().resolve(Path.of("multi_part_upload").resolve(Path.of(uploadId)));
+        List<Path> partPathList = partETags.stream().map(partETag -> multiPartUploadPath.resolve(partETag.getPartNumber() + "_" + partETag.getETag() + "_" + file.getName())).toList();
+        boolean allPartFileExists = partPathList.stream().allMatch(partPath -> partPath.toFile().exists());
+        if (!allPartFileExists) {
+            throw new RuntimeException("已存在的分片文件数量不满足要求");
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(file)) {
+            partPathList.forEach(partPath -> {
+                File partFile = partPath.toFile();
+                try (FileInputStream inputStream = new FileInputStream(partFile)) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        try {
+            Files.walkFileTree(multiPartUploadPath, new SimpleFileVisitor<>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+//            Files.delete(multiPartUploadPath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        CompleteMultipartUploadResult completeMultipartUploadResult = new CompleteMultipartUploadResult();
+        completeMultipartUploadResult.setBucketName(bucketName);
+        completeMultipartUploadResult.setKey(objectName);
+        return completeMultipartUploadResult;
     }
 
     @Override

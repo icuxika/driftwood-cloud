@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 @RestController
@@ -71,7 +72,7 @@ public class FileController {
     @PostMapping("initiateMultipartUpload")
     public ApiData<InitiateMultipartUploadResult> initiateMultipartUpload(@RequestPart("fileName") String fileName) {
         String fileExtension = FilenameUtils.getExtension(fileName) == null ? "" : "." + FilenameUtils.getExtension(fileName);
-        String objectName = DateUtil.getLocalDateText() + "/" + DateUtil.getLocalDateTimeText() + "_initiateMultipartUpload_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
+        String objectName = DateUtil.getLocalDateText() + "/" + DateUtil.getLocalDateTimeText() + "_" + UUID.randomUUID() + "_" + ThreadLocalRandom.current().nextInt(0, 10) + fileExtension;
         InitiateMultipartUploadResult uploadResult = fileTemplate.initiateMultipartUpload(SystemConstant.MINIO_BUCKET_NAME, objectName);
         return ApiData.ok(uploadResult);
     }
