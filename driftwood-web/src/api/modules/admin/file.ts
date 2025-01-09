@@ -40,14 +40,10 @@ interface PartETagDTO {
 }
 
 interface CompleteMultipartUploadRequestDTO {
+    originalFilename: string;
     objectName: string;
     uploadId: string;
     partETags: PartETagDTO[];
-}
-
-interface CompleteMultipartUploadResult {
-    key: string;
-    location: string;
 }
 
 type CreateService = (path: string) => {
@@ -74,7 +70,7 @@ type CreateService = (path: string) => {
 
     completeMultipartUpload: (
         upload: CompleteMultipartUploadRequestDTO
-    ) => ApiDataResponse<CompleteMultipartUploadResult>;
+    ) => ApiDataResponse<AdminFileVO>;
 };
 
 const createService: CreateService = (path: string) => {

@@ -152,6 +152,7 @@ const multipartUpload = async ({
         onProgress({ percent: totalProgress });
         console.log("uploadPartResults: ", uploadPartResults);
         const result = await fileService.completeMultipartUpload({
+            originalFilename: file.name,
             objectName: initiateMultipartUploadResult.key,
             uploadId: initiateMultipartUploadResult.uploadId,
             partETags: uploadPartResults.map((uploadPartResult) => {
@@ -162,7 +163,7 @@ const multipartUpload = async ({
             }),
         });
         console.log("result: ", result);
-        message.success(`文件分片上传已完成[${result.data.data?.key}]`);
+        message.success(`文件分片上传已完成[${result.data.data?.id}]`);
     }
 };
 </script>

@@ -8,13 +8,17 @@ import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
 import com.aliyun.oss.common.utils.BinaryUtil;
 import com.aliyun.oss.model.MatchMode;
 import com.aliyun.oss.model.PolicyConditions;
+import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
+import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.S3Object;
+import com.icuxika.admin.dto.CompleteMultipartUploadRequestDTO;
 import com.icuxika.admin.entity.AdminFile;
 import com.icuxika.admin.repository.FileRepository;
 import com.icuxika.admin.vo.OSSSignatureVO;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.util.DateUtil;
+import com.icuxika.framework.config.async.AsyncWrapper;
 import com.icuxika.framework.config.util.FileUtil;
 import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import com.icuxika.framework.object.modules.admin.vo.FileVO;
@@ -37,6 +41,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -47,6 +52,7 @@ public class FileServiceImpl implements FileService {
     private final FileTemplate fileTemplate;
 
     private final FileRepository fileRepository;
+    private final AsyncWrapper asyncWrapper;
 
     @Override
     public AdminFileVO uploadFile(MultipartFile file) {
@@ -165,5 +171,57 @@ public class FileServiceImpl implements FileService {
             throw new GlobalServiceException("获取对象存储服务端签名失败" + e.getMessage());
         }
         return ossSignatureVO;
+    }
+
+    @Override
+    public AdminFileVO completeMultipartUpload(CompleteMultipartUploadRequestDTO completeMultipartUploadRequestDTO) {
+        List<PartETag> partETagList = completeMultipartUploadRequestDTO.getPartETags().stream().map(partETagDTO -> new PartETag(partETagDTO.getPartNumber(), partETagDTO.getTag())).toList();
+        CompleteMultipartUploadResult completeMultipartUploadResult = fileTemplate.completeMultipartUpload(SystemConstant.MINIO_BUCKET_NAME, completeMultipartUploadRequestDTO.getObjectName(), completeMultipartUploadRequestDTO.getUploadId(), partETagList);
+
+        String fileName = completeMultipartUploadResult.getKey().substring(completeMultipartUploadRequestDTO.getObjectName().lastIndexOf("/") + 1);
+        String fileExtension = FilenameUtils.getExtension(completeMultipartUploadRequestDTO.getOriginalFilename()) == null ? "" : "." + FilenameUtils.getExtension(completeMultipartUploadRequestDTO.getOriginalFilename());
+
+        AdminFile adminFile = new AdminFile();
+        adminFile.setOriginalFilename(completeMultipartUploadRequestDTO.getOriginalFilename());
+        adminFile.setBucketName(SystemConstant.MINIO_BUCKET_NAME);
+        adminFile.setFileName(fileName);
+        adminFile.setObjectName(completeMultipartUploadRequestDTO.getObjectName());
+        adminFile.setFileSize(0L);
+        adminFile.setFileExtension(fileExtension);
+        adminFile.setFileSha256("");
+        fileRepository.save(adminFile);
+
+        asyncWrapper.doAsync("文件分片上传完成后异步计算SHA256", () -> {
+            long fileSize = 0;
+            String fileSha256;
+            try (
+                    S3Object s3Object = fileTemplate.getObject(SystemConstant.MINIO_BUCKET_NAME, completeMultipartUploadResult.getKey());
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()
+            ) {
+                final byte[] buffer = new byte[16384];
+                int len;
+                while ((len = s3Object.getObjectContent().read(buffer)) > -1) {
+                    fileSize += len;
+                    byteArrayOutputStream.write(buffer, 0, len);
+                }
+                try (InputStream sha256HexStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray())) {
+                    fileSha256 = DigestUtils.sha256Hex(sha256HexStream);
+                }
+            } catch (IOException e) {
+                log.error("文件分片上传完成后计算SHA256出错：{}", e.getMessage());
+                throw new GlobalServiceException(e.getMessage());
+            }
+            long finalFileSize = fileSize;
+            fileRepository.findById(adminFile.getId()).ifPresent(update -> {
+                update.setFileSize(finalFileSize);
+                update.setFileSha256(fileSha256);
+                fileRepository.save(update);
+            });
+        });
+
+        AdminFileVO adminFileVO = new AdminFileVO();
+        adminFileVO.setId(adminFile.getId());
+        adminFileVO.setFilepath(SystemConstant.MINIO_BUCKET_NAME + "/" + completeMultipartUploadRequestDTO.getObjectName());
+        return adminFileVO;
     }
 }

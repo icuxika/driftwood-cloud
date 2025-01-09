@@ -9,6 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CompleteMultipartUploadRequestDTO {
 
+    private String originalFilename;
     private String objectName;
     private String uploadId;
     private List<PartETagDTO> partETags;

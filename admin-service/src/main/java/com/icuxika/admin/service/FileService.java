@@ -1,5 +1,6 @@
 package com.icuxika.admin.service;
 
+import com.icuxika.admin.dto.CompleteMultipartUploadRequestDTO;
 import com.icuxika.admin.vo.OSSSignatureVO;
 import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import com.icuxika.framework.object.modules.admin.vo.FileVO;
@@ -14,4 +15,6 @@ public interface FileService {
     FileVO getFilePath(Long fileId);
 
     OSSSignatureVO getAliOSSSignature();
+
+    AdminFileVO completeMultipartUpload(CompleteMultipartUploadRequestDTO completeMultipartUploadRequestDTO);
 }

@@ -1,8 +1,6 @@
 package com.icuxika.admin.controller;
 
-import com.amazonaws.services.s3.model.CompleteMultipartUploadResult;
 import com.amazonaws.services.s3.model.InitiateMultipartUploadResult;
-import com.amazonaws.services.s3.model.PartETag;
 import com.amazonaws.services.s3.model.UploadPartResult;
 import com.icuxika.admin.dto.CompleteMultipartUploadRequestDTO;
 import com.icuxika.admin.service.FileService;
@@ -26,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -100,15 +97,10 @@ public class FileController {
     }
 
     @PostMapping("completeMultipartUpload")
-    public ApiData<CompleteMultipartUploadResult> completeMultipartUpload(@RequestBody CompleteMultipartUploadRequestDTO completeMultipartUploadRequestDTO) {
-        List<PartETag> partETagList = completeMultipartUploadRequestDTO.getPartETags().stream().map(partETagDTO -> new PartETag(partETagDTO.getPartNumber(), partETagDTO.getTag())).toList();
-        return ApiData.ok(fileTemplate.completeMultipartUpload(SystemConstant.MINIO_BUCKET_NAME, completeMultipartUploadRequestDTO.getObjectName(), completeMultipartUploadRequestDTO.getUploadId(), partETagList));
+    public ApiData<AdminFileVO> completeMultipartUpload(@RequestBody CompleteMultipartUploadRequestDTO completeMultipartUploadRequestDTO) {
+        AdminFileVO adminFileVO = fileService.completeMultipartUpload(completeMultipartUploadRequestDTO);
+        return ApiData.ok(adminFileVO);
     }
-
-    public void abortMultipartUpload() {
-    }
-
-    // ------------------------------ 阿里云
 
     /**
      * 获取阿里云对象存储服务端签名
