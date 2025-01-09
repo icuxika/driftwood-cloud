@@ -102,6 +102,10 @@ export const useFile = () => {
                 worker.onmessage = (e) => {
                     for (let i = start; i < end; i++) {
                         result[i] = e.data[i - start];
+
+                        if (i === chunkCount - 1) {
+                            result[i].end = file.size;
+                        }
                     }
                     worker.terminate();
                     finishCount++;

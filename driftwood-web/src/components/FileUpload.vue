@@ -9,10 +9,15 @@
         <n-button :loading="loading" type="info" @click="downloadByUrl">
             下载ByUrl
         </n-button>
+        <n-upload :custom-request="multipartUpload">
+            <n-button>大文件分片上传</n-button>
+        </n-upload>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ApiDataResponse, resolveAxiosResult } from "@/api";
+import { fileService, UploadPartResult } from "@/api/modules/admin/file";
 import { useFile } from "@/hooks/use-file";
 import { useFileStore } from "@/store/admin/file";
 import {
@@ -22,6 +27,7 @@ import {
 } from "naive-ui";
 import { ref } from "vue";
 
+const { cutFile } = useFile();
 const message = useMessage();
 const fileStore = useFileStore();
 const { downloadFile, downloadFileByUrl } = useFile();
@@ -92,6 +98,71 @@ const downloadByUrl = async () => {
             vo.filepath;
         const fileName = "new-" + vo.originalFilename;
         downloadFileByUrl(filePath, fileName);
+    }
+};
+
+const multipartUpload = async ({
+    file,
+    onFinish,
+    onError,
+    onProgress,
+}: UploadCustomRequestOptions) => {
+    // 初始化分片上传
+    let initiateMultipartUploadResult = await resolveAxiosResult(() =>
+        fileService.initiateMultipartUpload(file.name)
+    );
+    if (initiateMultipartUploadResult) {
+        console.log(
+            "initiateMultipartUploadResult: ",
+            initiateMultipartUploadResult
+        );
+        // 对文件进行分片
+        let chunks = await cutFile(file.file as File);
+        // 上传各个文件分片
+        let totalProgress = 0;
+        let lastProgress = 0;
+        const uploadPartTasks: ApiDataResponse<UploadPartResult>[] = chunks.map(
+            (chunk) => {
+                const chunkSize = chunk.end - chunk.start;
+                const chunkWeight = chunkSize / (file.file as File).size;
+
+                return fileService.uploadPart(
+                    {
+                        part: chunk.blob,
+                        objectName: initiateMultipartUploadResult.key,
+                        uploadId: initiateMultipartUploadResult.uploadId,
+                        partNumber: chunk.index + 1,
+                        partSize: chunk.end - chunk.start,
+                        fileOffset: chunk.start,
+                        md5Digest: chunk.hash,
+                    },
+                    (percent) => {
+                        const weightProcess = percent * chunkWeight;
+                        totalProgress += weightProcess;
+                        totalProgress = Math.min(totalProgress, 100);
+                        if (totalProgress - lastProgress > 1) {
+                            lastProgress = totalProgress;
+                            onProgress({ percent: totalProgress });
+                        }
+                    }
+                );
+            }
+        );
+        const uploadPartResults = await Promise.all(uploadPartTasks);
+        onProgress({ percent: totalProgress });
+        console.log("uploadPartResults: ", uploadPartResults);
+        const result = await fileService.completeMultipartUpload({
+            objectName: initiateMultipartUploadResult.key,
+            uploadId: initiateMultipartUploadResult.uploadId,
+            partETags: uploadPartResults.map((uploadPartResult) => {
+                return {
+                    partNumber: uploadPartResult.data.data!.partNumber,
+                    tag: uploadPartResult.data.data!.etag,
+                };
+            }),
+        });
+        console.log("result: ", result);
+        message.success(`文件分片上传已完成[${result.data.data?.key}]`);
     }
 };
 </script>

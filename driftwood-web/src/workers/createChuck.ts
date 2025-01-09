@@ -28,7 +28,7 @@ export default function createChunk(
     return new Promise((resolve) => {
         // 计算当前块的开始和结束字节位置
         const start = index * chunkSize;
-        const end = start + chunkSize;
+        const end = Math.min(start + chunkSize, file.size);
 
         // 初始化MD5计算器
         const spark = new SparkMD5.ArrayBuffer();

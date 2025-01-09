@@ -1,11 +1,9 @@
 package com.icuxika.framework.oss.local;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.icuxika.framework.oss.core.FileProperties;
 import com.icuxika.framework.oss.core.FileTemplate;
+import com.icuxika.framework.oss.core.FileUploadPart;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -117,5 +115,30 @@ public class LocalFileTemplate implements FileTemplate {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(file.length());
         return objectMetadata;
+    }
+
+    @Override
+    public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName) {
+        return null;
+    }
+
+    @Override
+    public UploadPartResult uploadPart(String bucketName, String objectName, InputStream inputStream, FileUploadPart fileUploadPart) {
+        return null;
+    }
+
+    @Override
+    public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partETags) {
+        return null;
+    }
+
+    @Override
+    public MultipartUploadListing listMultipartUploads(String bucketName) {
+        return null;
+    }
+
+    @Override
+    public void abortMultipartUpload(String bucketName, String objectName, String uploadId) {
+
     }
 }

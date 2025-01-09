@@ -1,9 +1,6 @@
 package com.icuxika.framework.oss.core;
 
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 
 import java.io.InputStream;
 import java.nio.file.FileSystems;
@@ -30,4 +27,14 @@ public interface FileTemplate {
     List<S3ObjectSummary> getAllObjectsByPrefix(String bucketName, String prefix, boolean recursive);
 
     ObjectMetadata getObjectMetadata(String bucketName, String objectName);
+
+    InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName);
+
+    UploadPartResult uploadPart(String bucketName, String objectName, InputStream inputStream, FileUploadPart fileUploadPart);
+
+    CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partETags);
+
+    MultipartUploadListing listMultipartUploads(String bucketName);
+
+    void abortMultipartUpload(String bucketName, String objectName, String uploadId);
 }

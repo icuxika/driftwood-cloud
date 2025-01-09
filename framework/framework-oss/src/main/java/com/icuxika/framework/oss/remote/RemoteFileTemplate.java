@@ -9,12 +9,10 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.icuxika.framework.oss.core.FileProperties;
 import com.icuxika.framework.oss.core.FileTemplate;
+import com.icuxika.framework.oss.core.FileUploadPart;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.http.MediaType;
 
@@ -22,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.List;
 
 public class RemoteFileTemplate implements FileTemplate, InitializingBean {
@@ -91,10 +91,48 @@ public class RemoteFileTemplate implements FileTemplate, InitializingBean {
     }
 
     @Override
+    public InitiateMultipartUploadResult initiateMultipartUpload(String bucketName, String objectName) {
+        InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(bucketName, objectName);
+        return amazonS3.initiateMultipartUpload(initRequest);
+    }
+
+    @Override
+    public UploadPartResult uploadPart(String bucketName, String objectName, InputStream inputStream, FileUploadPart fileUploadPart) {
+        UploadPartRequest uploadPartRequest = new UploadPartRequest()
+                .withBucketName(bucketName)
+                .withKey(objectName)
+                .withUploadId(fileUploadPart.getUploadId())
+                .withPartNumber(fileUploadPart.getPartNumber())
+                .withPartSize(fileUploadPart.getPartSize())
+                .withMD5Digest(Base64.getEncoder().encodeToString(HexFormat.of().parseHex(fileUploadPart.getMd5Digest())))
+                .withInputStream(inputStream);
+        return amazonS3.uploadPart(uploadPartRequest);
+    }
+
+    @Override
+    public CompleteMultipartUploadResult completeMultipartUpload(String bucketName, String objectName, String uploadId, List<PartETag> partETags) {
+        CompleteMultipartUploadRequest uploadRequest = new CompleteMultipartUploadRequest(bucketName, objectName, uploadId, partETags);
+        return amazonS3.completeMultipartUpload(uploadRequest);
+    }
+
+    @Override
+    public MultipartUploadListing listMultipartUploads(String bucketName) {
+        ListMultipartUploadsRequest request = new ListMultipartUploadsRequest(bucketName);
+        return amazonS3.listMultipartUploads(request);
+    }
+
+    @Override
+    public void abortMultipartUpload(String bucketName, String objectName, String uploadId) {
+        amazonS3.abortMultipartUpload(new AbortMultipartUploadRequest(bucketName, objectName, uploadId));
+    }
+
+    @Override
     public void afterPropertiesSet() throws Exception {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(fileProperties.getRemote().getMaxConnections());
         clientConfiguration.setProtocol(Protocol.HTTP);
+        clientConfiguration.setConnectionTimeout(50000);
+        clientConfiguration.setSocketTimeout(50000);
 
         AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(fileProperties.getRemote().getEndpoint(), fileProperties.getRemote().getRegion());
         AWSCredentials awsCredentials = new BasicAWSCredentials(fileProperties.getRemote().getAccessKey(), fileProperties.getRemote().getSecretKey());
