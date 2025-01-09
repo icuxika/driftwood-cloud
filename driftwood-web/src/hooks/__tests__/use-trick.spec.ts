@@ -24,7 +24,6 @@ describe("useTrick", () => {
     });
 
     test("componentRef", async () => {
-        // eslint-disable-next-line vue/one-component-per-file
         const DemoComponent = defineComponent({
             setup(props, { expose }) {
                 const title = "demo";
@@ -35,7 +34,6 @@ describe("useTrick", () => {
             template: "<div></div>",
         });
 
-        // eslint-disable-next-line vue/one-component-per-file
         const TestComponent = defineComponent({
             components: {
                 DemoComponent,

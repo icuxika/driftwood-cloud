@@ -13,7 +13,6 @@ export const useFile = () => {
                 );
             } else {
                 return decodeURIComponent(
-                    // eslint-disable-next-line
                     contentDisposition.split("filename=")[1].replaceAll('"', "")
                 );
             }

@@ -14,20 +14,20 @@ const renderPrefix = (type: number) => {
                 type == 1
                     ? "info"
                     : type == 2
-                    ? "warning"
-                    : type == 3
-                    ? "success"
-                    : "default",
+                      ? "warning"
+                      : type == 3
+                        ? "success"
+                        : "default",
         },
         {
             default: () =>
                 type == 1
                     ? "应用"
                     : type == 2
-                    ? "服务"
-                    : type == 3
-                    ? "URL"
-                    : "按钮",
+                      ? "服务"
+                      : type == 3
+                        ? "URL"
+                        : "按钮",
         }
     );
 };
