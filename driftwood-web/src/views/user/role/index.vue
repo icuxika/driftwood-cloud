@@ -17,11 +17,6 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "Role",
-};
-</script>
 <script setup lang="ts">
 import { NoNullReject, Page } from "@/api";
 import { Role } from "@/api/modules/user/role";
@@ -35,6 +30,10 @@ import {
     PaginationProps,
 } from "naive-ui";
 import { onMounted, reactive, ref } from "vue";
+
+defineOptions({
+    name: "Role",
+});
 
 // 等价于 Array.apply(null, { length: 987 })，为了创建指定长度并且每个元素都被初始化的数组，否则map无法遍历操作
 const roleData: Role[] = Array.apply(null, Array.from({ length: 987 })).map(

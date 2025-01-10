@@ -144,11 +144,6 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "Permission",
-};
-</script>
 <script setup lang="ts">
 import { usePermissionStore } from "@/store/user/permission";
 import {
@@ -165,6 +160,10 @@ import {
     useMessage,
 } from "naive-ui";
 import { ComputedRef, computed, onMounted, ref } from "vue";
+
+defineOptions({
+    name: "Permission",
+});
 
 const message = useMessage();
 const permissionStore = usePermissionStore();

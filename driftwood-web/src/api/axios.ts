@@ -1,4 +1,4 @@
-import router from "@/router/index";
+import eventEmitter from "@/events/event-emitter";
 import axios, { AxiosResponse } from "axios";
 import {
     AuthorizationGrantType,
@@ -73,8 +73,7 @@ const createResponseInterceptor = async () => {
                                     "Bearer " + newAccessToken;
                                 return instance(response.config);
                             } catch (error) {
-                                console.log(error);
-                                await toLogin();
+                                eventEmitter.emit("API:NOT_LOGGED_IN");
                             } finally {
                                 isRefreshing = false;
                             }
@@ -108,31 +107,6 @@ const createResponseInterceptor = async () => {
             return Promise.reject(error);
         }
     );
-};
-
-/**
- * 跳转登录页面
- */
-const toLogin = async () => {
-    window.$message.warning("登录失效，请重新登录");
-    // 跳转登录页面
-    localStorage.setItem("accessToken", "");
-    const currentPath = router.currentRoute.value.fullPath;
-    let newDirect = currentPath;
-    // 移除被跳转的路径携带的query参数，防止重复
-    const existQueryIndex = currentPath.indexOf("?");
-    if (existQueryIndex != -1) {
-        newDirect = currentPath.slice(0, existQueryIndex);
-    }
-    if (currentPath.indexOf("/login") == -1) {
-        router.push({
-            path: "/login",
-            replace: true,
-            query: {
-                redirect: newDirect,
-            },
-        });
-    }
 };
 
 /**

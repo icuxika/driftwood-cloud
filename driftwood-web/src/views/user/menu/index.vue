@@ -137,11 +137,6 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "Menu0",
-};
-</script>
 <script setup lang="ts">
 import { useIcon } from "@/hooks/use-icon";
 import { useTree } from "@/hooks/use-tree";
@@ -162,6 +157,10 @@ import {
     useMessage,
 } from "naive-ui";
 import { VNodeChild, h, onMounted, ref } from "vue";
+
+defineOptions({
+    name: "Menu0",
+});
 
 const message = useMessage();
 const dialog = useDialog();

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import eventEmitter from "@/events/event-emitter";
 import { basicRoutes } from "@/router/routes";
 
 declare module "vue-router" {
@@ -44,6 +45,29 @@ router.beforeEach((to, from, next) => {
         }
     } else {
         next();
+    }
+});
+
+eventEmitter.on("API:NOT_LOGGED_IN", () => {
+    console.log("登录失效");
+    window.$message.warning("登录失效，请重新登录");
+    localStorage.setItem("accessToken", "");
+    // 跳转登录页面
+    const currentPath = router.currentRoute.value.fullPath;
+    let newDirect = currentPath;
+    // 移除被跳转的路径携带的query参数，防止重复
+    const existQueryIndex = currentPath.indexOf("?");
+    if (existQueryIndex != -1) {
+        newDirect = currentPath.slice(0, existQueryIndex);
+    }
+    if (currentPath.indexOf("/login") == -1) {
+        router.push({
+            path: "/login",
+            replace: true,
+            query: {
+                redirect: newDirect,
+            },
+        });
     }
 });
 

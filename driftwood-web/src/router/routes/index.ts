@@ -1,6 +1,7 @@
-import { RouteRecordRaw } from "vue-router";
 import { adminRoutes } from "@/router/routes/admin";
 import { userRoutes } from "@/router/routes/user";
+import { RouteRecordRaw } from "vue-router";
+import { testRoutes } from "./test";
 
 const LOGIN_ROUTE: RouteRecordRaw = {
     path: "/login",
@@ -30,6 +31,12 @@ export const basicRoutes: RouteRecordRaw[] = [
         path: "/",
         name: "Home",
         component: () => import("@/views/home.vue"),
-        children: [INDEX_REDIRECT, INDEX_ROUTE, ...adminRoutes, ...userRoutes],
+        children: [
+            INDEX_REDIRECT,
+            INDEX_ROUTE,
+            ...adminRoutes,
+            ...userRoutes,
+            ...testRoutes,
+        ],
     },
 ];

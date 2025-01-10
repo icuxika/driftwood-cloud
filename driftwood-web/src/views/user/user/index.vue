@@ -18,11 +18,6 @@
     </div>
 </template>
 
-<script lang="ts">
-export default {
-    name: "User",
-};
-</script>
 <script setup lang="ts">
 import { NoNullReject, Page } from "@/api";
 import { User, userService } from "@/api/modules/user/user";
@@ -37,6 +32,10 @@ import {
     PaginationProps,
 } from "naive-ui";
 import { onMounted, reactive, ref } from "vue";
+
+defineOptions({
+    name: "User",
+});
 
 const userStore = useUserStore();
 const { downloadFile } = useFile();
