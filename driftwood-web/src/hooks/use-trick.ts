@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { customRef, ref } from "vue";
 
 export const useTrick = () => {
     /**
@@ -54,10 +54,31 @@ export const useTrick = () => {
         _component: T
     ) => ref<InstanceType<T>>();
 
+    /**
+     * 防抖 Ref
+     */
+    const debounceRef = <T>(target: T, delay: number) => {
+        let timer: NodeJS.Timeout;
+        return customRef<T>((track, trigger) => ({
+            get() {
+                track();
+                return target;
+            },
+            set(value) {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    target = value;
+                    trigger();
+                }, delay);
+            },
+        }));
+    };
+
     return {
         sleep,
         debounce0,
         debounce,
         componentRef,
+        debounceRef,
     };
 };
