@@ -12,6 +12,9 @@
         "test:unit": "vitest run"
     },
     "dependencies": {
+        "@logicflow/core": "^2.0.10",
+        "@logicflow/engine": "^0.1.1",
+        "@logicflow/extension": "^2.0.14",
         "axios": "^1.5.1",
         "github-markdown-css": "^5.2.0",
         "marked": "^9.0.3",
