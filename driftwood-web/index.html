@@ -1,170 +1,152 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" href="/favicon.ico" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Driftwood Web</title>
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="icon" href="/favicon.ico" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Driftwood Web</title>
 
-  <script src="//at.alicdn.com/t/font_3327625_siao2mp0kcb.js"></script>
+        <script src="//at.alicdn.com/t/font_3327625_siao2mp0kcb.js"></script>
 
-  <style>
-      .first-loading-wrapper {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          height: 90vh;
-      }
+        <style>
+            html {
+                box-sizing: border-box;
+            }
 
-      .lds-spinner {
-          color: inherit;
-          display: inline-block;
-          position: relative;
-          width: 80px;
-          height: 80px;
-      }
+            *,
+            *::before,
+            *::after {
+                margin: 0;
+                padding: 0;
+                box-sizing: inherit;
+            }
 
-      .lds-spinner div {
-          transform-origin: 40px 40px;
-          animation: lds-spinner 1.2s linear infinite;
-      }
+            @property --x {
+                syntax: "<length>";
+                initial-value: 0px;
+                inherits: false;
+            }
 
-      .lds-spinner div::after {
-          content: " ";
-          display: block;
-          position: absolute;
-          top: 3px;
-          left: 37px;
-          width: 6px;
-          height: 18px;
-          border-radius: 20%;
-          background: linear-gradient(
-                  -225deg,
-                  #ffd3a5 0%,
-                  #fd6585 29%,
-                  #fd6e6a 67%,
-                  #ffc600 100%
-          );
-      }
+            @property --y {
+                syntax: "<length>";
+                initial-value: 0px;
+                inherits: false;
+            }
 
-      .lds-spinner div:nth-child(1) {
-          transform: rotate(0deg);
-          animation-delay: -1.1s;
-      }
+            .loading-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }
 
-      .lds-spinner div:nth-child(2) {
-          transform: rotate(30deg);
-          animation-delay: -1s;
-      }
+            .loading-circle {
+                width: 24px;
+                height: 24px;
+                background-color: dodgerblue;
+                border-radius: 50%;
 
-      .lds-spinner div:nth-child(3) {
-          transform: rotate(60deg);
-          animation-delay: -0.9s;
-      }
+                transform: translate(var(--x), var(--y));
+                animation:
+                    x 4s,
+                    y 2s;
+                animation-timing-function: cubic-bezier(0.5, -800, 0.5, 800);
+                animation-iteration-count: infinite;
+            }
 
-      .lds-spinner div:nth-child(4) {
-          transform: rotate(90deg);
-          animation-delay: -0.8s;
-      }
+            @keyframes x {
+                to {
+                    --x: 1px;
+                }
+            }
 
-      .lds-spinner div:nth-child(5) {
-          transform: rotate(120deg);
-          animation-delay: -0.7s;
-      }
+            @keyframes y {
+                to {
+                    --y: 0.1px;
+                }
+            }
 
-      .lds-spinner div:nth-child(6) {
-          transform: rotate(150deg);
-          animation-delay: -0.6s;
-      }
+            .loading-trail-wrapper {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
 
-      .lds-spinner div:nth-child(7) {
-          transform: rotate(180deg);
-          animation-delay: -0.5s;
-      }
+            .loading-trail {
+                fill: none;
+                stroke: #292b2b;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-dasharray: 5, 5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="app">
+            <div id="loading-wrapper" class="loading-wrapper">
+                <div id="loading-circle" class="loading-circle"></div>
+                <svg class="loading-trail-wrapper">
+                    <path
+                        id="loading-trail"
+                        class="loading-trail"
+                        d="M 100 100"
+                    />
+                </svg>
+            </div>
+        </div>
+        <script>
+            const loadingWrapper = document.getElementById("loading-wrapper");
+            const loadingCircle = document.getElementById("loading-circle");
+            const loadingTrail = document.getElementById("loading-trail");
 
-      .lds-spinner div:nth-child(8) {
-          transform: rotate(210deg);
-          animation-delay: -0.4s;
-      }
+            const centerX = loadingWrapper.clientWidth / 2;
+            const centerY = loadingWrapper.clientHeight / 2;
 
-      .lds-spinner div:nth-child(9) {
-          transform: rotate(240deg);
-          animation-delay: -0.3s;
-      }
+            // 初始化路径
+            let d = `M ${centerX} ${centerY}`;
 
-      .lds-spinner div:nth-child(10) {
-          transform: rotate(270deg);
-          animation-delay: -0.2s;
-      }
+            let animationFrameId;
+            // 每帧更新路径
+            function updateTrail() {
+                const x =
+                    parseFloat(
+                        getComputedStyle(loadingCircle).getPropertyValue("--x")
+                    ) + centerX;
+                const y =
+                    parseFloat(
+                        getComputedStyle(loadingCircle).getPropertyValue("--y")
+                    ) + centerY;
 
-      .lds-spinner div:nth-child(11) {
-          transform: rotate(300deg);
-          animation-delay: -0.1s;
-      }
+                d += ` L ${x} ${y}`;
+                loadingTrail.setAttribute("d", d);
 
-      .lds-spinner div:nth-child(12) {
-          transform: rotate(330deg);
-          animation-delay: 0s;
-      }
+                animationFrameId = requestAnimationFrame(updateTrail);
+            }
+            // 启动轨迹更新
+            updateTrail();
 
-      @keyframes lds-spinner {
-          0% {
-              opacity: 1;
-          }
-          100% {
-              opacity: 0;
-          }
-      }
+            // 使用 MutationObserver 监听元素是否被移除
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.removedNodes.length > 0) {
+                        mutation.removedNodes.forEach((node) => {
+                            if (
+                                node &&
+                                node.classList &&
+                                node.classList.contains("loading-wrapper")
+                            ) {
+                                cancelAnimationFrame(animationFrameId);
+                                console.log("轨迹绘制已停止，因为元素已被移除");
+                            }
+                        });
+                    }
+                });
+            });
 
-      .animate-character {
-          text-transform: uppercase;
-          background-image: linear-gradient(
-                  -225deg,
-                  #ffd3a5 0%,
-                  #fd6585 29%,
-                  #fd6e6a 67%,
-                  #ffc600 100%
-          );
-          background-size: 200% auto;
-          color: #fff;
-          background-clip: inherit;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          animation: text-clip 2s linear infinite;
-          display: inline-block;
-          font-size: 24px;
-      }
-
-      @keyframes text-clip {
-          to {
-              background-position: 200% center;
-          }
-      }
-  </style>
-</head>
-<body>
-<div id="app">
-  <div class="first-loading-wrapper">
-    <div class="lds-spinner">
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-    <div>
-      <h3 class="animate-character">Loading ...</h3>
-    </div>
-  </div>
-</div>
-<script type="module" src="/src/main.ts"></script>
-</body>
+            // 监听整个文档的子节点变化
+            observer.observe(document.body, { childList: true, subtree: true });
+        </script>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>
