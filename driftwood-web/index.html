@@ -137,7 +137,7 @@
                                 node.classList.contains("loading-wrapper")
                             ) {
                                 cancelAnimationFrame(animationFrameId);
-                                console.log("轨迹绘制已停止，因为元素已被移除");
+                                observer.disconnect();
                             }
                         });
                     }
