@@ -38,7 +38,11 @@
                 </div>
             </n-layout>
         </div>
-        <n-layout-footer bordered>成府路</n-layout-footer>
+        <n-layout-footer bordered>
+            <n-marquee>
+                你要好好长大，不要输给风，不要输给雨，不要输给冬雪，不要输给炎夏。
+            </n-marquee>
+        </n-layout-footer>
     </div>
 </template>
 
@@ -145,5 +149,7 @@ const handleUpdateValue = (value: boolean) => {
 
 .n-layout-footer {
     height: 48px;
+    display: flex;
+    justify-content: center;
 }
 </style>

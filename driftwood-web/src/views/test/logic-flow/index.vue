@@ -1,10 +1,58 @@
 <template>
-    <div>
-        <n-button type="primary" @click="downloadXml">下载XML</n-button>
-        <n-upload :custom-request="uploadXml" :show-file-list="false">
-            <n-button>上传XML</n-button>
-        </n-upload>
+    <div id="logic-flow-container">
+        <div style="display: flex; align-items: center">
+            <n-button type="primary" @click="downloadXml">下载XML</n-button>
+            <n-upload :custom-request="uploadXml" :show-file-list="false">
+                <n-button>上传XML</n-button>
+            </n-upload>
+            <n-button type="primary" @click="downloadSnapshot"
+                >下载图片</n-button
+            >
+        </div>
         <div class="container" ref="container"></div>
+        <n-drawer
+            v-model:show="drawerShow"
+            :width="500"
+            :placement="drawerPlacement"
+            :trap-focus="false"
+            :block-scroll="false"
+            show-mask="transparent"
+            :mask-closable="false"
+            to="#logic-flow-container"
+        >
+            <n-drawer-content :native-scrollbar="false" closable>
+                <template #header> 保存流程图 </template>
+                <template #footer>
+                    <n-button @click="previewProcess">预览</n-button>
+                    <n-button @click="saveProcess">确认</n-button>
+                </template>
+                <template #default>
+                    <n-form
+                        ref="processForm"
+                        label-placement="left"
+                        :label-width="64"
+                        :model="processModelRef"
+                        :rules="processModelRules"
+                    >
+                        <n-form-item label="id" path="id">
+                            <n-input
+                                v-model:value="processModelRef.id"
+                                @keydown.enter.prevent
+                            ></n-input>
+                        </n-form-item>
+                        <n-form-item label="名称" path="name">
+                            <n-input
+                                v-model:value="processModelRef.name"
+                                @keydown.enter.prevent
+                            ></n-input>
+                        </n-form-item>
+                    </n-form>
+                    <div>
+                        <pre class="language-xml" v-html="xml" />
+                    </div>
+                </template>
+            </n-drawer-content>
+        </n-drawer>
     </div>
 </template>
 
@@ -13,22 +61,34 @@ import LogicFlow from "@logicflow/core";
 import "@logicflow/core/lib/style/index.css";
 import {
     BPMNAdapter,
-    BpmnElement,
-    BpmnXmlAdapter,
+    BPMNElements,
     Control,
     DndPanel,
+    Highlight,
     InsertNodeInPolyline,
     Menu,
     MiniMap,
     SelectionSelect,
+    Snapshot,
+    ToImageOptions,
 } from "@logicflow/extension";
 import "@logicflow/extension/lib/style/index.css";
-import { UploadCustomRequestOptions } from "naive-ui";
-import { onMounted, useTemplateRef } from "vue";
+import {
+    DrawerPlacement,
+    FormRules,
+    UploadCustomRequestOptions,
+    useMessage,
+} from "naive-ui";
+import Prism from "prismjs";
+import "prismjs/themes/prism.css";
+import { onMounted, ref, useTemplateRef } from "vue";
 import { addControlItem } from "./extension-config/control";
 import { patternItems } from "./extension-config/dnd-panel";
 import { menuConfig } from "./extension-config/menu";
+import NodeData = LogicFlow.NodeData;
+import EdgeData = LogicFlow.EdgeData;
 
+const message = useMessage();
 const container = useTemplateRef("container");
 let lf: LogicFlow;
 
@@ -44,11 +104,16 @@ const download = (filename: string, text: string) => {
     element.click();
     document.body.removeChild(element);
 };
+
+// 保存为 XML 文件
 const downloadXml = () => {
-    const data = lf.getGraphData() as string;
-    download("logic-flow.xml", data);
+    drawerShow.value = true;
+    renderXML((result) => {
+        xml.value = Prism.highlight(result, Prism.languages.xml, "xml");
+    });
 };
 
+// 加载 XML 文件
 const uploadXml = async ({ file }: UploadCustomRequestOptions) => {
     const reader = new FileReader();
     reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -63,6 +128,37 @@ const uploadXml = async ({ file }: UploadCustomRequestOptions) => {
     reader.readAsText(file.file as File);
 };
 
+// 保存为图片
+const downloadSnapshot = async () => {
+    const params: ToImageOptions = {
+        backgroundColor: "#fff",
+    };
+    await lf.getSnapshot(null, params);
+};
+
+// 节点属性编辑
+const handleNodeProperty = (node: NodeData) => {
+    console.log(`节点id：${node.id}`);
+    console.log(`节点类型：${node.type}`);
+    console.log(`节点坐标：(x: ${node.x}, y: ${node.y})`);
+    lf.getNodeModelById(node.id)?.setProperties({
+        "activiti:assignee": "1",
+        "activiti:candidateUsers": "1",
+        "activiti:candidateGroups": "1",
+    });
+};
+
+// 边属性编辑
+const handleEdgeProperty = (edge: EdgeData) => {
+    const { id, type, startPoint, endPoint, sourceNodeId, targetNodeId } = edge;
+    console.log(`边id：${id}`);
+    console.log(`边类型：${type}`);
+    console.log(`边起点坐标：(startPoint: [${startPoint.x}, ${startPoint.y}])`);
+    console.log(`边终点坐标：(endPoint: [${endPoint.x}, ${endPoint.y}])`);
+    console.log(`源节点id：${sourceNodeId}`);
+    console.log(`目标节点id：${targetNodeId}`);
+};
+
 onMounted(() => {
     if (container.value) {
         lf = new LogicFlow({
@@ -73,19 +169,101 @@ onMounted(() => {
                 Menu,
                 DndPanel,
                 MiniMap,
-                BpmnElement,
-                BpmnXmlAdapter,
+                BPMNElements,
                 InsertNodeInPolyline,
                 SelectionSelect,
                 BPMNAdapter,
+                Snapshot,
+                Highlight,
             ],
         });
         addControlItem(lf.extension.control as Control);
         (lf.extension.dndPanel as DndPanel).setPatternItems(patternItems(lf));
-        (lf.extension.menu as Menu).addMenuConfig(menuConfig());
+        (lf.extension.menu as Menu).addMenuConfig(
+            menuConfig({ handleNodeProperty, handleEdgeProperty })
+        );
+        (lf.extension.highlight as Highlight).setMode("single");
+        (lf.extension.highlight as Highlight).setEnable(true);
         lf.render({});
     }
 });
+
+const drawerShow = ref(false);
+const drawerPlacement = ref<DrawerPlacement>("right");
+const xml = ref<string>("");
+
+interface ProcessModelType {
+    id: string | null;
+    name: string | null;
+}
+const processModel: ProcessModelType = {
+    id: null,
+    name: null,
+};
+const processModelRef = ref<ProcessModelType>(processModel);
+const processModelRules: FormRules = {
+    id: [
+        {
+            required: true,
+            message: "请输入id",
+        },
+    ],
+    name: [
+        {
+            required: true,
+            message: "请输入名称",
+        },
+    ],
+};
+
+const processForm = useTemplateRef("processForm");
+
+const renderXML = (callback: (result: string) => void) => {
+    if (processModel.id) {
+        (lf.extension.BPMNAdapter as unknown as BPMNAdapter).processAttributes[
+            "-id"
+        ] = processModel.id;
+    }
+
+    if (processModel.name) {
+        (lf.extension.BPMNAdapter as any).processAttributes["-name"] =
+            processModel.name;
+    }
+
+    if (lf.adapterOut) {
+        const extraProps = {};
+        const xmlResult = lf.adapterOut(
+            lf.getGraphRawData(),
+            extraProps
+        ) as string;
+        callback(xmlResult);
+    }
+};
+const previewProcess = (e: MouseEvent) => {
+    e.preventDefault();
+    processForm.value?.validate((errors) => {
+        if (!errors) {
+            renderXML((result) => {
+                xml.value = Prism.highlight(result, Prism.languages.xml, "xml");
+            });
+        } else {
+            message.error("验证失败");
+        }
+    });
+};
+const saveProcess = (e: MouseEvent) => {
+    e.preventDefault();
+    processForm.value?.validate((errors) => {
+        if (!errors) {
+            renderXML((result) => {
+                download("logic-flow.xml", result);
+            });
+        } else {
+            console.log(errors);
+            message.error("验证失败");
+        }
+    });
+};
 </script>
 <style lang="scss" scoped>
 .container {
