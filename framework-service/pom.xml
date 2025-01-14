@@ -18,5 +18,6 @@
         <module>framework-service-websocket</module>
         <module>framework-service-job</module>
         <module>framework-service-minio</module>
+        <module>framework-service-bailian</module>
     </modules>
 </project>

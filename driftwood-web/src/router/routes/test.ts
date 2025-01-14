@@ -19,4 +19,13 @@ export const testRoutes: RouteRecordRaw[] = [
             fixed: false,
         },
     },
+    {
+        path: "test/ai-chat",
+        name: "AIChat",
+        component: () => import("@/views/test/ai-chat/index.vue"),
+        meta: {
+            title: "AI对话",
+            fixed: false,
+        },
+    },
 ];

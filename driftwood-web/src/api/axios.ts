@@ -96,8 +96,16 @@ const createResponseInterceptor = async () => {
                         window.$message.error("404");
                         break;
                     }
+                    case 503: {
+                        window.$message.error(
+                            `${response.status}|${response.statusText}`
+                        );
+                        break;
+                    }
                     default: {
-                        window.$message.error("未知错误");
+                        window.$message.error(
+                            `未知错误[${response.status}|${response.statusText}]`
+                        );
                     }
                 }
             } else {

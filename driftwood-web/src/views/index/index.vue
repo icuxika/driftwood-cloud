@@ -7,9 +7,11 @@
         <n-upload :custom-request="customRequest">
             <n-button>大文件分片</n-button>
         </n-upload>
+        <button type="button" @click="streamChat">streamChat</button>
     </div>
 </template>
 <script setup lang="ts">
+import { chatClientService } from "@/api/modules/bailian/chat-client";
 import FileUpload from "@/components/FileUpload.vue";
 import { useFile } from "@/hooks/use-file";
 import { useUserStore } from "@/store/user/user";
@@ -101,6 +103,26 @@ const customRequest = ({
         })
         .catch((error) => {
             console.log(error);
+        });
+};
+
+const streamChat = () => {
+    chatClientService
+        .streamChat()
+        .then(async (res) => {
+            const reader = (res.data as ReadableStream)
+                .pipeThrough(new TextDecoderStream())
+                .getReader();
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    break;
+                }
+                console.log(value);
+            }
+        })
+        .catch((err) => {
+            console.error(err);
         });
 };
 

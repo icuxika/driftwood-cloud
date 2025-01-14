@@ -29,7 +29,6 @@ export const basicRoutes: RouteRecordRaw[] = [
     LOGIN_ROUTE,
     {
         path: "/",
-        name: "Home",
         component: () => import("@/views/home.vue"),
         children: [
             INDEX_REDIRECT,
@@ -38,5 +37,10 @@ export const basicRoutes: RouteRecordRaw[] = [
             ...userRoutes,
             ...testRoutes,
         ],
+    },
+    {
+        path: "/:pathMatch(.*)*",
+        name: "NotFound",
+        component: () => import("@/components/NotFound.vue"),
     },
 ];

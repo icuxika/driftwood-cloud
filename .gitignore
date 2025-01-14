@@ -38,3 +38,5 @@ build/
 ### Log ###
 logs
 run-logs
+
+.local.env

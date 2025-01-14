@@ -25,24 +25,18 @@
             </div>
         </n-layout-header>
         <div class="basic-wrapper">
-            <n-layout has-sider class="content-wrapper">
+            <n-layout has-sider>
                 <!-- 侧栏菜单 -->
                 <SideMenu />
                 <div class="main-wrapper">
                     <!-- 导航 -->
                     <MainHeader />
-                    <n-layout has-sider>
-                        <!-- 内容 -->
-                        <MainContent />
-                    </n-layout>
+                    <!-- 内容 -->
+                    <MainContent />
                 </div>
             </n-layout>
         </div>
-        <n-layout-footer bordered>
-            <n-marquee>
-                你要好好长大，不要输给风，不要输给雨，不要输给冬雪，不要输给炎夏。
-            </n-marquee>
-        </n-layout-footer>
+        <n-layout-footer bordered> 等跑马灯修完bug </n-layout-footer>
     </div>
 </template>
 
@@ -136,13 +130,14 @@ const handleUpdateValue = (value: boolean) => {
 .basic-wrapper {
     height: calc(100% - 96px);
     margin-top: 48px;
-    & .content-wrapper {
+    display: flex;
+
+    & > .n-layout {
         height: 100%;
+
         & .main-wrapper {
+            height: calc(100% - 48px);
             width: 100%;
-            & .n-layout {
-                height: calc(100% - 48px);
-            }
         }
     }
 }
@@ -151,5 +146,6 @@ const handleUpdateValue = (value: boolean) => {
     height: 48px;
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 </style>
