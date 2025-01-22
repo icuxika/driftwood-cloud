@@ -28,4 +28,13 @@ export const testRoutes: RouteRecordRaw[] = [
             fixed: false,
         },
     },
+    {
+        path: "test/audio-player",
+        name: "AudioPlayer",
+        component: () => import("@/views/test/audio-player/index.vue"),
+        meta: {
+            title: "音乐播放器",
+            fixed: false,
+        },
+    },
 ];

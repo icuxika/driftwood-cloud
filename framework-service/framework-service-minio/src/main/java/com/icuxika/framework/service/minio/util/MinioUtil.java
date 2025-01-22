@@ -7,10 +7,9 @@ import io.minio.*;
 import io.minio.errors.*;
 import io.minio.http.Method;
 import io.minio.messages.Part;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,9 +22,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 @Component
+@Slf4j
 public class MinioUtil {
-
-    private static final Logger L = LoggerFactory.getLogger(MinioUtil.class);
 
     @Autowired
     private PartialMinioClient minioClient;
@@ -38,13 +36,13 @@ public class MinioUtil {
     private void createBucket(String bucketName) throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
         if (!found) {
-            if (L.isInfoEnabled()) {
-                L.info("创建新的bucket：" + bucketName);
+            if (log.isInfoEnabled()) {
+                log.info("创建新的bucket：{}", bucketName);
             }
             minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
         } else {
-            if (L.isInfoEnabled()) {
-                L.info("bucket已存在：" + bucketName);
+            if (log.isInfoEnabled()) {
+                log.info("bucket已存在：{}", bucketName);
             }
         }
     }
@@ -86,8 +84,8 @@ public class MinioUtil {
             fileUploadBO.setFileStoreName(objectName);
             return fileUploadBO;
         } catch (Exception e) {
-            if (L.isErrorEnabled()) {
-                L.error("文件上传失败：" + e.getMessage());
+            if (log.isErrorEnabled()) {
+                log.error("文件上传失败：{}", e.getMessage());
             }
             return fileUploadBO;
         }
@@ -121,8 +119,8 @@ public class MinioUtil {
                             .build()
             );
         } catch (Exception e) {
-            if (L.isErrorEnabled()) {
-                L.error("获取文件下载链接失败：" + e.getMessage());
+            if (log.isErrorEnabled()) {
+                log.error("获取文件下载链接失败：{}", e.getMessage());
             }
             return null;
         }
@@ -140,8 +138,8 @@ public class MinioUtil {
                             .build()
             );
         } catch (Exception e) {
-            if (L.isErrorEnabled()) {
-                L.error("获取文件下载链接失败：" + e.getMessage());
+            if (log.isErrorEnabled()) {
+                log.error("获取文件下载链接失败：{}", e.getMessage());
             }
             return null;
         }

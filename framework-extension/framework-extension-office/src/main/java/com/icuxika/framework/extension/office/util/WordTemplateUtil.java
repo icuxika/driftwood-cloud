@@ -4,8 +4,7 @@ import freemarker.cache.ByteArrayTemplateLoader;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -22,9 +21,8 @@ import java.util.zip.ZipOutputStream;
  * 基于 Word 模板生成文档
  * 采用将 Word 文件中的 word/document.xml 抽取出来进行数据填充后再写入 Word文件的方式
  */
+@Slf4j
 public class WordTemplateUtil {
-
-    private static final Logger L = LoggerFactory.getLogger(WordTemplateUtil.class);
 
     /**
      * 从 src/main/resources 目录下获取模板文件
@@ -85,8 +83,8 @@ public class WordTemplateUtil {
         File tempFile;
         try {
             tempFile = File.createTempFile("driftwood-" + getLocalDateTimeFormat(), ".xml");
-            if (L.isInfoEnabled()) {
-                L.info("填充数据Word xml文件：" + tempFile.getAbsoluteFile());
+            if (log.isInfoEnabled()) {
+                log.info("填充数据Word xml文件：{}", tempFile.getAbsoluteFile());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -134,8 +132,8 @@ public class WordTemplateUtil {
                 }
             }
             if (!xml.delete()) {
-                if (L.isWarnEnabled()) {
-                    L.warn("临时文件删除失败");
+                if (log.isWarnEnabled()) {
+                    log.warn("临时文件删除失败");
                 }
             }
         } catch (Exception e) {
@@ -173,8 +171,8 @@ public class WordTemplateUtil {
                 }
             }
             if (!xml.delete()) {
-                if (L.isWarnEnabled()) {
-                    L.warn("临时文件删除失败");
+                if (log.isWarnEnabled()) {
+                    log.warn("临时文件删除失败");
                 }
             }
         } catch (IOException e) {

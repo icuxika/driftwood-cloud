@@ -30,6 +30,11 @@ export default defineConfig(({ command, mode }) => {
                         changeOrigin: true,
                         rewrite: (path) => path.replace(/^\/api/, ""),
                     },
+                    "/download": {
+                        target: "https://www.aprillie.com/download/",
+                        changeOrigin: true,
+                        rewrite: (path) => path.replace(/^\/download/, ""),
+                    },
                 },
             },
             test: {

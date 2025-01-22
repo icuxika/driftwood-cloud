@@ -2,8 +2,7 @@ package com.icuxika.framework.object.modules.file.feign;
 
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.object.modules.file.vo.MinioFileVO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,15 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @Component
+@Slf4j
 public class MinioFileClientFallbackFactory implements FallbackFactory<MinioFileClient> {
-
-    private static final Logger L = LoggerFactory.getLogger(MinioFileClientFallbackFactory.class);
 
     @Override
     public MinioFileClient create(Throwable cause) {
 
-        if (L.isErrorEnabled()) {
-            L.error(cause.getMessage());
+        if (log.isErrorEnabled()) {
+            log.error(cause.getMessage());
         }
 
         return new MinioFileClient() {

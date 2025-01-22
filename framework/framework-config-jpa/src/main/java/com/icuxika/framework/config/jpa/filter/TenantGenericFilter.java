@@ -9,8 +9,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -21,9 +20,8 @@ import java.io.IOException;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class TenantGenericFilter extends GenericFilterBean {
-
-    private static final Logger L = LoggerFactory.getLogger(TenantGenericFilter.class);
 
     @Autowired
     private TenantIdentifierResolver tenantIdentifierResolver;
@@ -38,8 +36,8 @@ public class TenantGenericFilter extends GenericFilterBean {
         }
         tenantIdentifierResolver.setTenantId(tenantId);
         TenantContextHolder.setTenantId(tenantId);
-        if (L.isInfoEnabled()) {
-            L.info("当前租户：" + tenantId);
+        if (log.isInfoEnabled()) {
+            log.info("当前租户：{}", tenantId);
         }
         filterChain.doFilter(request, response);
         TenantContextHolder.clear();

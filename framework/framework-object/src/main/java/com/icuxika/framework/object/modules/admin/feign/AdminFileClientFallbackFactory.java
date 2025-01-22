@@ -3,21 +3,19 @@ package com.icuxika.framework.object.modules.admin.feign;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.object.modules.admin.vo.AdminFileVO;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 @Component
+@Slf4j
 public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFileClient> {
-
-    private static final Logger L = LoggerFactory.getLogger(AdminFileClientFallbackFactory.class);
 
     @Override
     public AdminFileClient create(Throwable cause) {
-        if (L.isErrorEnabled()) {
-            L.error(cause.getMessage());
+        if (log.isErrorEnabled()) {
+            log.error(cause.getMessage());
         }
         return new AdminFileClient() {
             @Override
@@ -27,8 +25,8 @@ public class AdminFileClientFallbackFactory implements FallbackFactory<AdminFile
 
             @Override
             public void downloadFile(Long fileId, HttpServletResponse response) {
-                if (L.isErrorEnabled()) {
-                    L.error("下载文件出错");
+                if (log.isErrorEnabled()) {
+                    log.error("下载文件出错");
                 }
             }
         };

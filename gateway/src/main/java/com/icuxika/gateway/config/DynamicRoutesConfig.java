@@ -3,8 +3,7 @@ package com.icuxika.gateway.config;
 import com.alibaba.cloud.nacos.NacosConfigManager;
 import com.alibaba.nacos.api.config.ConfigService;
 import com.alibaba.nacos.api.config.listener.Listener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.route.RouteDefinitionLocator;
@@ -19,9 +18,8 @@ import java.util.concurrent.Executor;
  * Gateway 动态路由配置
  */
 @Configuration
+@Slf4j
 public class DynamicRoutesConfig implements InitializingBean {
-
-    private static final Logger L = LoggerFactory.getLogger(DynamicRoutesConfig.class);
 
     @Autowired
     private NacosConfigManager nacosConfigManager;
@@ -39,12 +37,12 @@ public class DynamicRoutesConfig implements InitializingBean {
     public void afterPropertiesSet() throws Exception {
         ConfigService configService = nacosConfigManager.getConfigService();
         String content = configService.getConfig(GATEWAY_DYNAMIC_ROUTES_FILE, GATEWAY_DYNAMIC_ROUTES_FILE_GROUP, 5000);
-        if (L.isInfoEnabled()) {
-            L.info("开始加载网关动态路由");
+        if (log.isInfoEnabled()) {
+            log.info("开始加载网关动态路由");
         }
         updateRoutes(content);
-        if (L.isInfoEnabled()) {
-            L.info("网关动态路由加载完成");
+        if (log.isInfoEnabled()) {
+            log.info("网关动态路由加载完成");
         }
         configService.addListener(GATEWAY_DYNAMIC_ROUTES_FILE, GATEWAY_DYNAMIC_ROUTES_FILE_GROUP, new Listener() {
             @Override
@@ -54,17 +52,17 @@ public class DynamicRoutesConfig implements InitializingBean {
 
             @Override
             public void receiveConfigInfo(String configInfo) {
-                if (L.isInfoEnabled()) {
-                    L.info("开始清除旧的路由数据");
+                if (log.isInfoEnabled()) {
+                    log.info("开始清除旧的路由数据");
                 }
                 clean();
-                if (L.isInfoEnabled()) {
-                    L.info("旧的路由数据清除完成");
-                    L.info("开始更新网关动态路由");
+                if (log.isInfoEnabled()) {
+                    log.info("旧的路由数据清除完成");
+                    log.info("开始更新网关动态路由");
                 }
                 updateRoutes(configInfo);
-                if (L.isInfoEnabled()) {
-                    L.info("网关动态路由更新完成");
+                if (log.isInfoEnabled()) {
+                    log.info("网关动态路由更新完成");
                 }
             }
         });
@@ -72,8 +70,8 @@ public class DynamicRoutesConfig implements InitializingBean {
 
     public void clean() {
         routeDefinitionLocator.getRouteDefinitions().subscribe(routeDefinition -> {
-            if (L.isInfoEnabled()) {
-                L.info("正在清除路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            if (log.isInfoEnabled()) {
+                log.info("正在清除路由：{}, uri 是 {}", routeDefinition.getId(), routeDefinition.getUri());
             }
             routeDefinitionWriter.delete(Mono.just(routeDefinition.getId())).subscribe();
         });
@@ -83,8 +81,8 @@ public class DynamicRoutesConfig implements InitializingBean {
         Yaml yaml = new Yaml();
         RouteDefinitionList routeDefinitionList = yaml.loadAs(routes, RouteDefinitionList.class);
         routeDefinitionList.getRoutes().forEach(routeDefinition -> {
-            if (L.isInfoEnabled()) {
-                L.info("正在更新路由：" + routeDefinition.getId() + ", uri 是 " + routeDefinition.getUri());
+            if (log.isInfoEnabled()) {
+                log.info("正在更新路由：{}, uri 是 {}", routeDefinition.getId(), routeDefinition.getUri());
             }
             routeDefinitionWriter.save(Mono.just(routeDefinition)).subscribe();
         });

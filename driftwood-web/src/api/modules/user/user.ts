@@ -114,6 +114,7 @@ const createService: CreateService = (path: string) => {
         },
         page(pageable) {
             return AxiosInstance.get(`${path}/page`, {
+                timeout: 1000 * 10,
                 params: pageable,
             });
         },

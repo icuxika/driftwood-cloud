@@ -1,7 +1,6 @@
 package com.icuxika.framework.config.async;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +11,8 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
+@Slf4j
 public class AsyncConfig {
-
-    private static final Logger L = LoggerFactory.getLogger(AsyncConfig.class);
 
     @Bean
     @ConditionalOnExpression("!'${spring.application.name}'.equals('framework-service-flowable') && !'${spring.application.name}'.equals('framework-service-activiti')")
@@ -26,8 +24,8 @@ public class AsyncConfig {
         executor.setKeepAliveSeconds(60);
         executor.setThreadNamePrefix("DriftwoodAsyncExecutor-");
         executor.setRejectedExecutionHandler((r, e) -> {
-            if (L.isWarnEnabled()) {
-                L.warn("任务[" + r.toString() + "]被[" + e.toString() + "]拒绝");
+            if (log.isWarnEnabled()) {
+                log.warn("任务[{}]被[{}]拒绝", r.toString(), e.toString());
             }
         });
         executor.initialize();

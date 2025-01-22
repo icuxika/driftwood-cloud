@@ -8,8 +8,7 @@ import com.icuxika.framework.config.converter.LocalDateConverter;
 import com.icuxika.framework.config.converter.LocalDateTimeConverter;
 import com.icuxika.framework.config.converter.LocalTimeConverter;
 import jakarta.servlet.http.HttpServletRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -23,9 +22,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class RequestExcelResolver implements HandlerMethodArgumentResolver {
-
-    private static final Logger L = LoggerFactory.getLogger(RequestExcelResolver.class);
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -58,7 +56,7 @@ public class RequestExcelResolver implements HandlerMethodArgumentResolver {
 
             @Override
             public void doAfterAllAnalysed(AnalysisContext analysisContext) {
-                L.info("Excel 读取完成");
+                log.info("Excel 读取完成");
             }
         };
         EasyExcel.read(inputStream, excelModelClass, readListener)

@@ -82,7 +82,7 @@ import {
 import Prism from "prismjs";
 import "prismjs/themes/prism.css";
 import { onMounted, ref, useTemplateRef } from "vue";
-import { addControlItem } from "./extension-config/control";
+import { miniMapItem } from "./extension-config/control";
 import { patternItems } from "./extension-config/dnd-panel";
 import { menuConfig } from "./extension-config/menu";
 import NodeData = LogicFlow.NodeData;
@@ -177,7 +177,7 @@ onMounted(() => {
                 Highlight,
             ],
         });
-        addControlItem(lf.extension.control as Control);
+        (lf.extension.control as Control).addItem(miniMapItem);
         (lf.extension.dndPanel as DndPanel).setPatternItems(patternItems(lf));
         (lf.extension.menu as Menu).addMenuConfig(
             menuConfig({ handleNodeProperty, handleEdgeProperty })

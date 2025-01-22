@@ -1,8 +1,7 @@
 package com.icuxika.framework.xxl.job.config;
 
 import com.xxl.job.core.executor.impl.XxlJobSpringExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -11,14 +10,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 @EnableAutoConfiguration
 @EnableConfigurationProperties(XxlJobProperties.class)
+@Slf4j
 public class XxlJobAutoConfiguration {
-
-    private static final Logger L = LoggerFactory.getLogger(XxlJobAutoConfiguration.class);
 
     @Bean
     public XxlJobSpringExecutor xxlJobExecutor(XxlJobProperties xxlJobProperties) {
-        if (L.isInfoEnabled()) {
-            L.info(">>>>>>>>>>> xxl-job config init.");
+        if (log.isInfoEnabled()) {
+            log.info(">>>>>>>>>>> xxl-job config init.");
         }
         XxlJobSpringExecutor xxlJobSpringExecutor = new XxlJobSpringExecutor();
         xxlJobSpringExecutor.setAdminAddresses(xxlJobProperties.getAdmin().getAddress());

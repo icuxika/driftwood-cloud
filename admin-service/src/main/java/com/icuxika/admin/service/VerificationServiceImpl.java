@@ -2,10 +2,7 @@ package com.icuxika.admin.service;
 
 import com.icuxika.admin.vo.VerificationImageInfo;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Base64Utils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -13,15 +10,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class VerificationServiceImpl implements VerificationService {
 
-    private static final Logger L = LoggerFactory.getLogger(VerificationServiceImpl.class);
     private static final int DEFAULT_IMAGE_WIDTH = 280;
     private static final int DEFAULT_IMAGE_HEIGHT = 171;
 
@@ -34,9 +27,9 @@ public class VerificationServiceImpl implements VerificationService {
              InputStream templateInputStream = getClass().getResourceAsStream("/verification/templates/template.png");
              InputStream borderInputStream = getClass().getResourceAsStream("/verification/templates/border.png")
         ) {
-            BufferedImage originImage = ImageIO.read(originInputStream);
-            BufferedImage templateImage = ImageIO.read(templateInputStream);
-            BufferedImage borderImage = ImageIO.read(borderInputStream);
+            BufferedImage originImage = ImageIO.read(Objects.requireNonNull(originInputStream));
+            BufferedImage templateImage = ImageIO.read(Objects.requireNonNull(templateInputStream));
+            BufferedImage borderImage = ImageIO.read(Objects.requireNonNull(borderInputStream));
 
             setRandomBlockPos(info, templateImage);
             generate(info, originImage, templateImage, borderImage);
@@ -194,7 +187,7 @@ public class VerificationServiceImpl implements VerificationService {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
             ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
             byte[] bytes = byteArrayOutputStream.toByteArray();
-            return Base64Utils.encodeToString(bytes);
+            return Base64.getEncoder().encodeToString(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

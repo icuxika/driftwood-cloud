@@ -7,7 +7,6 @@ import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
 import org.springframework.ai.chat.model.ChatModel;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,18 +27,18 @@ public class ChatClientController {
     private final ChatClient chatClient;
     private final ChatModel chatModel;
 
-    public ChatClientController(@Qualifier("ollamaChatModel") ChatModel chatModel) {
+    public ChatClientController(ChatModel chatModel) {
         this.chatModel = chatModel;
         this.chatClient = ChatClient.builder(chatModel)
                 .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-                .defaultOptions(DashScopeChatOptions.builder().withTopP(0.7).withModel("qwen2.5").build())
+                .defaultOptions(DashScopeChatOptions.builder().withTopP(0.7).build())
                 .build();
     }
 
     @GetMapping("/simple/chat")
     public String simpleChat(String userInput) {
-        return chatClient.prompt(DEFAULT_PROMPT).call().content();
+        return chatClient.prompt(Objects.requireNonNullElse(userInput, DEFAULT_PROMPT)).call().content();
     }
 
     @GetMapping("/stream/chat")

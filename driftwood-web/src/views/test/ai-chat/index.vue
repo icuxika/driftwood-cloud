@@ -2,7 +2,10 @@
     <div class="container">
         <n-layout :native-scrollbar="false">
             <div class="message-wrapper">
-                <MessageListView :message-list="messageList" />
+                <MessageListView
+                    ref="messageListView"
+                    :message-list="messageList"
+                />
             </div>
         </n-layout>
         <div ref="inputTextareaWrapper" class="send-wrapper">
@@ -31,6 +34,8 @@ import { useTrick } from "@/hooks/use-trick";
 import { getCurrentInstance, onMounted, ref, useTemplateRef, watch } from "vue";
 import MessageListView from "./MessageListView.vue";
 const { debounce } = useTrick();
+
+const messageListView = useTemplateRef("messageListView");
 
 interface Message {
     id: string;
@@ -91,10 +96,13 @@ const send = (id: string, text: string) => {
                 messageList.value.filter((item) => item.id === id)[0].message +=
                     value;
             }
+            // https://github.com/MeSilicon7/LexiStreamKit
+            messageListView.value?.render2Markdown(id);
             confirmBtnLoading.value = false;
         })
         .catch((err) => {
-            console.error(err);
+            messageList.value.filter((item) => item.id === id)[0].message +=
+                err.message;
             confirmBtnLoading.value = false;
         });
 };
@@ -137,6 +145,7 @@ onMounted(() => {
     }
     .message-wrapper {
         padding: 8px 32px;
+        background-color: rgba(0, 0, 0, 0.5);
     }
     .send-wrapper {
         position: relative;

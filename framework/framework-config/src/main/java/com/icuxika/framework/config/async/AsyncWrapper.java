@@ -1,19 +1,17 @@
 package com.icuxika.framework.config.async;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class AsyncWrapper {
-
-    private static final Logger L = LoggerFactory.getLogger(AsyncWrapper.class);
 
     @Async
     public void doAsync(String name, Runnable task) {
-        if (L.isInfoEnabled()) {
-            L.info("[ASYNC][" + name + "]" + Thread.currentThread().getName());
+        if (log.isInfoEnabled()) {
+            log.info("[ASYNC][{}]{}", name, Thread.currentThread().getName());
         }
         task.run();
     }

@@ -2,6 +2,7 @@ package com.icuxika.user.controller;
 
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.ApiReturn;
+import com.icuxika.framework.config.annotation.LogExecutionTime;
 import com.icuxika.framework.config.annotation.RequestExcel;
 import com.icuxika.framework.config.annotation.ResponseExcel;
 import com.icuxika.framework.object.modules.user.dto.BindOneDTO;
@@ -103,6 +104,7 @@ public class UserController {
         return ApiData.ok(userService.getUserInfo());
     }
 
+    @LogExecutionTime
     @GetMapping("/page")
     public ApiData<Page<UserVO>> getPage(@PageableDefault(sort = "id") Pageable pageable, UserQueryDTO userQueryDTO) {
         // 参数合理校验

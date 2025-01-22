@@ -1,8 +1,7 @@
 package com.icuxika.framework.security.config;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -19,6 +18,7 @@ import java.time.Duration;
 import java.util.List;
 
 @Configuration
+@Slf4j
 public class JwtDecoderConfig {
 
     @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
@@ -32,8 +32,6 @@ public class JwtDecoderConfig {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    private static final Logger L = LoggerFactory.getLogger(JwtDecoderConfig.class);
 
     @Bean
     @ConditionalOnExpression("!'${spring.application.name}'.equals('framework-service-flowable') && !'${spring.application.name}'.equals('framework-service-activiti')")
@@ -68,8 +66,8 @@ public class JwtDecoderConfig {
         @Override
         public OAuth2TokenValidatorResult validate(Jwt token) {
             if (!abandonLastToken) {
-                if (L.isInfoEnabled()) {
-                    L.info("用户会话当前支持多处登录");
+                if (log.isInfoEnabled()) {
+                    log.info("用户会话当前支持多处登录");
                 }
                 return OAuth2TokenValidatorResult.success();
             }
