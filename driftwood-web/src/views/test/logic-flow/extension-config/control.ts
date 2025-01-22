@@ -4,7 +4,7 @@ import { Control, MiniMap } from "@logicflow/extension";
 type MethodFirstParameterType<C, M extends keyof C> = C[M] extends (
     ...args: any[]
 ) => any
-    ? C[M] extends (args0: infer P, ...args: any) => any
+    ? C[M] extends (args0: infer P, ...args: any[]) => any
         ? P
         : never
     : never;
