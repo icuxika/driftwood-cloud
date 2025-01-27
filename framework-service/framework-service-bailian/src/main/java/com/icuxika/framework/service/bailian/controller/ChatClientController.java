@@ -1,12 +1,11 @@
 package com.icuxika.framework.service.bailian.controller;
 
-import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatOptions;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
-import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,29 +21,31 @@ import java.util.Objects;
 @RequestMapping("/chat-client")
 public class ChatClientController {
 
-    private static final String DEFAULT_PROMPT = "你好，介绍下你自己！";
+    private static final String DEFAULT_USER_PROMPT = "你好，介绍下你自己！";
+    private static final String DEFAULT_SYSTEM_PROMPT = "你是一个有帮助的助手。";
 
     private final ChatClient chatClient;
-    private final ChatModel chatModel;
 
-    public ChatClientController(ChatModel chatModel) {
-        this.chatModel = chatModel;
-        this.chatClient = ChatClient.builder(chatModel)
+    public ChatClientController(ChatClient.Builder builder) {
+        this.chatClient = builder
+                .defaultSystem(DEFAULT_SYSTEM_PROMPT)
                 .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-                .defaultOptions(DashScopeChatOptions.builder().withTopP(0.7).build())
+                .defaultOptions(OpenAiChatOptions.builder().topP(0.7).build())
                 .build();
     }
 
     @GetMapping("/simple/chat")
     public String simpleChat(String userInput) {
-        return chatClient.prompt(Objects.requireNonNullElse(userInput, DEFAULT_PROMPT)).call().content();
+        String userText = Objects.requireNonNullElse(userInput, DEFAULT_USER_PROMPT);
+        return chatClient.prompt().user(userText).call().content();
     }
 
     @GetMapping("/stream/chat")
     public Flux<String> streamChat(HttpServletResponse response, String userInput) {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        return chatClient.prompt(Objects.requireNonNullElse(userInput, DEFAULT_PROMPT)).stream().content();
+        String userText = Objects.requireNonNullElse(userInput, DEFAULT_USER_PROMPT);
+        return chatClient.prompt().user(userText).stream().content();
     }
 
 }

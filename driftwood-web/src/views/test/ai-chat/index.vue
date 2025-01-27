@@ -15,6 +15,12 @@
                 rows="1"
                 v-model="input"
                 @keyup.enter="confirm"
+                @compositionstart="
+                    {
+                        isCompositionUpdate = true;
+                    }
+                "
+                @compositionend="handleCompositionEnd"
             ></textarea>
             <div>
                 <n-button
@@ -107,7 +113,16 @@ const send = (id: string, text: string) => {
         });
 };
 
+const isCompositionUpdate = ref(false);
+const handleCompositionEnd = () => {
+    setTimeout(() => {
+        isCompositionUpdate.value = false;
+    }, 100);
+};
 const confirm = async () => {
+    if (isCompositionUpdate.value) {
+        return;
+    }
     const userInput = input.value;
     input.value = "";
 
