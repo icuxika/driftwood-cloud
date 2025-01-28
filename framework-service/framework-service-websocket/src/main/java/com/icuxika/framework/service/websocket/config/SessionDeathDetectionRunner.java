@@ -37,6 +37,6 @@ public class SessionDeathDetectionRunner implements ApplicationRunner {
                     }
                 });
             }
-        }, 0, 5, TimeUnit.SECONDS);
+        }, 0, 30, TimeUnit.SECONDS);
     }
 }

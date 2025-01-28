@@ -33,7 +33,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         WebSocketSessionInfo info = (WebSocketSessionInfo) session.getAttributes().get(WebSocketHandshakeInterceptor.ATTRIBUTE_HEADER_INFO);
         Message<SimpleMessage> msg = new GenericMessage<>(new SimpleMessage(info.getUserId(), info.getClientType(), message.getPayload()));
-        streamBridge.send("websocketMessageConsumer-out-0", msg);
+        streamBridge.send("websocketMessageProducer-out-0", msg);
     }
 
     @Override

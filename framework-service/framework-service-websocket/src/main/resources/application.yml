@@ -17,14 +17,14 @@ spring:
         binder:
           name-server: ${ROCKETMQ_HOST:127.0.0.1}:${ROCKETMQ_PORT:9876}
         bindings:
-          websocketMessageConsumer-out-0:
+          websocketMessageProducer-out-0:
             producer:
               group: default_producer_group
           websocketMessageConsumer-in-0:
             consumer:
               messageModel: BROADCASTING
       bindings:
-        websocketMessageConsumer-out-0:
+        websocketMessageProducer-out-0:
           destination: websocket_message
         websocketMessageConsumer-in-0:
           destination: websocket_message
@@ -39,3 +39,4 @@ spring:
 logging:
   level:
     com.icuxika.framework.service.websocket.config.ManageableWebSocketSession: TRACE
+    org.springframework.context.support: DEBUG

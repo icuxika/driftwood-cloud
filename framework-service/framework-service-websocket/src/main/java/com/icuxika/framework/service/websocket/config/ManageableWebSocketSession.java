@@ -60,7 +60,7 @@ public class ManageableWebSocketSession {
         } catch (IOException e) {
             log.error("向[{}]发送ping时遇到错误", userId, e);
         }
-        return offline();
+        return !offline();
     }
 
     public void onPong() {
@@ -76,7 +76,7 @@ public class ManageableWebSocketSession {
         if (log.isTraceEnabled()) {
             log.trace("[{}]ping: {}, pong: {}", userId, pingCount, pongCount);
         }
-        return pingCount - pongCount < 3;
+        return pingCount - pongCount > 3;
     }
 
 }
