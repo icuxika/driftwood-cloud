@@ -39,7 +39,7 @@ import { chatClientService } from "@/api/modules/bailian/chat-client";
 import { useTrick } from "@/hooks/use-trick";
 import { getCurrentInstance, onMounted, ref, useTemplateRef, watch } from "vue";
 import MessageListView from "./MessageListView.vue";
-const { debounce } = useTrick();
+const { debounce, randomUUID } = useTrick();
 
 const messageListView = useTemplateRef("messageListView");
 
@@ -86,10 +86,11 @@ const generateId = () => {
 };
 
 const confirmBtnLoading = ref<boolean>(false);
+let conversationId: string;
 const send = (id: string, text: string) => {
     confirmBtnLoading.value = true;
     chatClientService
-        .streamChat(text)
+        .streamChat(conversationId, text)
         .then(async (res) => {
             const reader = (res.data as ReadableStream)
                 .pipeThrough(new TextDecoderStream())
@@ -148,6 +149,7 @@ onMounted(() => {
     if (inputTextarea.value) {
         initialTextareaScrollHeight.value = inputTextarea.value.scrollHeight;
     }
+    conversationId = randomUUID();
 });
 </script>
 

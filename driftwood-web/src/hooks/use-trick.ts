@@ -126,6 +126,13 @@ export const useTrick = () => {
         };
     };
 
+    const randomUUID = (): string => {
+        const temp = URL.createObjectURL(new Blob());
+        const uuid = temp.toString();
+        URL.revokeObjectURL(temp);
+        return uuid.substring(uuid.lastIndexOf("/") + 1);
+    };
+
     return {
         sleep,
         debounce0,
@@ -133,5 +140,6 @@ export const useTrick = () => {
         componentRef,
         debounceRef,
         processPauseableTasks,
+        randomUUID,
     };
 };

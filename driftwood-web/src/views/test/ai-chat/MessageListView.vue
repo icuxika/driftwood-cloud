@@ -3,7 +3,7 @@
         <div
             v-for="item in list"
             :key="item.id"
-            style="display: flex"
+            style="display: flex; padding: 8px 0"
             :style="{ flexDirection: item.left ? 'row' : 'row-reverse' }"
         >
             <div

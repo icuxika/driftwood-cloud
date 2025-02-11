@@ -14,11 +14,13 @@
 import { chatClientService } from "@/api/modules/bailian/chat-client";
 import FileUpload from "@/components/FileUpload.vue";
 import { useFile } from "@/hooks/use-file";
+import { useTrick } from "@/hooks/use-trick";
 import { useUserStore } from "@/store/user/user";
 import { UploadCustomRequestOptions } from "naive-ui";
 import { onMounted, onUnmounted } from "vue";
 const userStore = useUserStore();
 const { cutFile } = useFile();
+const { randomUUID } = useTrick();
 
 const openGithubLoginWindow = () => {
     let width = 480;
@@ -106,9 +108,10 @@ const customRequest = ({
         });
 };
 
+let conversationId: string;
 const streamChat = () => {
     chatClientService
-        .streamChat()
+        .streamChat(conversationId)
         .then(async (res) => {
             const reader = (res.data as ReadableStream)
                 .pipeThrough(new TextDecoderStream())
@@ -128,6 +131,7 @@ const streamChat = () => {
 
 onMounted(() => {
     window.addEventListener("message", listener);
+    conversationId = randomUUID();
 });
 
 onUnmounted(() => {

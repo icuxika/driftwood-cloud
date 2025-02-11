@@ -1,21 +1,23 @@
 package com.icuxika.framework.service.bailian.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
-import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
+
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
+import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
 
 /**
  * <a href="https://github.com/springaialibaba/spring-ai-alibaba-examples/blob/main/spring-ai-alibaba-chat-example/dashscope-chat/dashscope-chat-client/src/main/java/com/alibaba/cloud/ai/example/chat/dashscope/controller/DashScopeChatClientController.java">DashScopeChatClientController.java</a>
@@ -28,18 +30,14 @@ public class ChatClientController {
     private static final String DEFAULT_USER_PROMPT = "你好，介绍下你自己！";
     private static final String DEFAULT_SYSTEM_PROMPT = "你是一个有帮助的助手。";
 
-    private final ObjectMapper objectMapper;
-
     private final ChatClient chatClient;
 
-    public ChatClientController(ChatClient.Builder builder, ObjectMapper objectMapper) {
+    public ChatClientController(ChatClient.Builder builder) {
         this.chatClient = builder
                 .defaultSystem(DEFAULT_SYSTEM_PROMPT)
                 .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
                 .defaultAdvisors(new SimpleLoggerAdvisor())
-                .defaultOptions(OpenAiChatOptions.builder().topP(0.7).build())
                 .build();
-        this.objectMapper = objectMapper;
     }
 
     @GetMapping("/simple/chat")
@@ -48,11 +46,17 @@ public class ChatClientController {
         return chatClient.prompt().user(userText).call().content();
     }
 
-    @GetMapping("/stream/chat")
-    public Flux<String> streamChat(HttpServletResponse response, String userInput) {
+    @GetMapping("/stream/chat/{id}")
+    public Flux<String> streamChat(HttpServletResponse response, @PathVariable String id, String userInput) {
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         String userText = Objects.requireNonNullElse(userInput, DEFAULT_USER_PROMPT);
-        return chatClient.prompt().user(userText).stream().content();
+        return chatClient.prompt().user(userText)
+                .advisors(
+                        advisorSpec -> advisorSpec
+                                .param(CHAT_MEMORY_CONVERSATION_ID_KEY, id)
+                                .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                )
+                .stream().content();
     }
 
     @GetMapping("/stream/sse/chat")
