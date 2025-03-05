@@ -46,7 +46,8 @@ public class WebSocketSessionManager {
      */
     public static void closeSession(long userId, WebSocketSession webSocketSession) {
         List<ManageableWebSocketSession> userSessionList = USER_SESSION_LIST_MAP.get(userId);
-        if (userSessionList != null) {
+        boolean contains = userSessionList.stream().anyMatch(p -> p.getWebSocketSession().getId().equals(webSocketSession.getId()));
+        if (contains) {
             ManageableWebSocketSession manageableWebSocketSession = SESSION_ID_MAP.get(webSocketSession.getId());
             if (manageableWebSocketSession != null) {
                 userSessionList.remove(manageableWebSocketSession);
