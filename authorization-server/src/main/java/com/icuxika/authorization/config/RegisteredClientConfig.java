@@ -58,8 +58,23 @@ public class RegisteredClientConfig {
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .tokenSettings(tokenSettings())
                 .build();
+        RegisteredClient desktopAuthorizationCodeRegisteredClient = RegisteredClient.withId("5")
+                .clientId("id_desktop_authorization_code")
+                .clientSecret("{noop}secret5")
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+                .redirectUri("http://driftwood-cloud:8900/admin/auth/desktopAuthorizationCode")
+                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
+                .tokenSettings(tokenSettings())
+                .build();
 
-        Arrays.asList(authorizationCodeRegisteredClient, clientCredentialsRegisteredClient, passwordRegisteredClient, phoneRegisteredClient).forEach(registeredClient -> {
+        Arrays.asList(
+                authorizationCodeRegisteredClient,
+                clientCredentialsRegisteredClient,
+                passwordRegisteredClient,
+                phoneRegisteredClient,
+                desktopAuthorizationCodeRegisteredClient).forEach(registeredClient -> {
             String id = registeredClient.getId();
             String clientId = registeredClient.getClientId();
             RegisteredClient existRegisteredClient = registeredClientRepository.findById(id);

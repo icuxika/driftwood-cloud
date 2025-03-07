@@ -165,6 +165,32 @@ public class AuthServiceImpl implements AuthService {
         throw new GlobalServiceException("登录失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
     }
 
+    @Override
+    public String desktopAuthorizationCode(String code) {
+        ResponseEntity<TokenResponse> tokenResponseResponseEntity = authClient.tokenByAuthorizationCode(
+                buildHeaders("id_desktop_authorization_code", "secret5"),
+                Map.of("grant_type", "authorization_code", "code", code)
+        );
+        if (HttpStatus.OK.equals(tokenResponseResponseEntity.getStatusCode())) {
+            TokenResponse tokenResponse = tokenResponseResponseEntity.getBody();
+            if (tokenResponse == null) {
+                throw new GlobalServiceException("[不应出现]登录失败，授权服务器登录返回结果为空！");
+            }
+            TokenInfo tokenInfo = new TokenInfo();
+            BeanUtils.copyProperties(tokenResponse, tokenInfo);
+            String json;
+            try {
+                json = objectMapper.writeValueAsString(tokenInfo);
+            } catch (JsonProcessingException e) {
+                throw new GlobalServiceException("登录失败：" + e.getMessage());
+            }
+            Context context = new Context();
+            context.setVariable("message", Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8)));
+            return templateEngine.process("desktopCallback", context);
+        }
+        throw new GlobalServiceException("登录失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
+    }
+
     private HttpHeaders buildHeaders(String clientId, String clientSecret) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBasicAuth(clientId, clientSecret);

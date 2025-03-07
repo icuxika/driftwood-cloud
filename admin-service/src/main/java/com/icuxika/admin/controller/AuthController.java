@@ -56,4 +56,11 @@ public class AuthController {
     public String authorizationCode(String code) {
         return authService.authorizationCode(code);
     }
+
+    @Anonymous
+    @ApiReturn(disable = true)
+    @GetMapping("desktopAuthorizationCode")
+    public String desktopAuthorizationCode(String code) {
+        return authService.desktopAuthorizationCode(code);
+    }
 }

@@ -12,4 +12,6 @@ public interface AuthService {
     String generateVerificationCode(String phone);
 
     String authorizationCode(String code);
+
+    String desktopAuthorizationCode(String code);
 }
