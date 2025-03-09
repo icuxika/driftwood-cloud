@@ -51,6 +51,7 @@ export default defineConfig(({ command, mode }) => {
     } else {
         // build 命令下执行
         return {
+            base: "/driftwood-web",
             plugins: [
                 vue(),
                 vueJsx({}),

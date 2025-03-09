@@ -249,8 +249,7 @@ const openAuthorizationCodeLoginWindow = () => {
     let positionLeft = (window.screen.availWidth - width) / 2;
     let positionTop = (window.screen.availHeight - height) / 2;
     window.open(
-        import.meta.env.VITE_APP_BASE_URL +
-            "oauth2/authorize?response_type=code&client_id=id_authorization_code",
+        "https://www.aprillie.com/driftwood-cloud/auth/oauth2/authorize?response_type=code&client_id=id_authorization_code",
         "login",
         "height=" +
             height +

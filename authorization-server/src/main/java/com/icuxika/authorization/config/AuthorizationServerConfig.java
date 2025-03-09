@@ -90,7 +90,7 @@ public class AuthorizationServerConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/assets/**", "/login").permitAll()
+                                .requestMatchers("/assets/**", "/login", "/test").permitAll()
                                 .anyRequest().authenticated()
                 );
 
@@ -136,7 +136,7 @@ public class AuthorizationServerConfig {
 
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
-        return AuthorizationServerSettings.builder().issuer("http://driftwood-cloud:8900/auth").build();
+        return AuthorizationServerSettings.builder().issuer("https://www.aprillie.com/driftwood-cloud/auth").build();
     }
 
     /**

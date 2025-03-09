@@ -29,7 +29,7 @@ public class RegisteredClientConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://driftwood-cloud:8900/admin/auth/authorizationCode")
+                .redirectUri("https://www.aprillie.com/driftwood-cloud/admin/auth/authorizationCode")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .tokenSettings(tokenSettings())
                 .build();
@@ -64,7 +64,7 @@ public class RegisteredClientConfig {
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://driftwood-cloud:8900/admin/auth/desktopAuthorizationCode")
+                .redirectUri("https://www.aprillie.com/driftwood-cloud/admin/auth/desktopAuthorizationCode")
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .tokenSettings(tokenSettings())
                 .build();
