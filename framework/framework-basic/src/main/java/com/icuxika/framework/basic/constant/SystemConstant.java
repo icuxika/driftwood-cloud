@@ -61,9 +61,14 @@ public class SystemConstant {
     public static final String REDIS_OAUTH2_USER_SESSION = "DRIFTWOOD:OAUTH2:USER_SESSION";
 
     /**
-     * 缓存用户登录时请求的验证码
+     * 缓存用户登录时请求的短信验证码
      */
     public static final String REDIS_OAUTH2_PHONE_CODE = "DRIFTWOOD:OAUTH2:PHONE_CODE";
+
+    /**
+     * 缓存用户登录时请求的图形验证码
+     */
+    public static final String REDIS_OAUTH2_CAPTCHA = "DRIFTWOOD:OAUTH2:CAPTCHA";
 
     /**
      * 缓存用户第三方登录时获取到的openid

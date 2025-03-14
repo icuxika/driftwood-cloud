@@ -1,5 +1,7 @@
 package com.icuxika.admin.service;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ShearCaptcha;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icuxika.admin.config.OpenAuthProperties;
@@ -189,6 +191,14 @@ public class AuthServiceImpl implements AuthService {
             return templateEngine.process("desktopCallback", context);
         }
         throw new GlobalServiceException("登录失败：" + Optional.ofNullable(tokenResponseResponseEntity.getBody()).map(TokenResponse::getError).orElse("未知错误"));
+    }
+
+    @Override
+    public String generateCaptcha() {
+        ShearCaptcha shearCaptcha = CaptchaUtil.createShearCaptcha(120, 38, 4, 4);
+        PhoneCodeCache phoneCodeCache = new PhoneCodeCache(shearCaptcha.getCode(), Duration.ofMinutes(1).toMillis());
+        redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_CAPTCHA, "captcha", phoneCodeCache);
+        return shearCaptcha.getImageBase64();
     }
 
     private HttpHeaders buildHeaders(String clientId, String clientSecret) {

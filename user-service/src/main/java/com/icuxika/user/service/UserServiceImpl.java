@@ -90,7 +90,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserAuthVO findByUsername(String username) {
-        return userRepository.findByUsername(username).map(this::buildUserAuthVO).orElse(null);
+        return userRepository.findByUsername(username)
+                .map(this::buildUserAuthVO)
+                .orElse(
+                        userRepository.findByPhone(username).map(this::buildUserAuthVO).orElse(null)
+                );
     }
 
     @Override

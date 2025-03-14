@@ -7,15 +7,17 @@ import com.icuxika.admin.vo.TokenInfo;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.ApiReturn;
 import com.icuxika.framework.security.annotation.Anonymous;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+    private final RedisTemplate<String, String> redisTemplate;
 
     /**
      * OAuth2用户登录
@@ -62,5 +64,12 @@ public class AuthController {
     @GetMapping("desktopAuthorizationCode")
     public String desktopAuthorizationCode(String code) {
         return authService.desktopAuthorizationCode(code);
+    }
+
+    @Anonymous
+    @GetMapping("captcha")
+    public ApiData<String> captcha() {
+        String imageBase64 = authService.generateCaptcha();
+        return ApiData.ok(imageBase64);
     }
 }

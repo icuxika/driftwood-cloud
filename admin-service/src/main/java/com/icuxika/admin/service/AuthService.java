@@ -14,4 +14,6 @@ public interface AuthService {
     String authorizationCode(String code);
 
     String desktopAuthorizationCode(String code);
+
+    String generateCaptcha();
 }
