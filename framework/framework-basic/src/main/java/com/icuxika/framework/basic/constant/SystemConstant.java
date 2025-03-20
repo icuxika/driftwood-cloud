@@ -71,6 +71,11 @@ public class SystemConstant {
     public static final String REDIS_OAUTH2_CAPTCHA = "DRIFTWOOD:OAUTH2:CAPTCHA";
 
     /**
+     * 缓存用户登录时请求的二维码
+     */
+    public static final String REDIS_OAUTH2_QR_CODE = "DRIFTWOOD:OAUTH2:QR_CODE";
+
+    /**
      * 缓存用户第三方登录时获取到的openid
      */
     public static final String REDIS_OAUTH2_OPENID = "DRIFTWOOD:OAUTH2:OPENID";

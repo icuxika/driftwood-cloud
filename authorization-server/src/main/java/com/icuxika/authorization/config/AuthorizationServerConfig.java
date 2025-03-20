@@ -10,6 +10,9 @@ import com.icuxika.authorization.config.password.PasswordAuthenticationConverter
 import com.icuxika.authorization.config.password.PasswordAuthenticationProvider;
 import com.icuxika.authorization.config.password.PasswordAuthenticationToken;
 import com.icuxika.authorization.config.phone.*;
+import com.icuxika.authorization.config.qrcode.QRCodeAuthenticationFilterDsl;
+import com.icuxika.authorization.config.qrcode.QRCodeAuthenticationProvider;
+import com.icuxika.authorization.config.qrcode.QRCodeUserDetailsService;
 import com.icuxika.framework.basic.constant.ClientType;
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.nimbusds.jose.jwk.JWKSet;
@@ -68,6 +71,8 @@ public class AuthorizationServerConfig {
 
     private final PhoneUserDetailsService phoneUserDetailsService;
 
+    private final QRCodeUserDetailsService qrCodeUserDetailsService;
+
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -97,6 +102,9 @@ public class AuthorizationServerConfig {
         http.formLogin(formLogin ->
                 formLogin.loginPage("/login")
         );
+
+        http.with(QRCodeAuthenticationFilterDsl.qrCodeAuthenticationFilterDsl(), qrCodeAuthenticationFilterDsl -> {
+        });
 
         SecurityFilterChain securityFilterChain = http.build();
         // 添加自定义验证模式
@@ -214,6 +222,9 @@ public class AuthorizationServerConfig {
         addPasswordAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
         // 短信模式
         addPhoneAuthenticationProvider(http, authenticationManager, authorizationService, tokenGenerator);
+
+        // 二维码登录
+        http.authenticationProvider(new QRCodeAuthenticationProvider(qrCodeUserDetailsService));
     }
 
     /**

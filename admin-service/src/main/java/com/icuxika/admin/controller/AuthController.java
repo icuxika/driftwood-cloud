@@ -3,6 +3,7 @@ package com.icuxika.admin.controller;
 import com.icuxika.admin.dto.LoginDTO;
 import com.icuxika.admin.dto.RefreshTokenDTO;
 import com.icuxika.admin.service.AuthService;
+import com.icuxika.admin.vo.QRCodeResponse;
 import com.icuxika.admin.vo.TokenInfo;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.config.annotation.ApiReturn;
@@ -71,5 +72,31 @@ public class AuthController {
     public ApiData<String> captcha() {
         String imageBase64 = authService.generateCaptcha();
         return ApiData.ok(imageBase64);
+    }
+
+    @Anonymous
+    @GetMapping("qrcode")
+    public ApiData<QRCodeResponse> qrcode() {
+        QRCodeResponse qrCodeResponse = authService.generateQRCode();
+        return ApiData.ok(qrCodeResponse);
+    }
+
+    @Anonymous
+    @GetMapping("getQRCodeStatus")
+    public ApiData<Integer> getQRCodeStatus(@RequestParam("qrcodeId") String qrcodeId) {
+        int status = authService.getQRCodeStatus(qrcodeId);
+        return ApiData.ok(status);
+    }
+
+    @PostMapping("/scanQRCode")
+    public ApiData<String> scanQRCode(@RequestParam("qrcodeId") String qrcodeId) {
+        String qrcodeToken = authService.scanQRCode(qrcodeId);
+        return ApiData.ok(qrcodeToken);
+    }
+
+    @PostMapping("/confirmQRCode")
+    public ApiData<Void> confirmQRCode(@RequestParam("qrcodeToken") String qrcodeToken) {
+        authService.confirmQRCode(qrcodeToken);
+        return ApiData.okMsg("二维码登录已确认");
     }
 }

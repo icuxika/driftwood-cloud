@@ -2,6 +2,8 @@ package com.icuxika.admin.service;
 
 import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.ShearCaptcha;
+import cn.hutool.extra.qrcode.QrCodeUtil;
+import cn.hutool.extra.qrcode.QrConfig;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.icuxika.admin.config.OpenAuthProperties;
@@ -9,14 +11,19 @@ import com.icuxika.admin.dto.LoginDTO;
 import com.icuxika.admin.dto.RefreshTokenDTO;
 import com.icuxika.admin.enumerate.SupportGrantType;
 import com.icuxika.admin.feign.AuthClient;
+import com.icuxika.admin.vo.QRCodeResponse;
 import com.icuxika.admin.vo.TokenInfo;
 import com.icuxika.admin.vo.TokenResponse;
 import com.icuxika.framework.basic.common.ApiData;
 import com.icuxika.framework.basic.constant.SystemConstant;
+import com.icuxika.framework.basic.dict.QRCodeStatusType;
 import com.icuxika.framework.basic.exception.GlobalServiceException;
 import com.icuxika.framework.basic.transfer.auth.PhoneCodeCache;
+import com.icuxika.framework.basic.transfer.auth.QRCodeCache;
+import com.icuxika.framework.basic.util.DateUtil;
 import com.icuxika.framework.object.modules.user.feign.UserClient;
 import com.icuxika.framework.object.modules.user.vo.UserAuthVO;
+import com.icuxika.framework.security.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -27,9 +34,11 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import java.awt.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -199,6 +208,73 @@ public class AuthServiceImpl implements AuthService {
         PhoneCodeCache phoneCodeCache = new PhoneCodeCache(shearCaptcha.getCode(), Duration.ofMinutes(1).toMillis());
         redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_CAPTCHA, "captcha", phoneCodeCache);
         return shearCaptcha.getImageBase64();
+    }
+
+    @Override
+    public QRCodeResponse generateQRCode() {
+        QrConfig config = new QrConfig(300, 300);
+        // 设置边距，既二维码和背景之间的边距
+        config.setMargin(3);
+        // 设置前景色，既二维码颜色（青色）
+        config.setForeColor(Color.BLACK);
+        // 设置背景色（灰色）
+        config.setBackColor(Color.WHITE);
+
+        String qrcodeId = UUID.randomUUID().toString();
+        QRCodeCache qrCodeCache = new QRCodeCache(QRCodeStatusType.UN_SCANNED.getCode());
+        redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId, qrCodeCache);
+        String imageBase64 = QrCodeUtil.generateAsBase64(qrcodeId, config, "");
+
+        QRCodeResponse qrCodeResponse = new QRCodeResponse();
+        qrCodeResponse.setQrcodeId(qrcodeId);
+        qrCodeResponse.setImageBase64(imageBase64);
+        return qrCodeResponse;
+    }
+
+    @Override
+    public String scanQRCode(String qrcodeId) {
+        long userId = SecurityUtil.getUserId();
+        String qrcodeTokenSrc = userId + ":" + DateUtil.getLocalDateTimeText() + ":" + UUID.randomUUID();
+        String qrcodeToken = Base64.getEncoder().encodeToString(qrcodeTokenSrc.getBytes(StandardCharsets.UTF_8));
+
+        QRCodeCache qrCodeCache = (QRCodeCache) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId);
+        if (qrCodeCache == null) {
+            throw new GlobalServiceException("二维码数据不存在");
+        }
+        qrCodeCache.setStatus(QRCodeStatusType.SCANNED.getCode());
+        redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId, qrCodeCache);
+
+        List<String> qrcodeIdWrapper = new ArrayList<>();
+        qrcodeIdWrapper.add(qrcodeId);
+        redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeToken, qrcodeIdWrapper);
+        return qrcodeToken;
+    }
+
+    @Override
+    public void confirmQRCode(String qrcodeToken) {
+        long userId = SecurityUtil.getUserId();
+        @SuppressWarnings("unchecked")
+        List<String> qrcodeIdWrapper = (List<String>) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeToken);
+        if (qrcodeIdWrapper == null) {
+            throw new GlobalServiceException("未找到二维码id");
+        }
+        String qrcodeId = qrcodeIdWrapper.getFirst();
+        QRCodeCache qrCodeCache = (QRCodeCache) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId);
+        if (qrCodeCache == null) {
+            throw new GlobalServiceException("二维码数据不存在");
+        }
+        qrCodeCache.setStatus(QRCodeStatusType.CONFIRMED.getCode());
+        qrCodeCache.setUserId(userId);
+        redisTemplate.opsForHash().put(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId, qrCodeCache);
+    }
+
+    @Override
+    public int getQRCodeStatus(String qrcodeId) {
+        QRCodeCache qrCodeCache = (QRCodeCache) redisTemplate.opsForHash().get(SystemConstant.REDIS_OAUTH2_QR_CODE, qrcodeId);
+        if (qrCodeCache == null) {
+            throw new GlobalServiceException("二维码数据不存在");
+        }
+        return qrCodeCache.getStatus();
     }
 
     private HttpHeaders buildHeaders(String clientId, String clientSecret) {
