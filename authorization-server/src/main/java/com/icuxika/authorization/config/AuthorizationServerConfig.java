@@ -10,7 +10,6 @@ import com.icuxika.authorization.config.password.PasswordAuthenticationConverter
 import com.icuxika.authorization.config.password.PasswordAuthenticationProvider;
 import com.icuxika.authorization.config.password.PasswordAuthenticationToken;
 import com.icuxika.authorization.config.phone.*;
-import com.icuxika.authorization.config.qrcode.QRCodeAuthenticationFilterDsl;
 import com.icuxika.authorization.config.qrcode.QRCodeAuthenticationProvider;
 import com.icuxika.authorization.config.qrcode.QRCodeUserDetailsService;
 import com.icuxika.framework.basic.constant.ClientType;
@@ -24,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +43,7 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2ClientAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.authentication.OAuth2RefreshTokenAuthenticationToken;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.jackson2.OAuth2AuthorizationServerJackson2Module;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
@@ -55,6 +56,8 @@ import org.springframework.security.oauth2.server.authorization.web.authenticati
 import org.springframework.security.oauth2.server.authorization.web.authentication.OAuth2RefreshTokenAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,35 +78,30 @@ public class AuthorizationServerConfig {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-        OAuth2AuthorizationServerConfigurer authorizationServerConfigurer = new OAuth2AuthorizationServerConfigurer();
-        http.with(authorizationServerConfigurer.tokenEndpoint(oAuth2TokenEndpointConfigurer -> oAuth2TokenEndpointConfigurer
-                .accessTokenRequestConverter(new DelegatingAuthenticationConverter(
-                                Arrays.asList(
-                                        new OAuth2AuthorizationCodeAuthenticationConverter(),
-                                        new OAuth2RefreshTokenAuthenticationConverter(),
-                                        new OAuth2ClientCredentialsAuthenticationConverter(),
-                                        new PasswordAuthenticationConverter(),
-                                        new PhoneAuthenticationConverter()
+        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
+                .tokenEndpoint(
+                        oAuth2TokenEndpointConfigurer -> oAuth2TokenEndpointConfigurer
+                                .accessTokenRequestConverter(new DelegatingAuthenticationConverter(
+                                                Arrays.asList(
+                                                        new OAuth2AuthorizationCodeAuthenticationConverter(),
+                                                        new OAuth2RefreshTokenAuthenticationConverter(),
+                                                        new OAuth2ClientCredentialsAuthenticationConverter(),
+                                                        new PasswordAuthenticationConverter(),
+                                                        new PhoneAuthenticationConverter()
+                                                )
+                                        )
                                 )
-                        )
+                                .accessTokenResponseHandler(authenticationSuccessHandler)
                 )
-                .accessTokenResponseHandler(authenticationSuccessHandler)), Customizer.withDefaults());
-
-        authorizationServerConfigurer.oidc(Customizer.withDefaults());
-
-        http.csrf(csrf -> csrf.ignoringRequestMatchers("oauth2/token"))
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/assets/**", "/login", "/test").permitAll()
-                                .anyRequest().authenticated()
+                .oidc(Customizer.withDefaults());
+        http
+                .exceptionHandling((exceptions) -> exceptions
+                        .defaultAuthenticationEntryPointFor(
+                                new LoginUrlAuthenticationEntryPoint("/login"),
+                                new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+                        )
                 );
-
-        http.formLogin(formLogin ->
-                formLogin.loginPage("/login")
-        );
-
-        http.with(QRCodeAuthenticationFilterDsl.qrCodeAuthenticationFilterDsl(), qrCodeAuthenticationFilterDsl -> {
-        });
 
         SecurityFilterChain securityFilterChain = http.build();
         // 添加自定义验证模式

@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDetailsImplJsonDeserializer extends JsonDeserializer<UserDetailsImpl> {
 
@@ -38,10 +39,10 @@ public class UserDetailsImplJsonDeserializer extends JsonDeserializer<UserDetail
         String username = jsonNode.get("username").asText();
         JsonNode passwordNode = jsonNode.get("password");
         String password = passwordNode.asText("");
-        boolean enabled = jsonNode.get("enabled").asBoolean();
-        boolean accountNonExpired = jsonNode.get("accountNonExpired").asBoolean();
-        boolean accountNonLocked = jsonNode.get("accountNonLocked").asBoolean();
-        boolean credentialsNonExpired = jsonNode.get("credentialsNonExpired").asBoolean();
+        boolean enabled = Optional.ofNullable(jsonNode.get("enabled")).map(JsonNode::asBoolean).orElse(true);
+        boolean accountNonExpired = Optional.ofNullable(jsonNode.get("accountNonExpired")).map(JsonNode::asBoolean).orElse(true);
+        boolean accountNonLocked = Optional.ofNullable(jsonNode.get("accountNonLocked")).map(JsonNode::asBoolean).orElse(true);
+        boolean credentialsNonExpired = Optional.ofNullable(jsonNode.get("credentialsNonExpired")).map(JsonNode::asBoolean).orElse(true);
 
         UserDetailsImpl userDetails = new UserDetailsImpl();
         userDetails.setAuthorities(authorityList);

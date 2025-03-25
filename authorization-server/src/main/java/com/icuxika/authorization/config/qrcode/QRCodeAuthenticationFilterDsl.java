@@ -9,6 +9,8 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 public class QRCodeAuthenticationFilterDsl extends AbstractHttpConfigurer<QRCodeAuthenticationFilterDsl, HttpSecurity> {
 
+    private QRCodeUserDetailsService qrCodeUserDetailsService;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
@@ -20,6 +22,11 @@ public class QRCodeAuthenticationFilterDsl extends AbstractHttpConfigurer<QRCode
         qrCodeAuthenticationFilter.setSessionStrategy(sessionAuthenticationStrategy);
         qrCodeAuthenticationFilter.setSecurityContextRepository(securityContextRepository);
         http.addFilterBefore(qrCodeAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(new QRCodeAuthenticationProvider(qrCodeUserDetailsService));
+    }
+
+    public void setQrCodeUserDetailsService(QRCodeUserDetailsService qrCodeUserDetailsService) {
+        this.qrCodeUserDetailsService = qrCodeUserDetailsService;
     }
 
     public static QRCodeAuthenticationFilterDsl qrCodeAuthenticationFilterDsl() {

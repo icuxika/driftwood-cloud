@@ -490,6 +490,10 @@
                     this.errorMsg = "用户已经注销登录"
                     new bootstrap.Toast(this.errorToast).show();
                 }
+                if (window.location.search.includes("expired")) {
+                    this.errorMsg = "用户会话已过期"
+                    new bootstrap.Toast(this.errorToast).show();
+                }
             }
             if (modelAttributes.exception && modelAttributes.exception !== "") {
                 this.errorMsg = modelAttributes.exception
