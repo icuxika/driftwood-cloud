@@ -4,8 +4,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.model.ModelOptionsUtils;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,11 +35,19 @@ public class ChatClientController {
 
     private final ChatClient chatClient;
 
-    public ChatClientController(ChatClient.Builder builder) {
+    public ChatClientController(ChatClient.Builder builder, VectorStore vectorStore) {
         this.chatClient = builder
                 .defaultSystem(DEFAULT_SYSTEM_PROMPT)
-                .defaultAdvisors(new MessageChatMemoryAdvisor(new InMemoryChatMemory()))
-                .defaultAdvisors(new SimpleLoggerAdvisor())
+                .defaultAdvisors(
+                        new MessageChatMemoryAdvisor(new InMemoryChatMemory()),
+                        new SimpleLoggerAdvisor(
+                                ModelOptionsUtils::toJsonStringPrettyPrinter,
+                                ModelOptionsUtils::toJsonStringPrettyPrinter,
+                                0
+                        ),
+                        new QuestionAnswerAdvisor(vectorStore)
+                )
+                .defaultTools("cancelFlightBooking")
                 .build();
     }
 
@@ -67,7 +78,7 @@ public class ChatClientController {
                 .<ServerSentEvent<String>>handle((s, sink) -> {
                     if ("STOP".equals(s.getResult().getMetadata().getFinishReason())) {
                         var usage = s.getMetadata().getUsage();
-                        log.info("请求数据统计->[promptTokens(输入):{}],[generationTokens(生成):{}],[totalTokens(总):{}]", usage.getPromptTokens(), usage.getGenerationTokens(), usage.getTotalTokens());
+                        log.info("请求数据统计->[promptTokens(输入):{}],[getCompletionTokens(生成):{}],[totalTokens(总):{}]", usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
                     }
                     sink.next(ServerSentEvent.<String>builder()
                             .event("message")

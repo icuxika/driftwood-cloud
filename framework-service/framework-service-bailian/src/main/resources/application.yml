@@ -19,18 +19,24 @@ spring:
       - nacos:resource-server.yml?refreshEnabled=false
 
   ai:
+    chat:
+      client:
+        observations:
+          include-input: false
     dashscope:
       api-key: ${AI_DASHSCOPE_API_KEY}
       chat:
         enabled: true
         options:
-          model: deepseek-r1
+          model: qwen-max
           top_p: 0.7
     ollama:
       base-url: http://localhost:11434
       chat:
         enabled: false
         model: qwen2.5
+      embedding:
+        enabled: false
     openai:
       api-key: ${DEEPSEEK_API_KEY}
       base-url: https://api.deepseek.com
@@ -43,4 +49,5 @@ spring:
 
 logging:
   level:
+    org.springframework.ai: DEBUG
     org.springframework.ai.chat.client.advisor: DEBUG
