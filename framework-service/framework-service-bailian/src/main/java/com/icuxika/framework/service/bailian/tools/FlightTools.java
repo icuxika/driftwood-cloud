@@ -1,26 +1,20 @@
 package com.icuxika.framework.service.bailian.tools;
 
+import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Description;
+import org.springframework.stereotype.Service;
 
-import java.util.function.Function;
-
-@Configuration
+@Service
 public class FlightTools {
 
-    @Bean("cancelFlightBooking")
-    @Description("退订航班")
-    Function<CancelFlightBookingRequest, CancelFlightBookingResponse> cancelFlightBooking() {
-        return cancelFlightBookingRequest -> {
-            System.out.println("航班序号: " + cancelFlightBookingRequest.number());
-            System.out.println("客户名称: " + cancelFlightBookingRequest.name());
-            if (cancelFlightBookingRequest.number().startsWith("no")) {
-                return new CancelFlightBookingResponse("FAILURE", "退订失败");
-            }
-            return new CancelFlightBookingResponse("SUCCESS", "退订成功");
-        };
+    @Tool(description = "退订航班")
+    CancelFlightBookingResponse cancelFlightBooking(CancelFlightBookingRequest cancelFlightBookingRequest) {
+        System.out.println("航班序号: " + cancelFlightBookingRequest.number());
+        System.out.println("客户名称: " + cancelFlightBookingRequest.name());
+        if (cancelFlightBookingRequest.number().startsWith("no")) {
+            return new CancelFlightBookingResponse("FAILURE", "退订失败");
+        }
+        return new CancelFlightBookingResponse("SUCCESS", "退订成功");
     }
 }
 

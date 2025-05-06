@@ -1,5 +1,6 @@
 package com.icuxika.framework.service.bailian.controller;
 
+import com.icuxika.framework.service.bailian.tools.FlightTools;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -35,7 +36,7 @@ public class ChatClientController {
 
     private final ChatClient chatClient;
 
-    public ChatClientController(ChatClient.Builder builder, VectorStore vectorStore) {
+    public ChatClientController(ChatClient.Builder builder, VectorStore vectorStore, FlightTools flightTools) {
         this.chatClient = builder
                 .defaultSystem(DEFAULT_SYSTEM_PROMPT)
                 .defaultAdvisors(
@@ -47,7 +48,7 @@ public class ChatClientController {
                         ),
                         new QuestionAnswerAdvisor(vectorStore)
                 )
-                .defaultTools("cancelFlightBooking")
+                .defaultTools(flightTools)
                 .build();
     }
 
