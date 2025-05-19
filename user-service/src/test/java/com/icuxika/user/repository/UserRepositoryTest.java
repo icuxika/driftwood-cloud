@@ -151,7 +151,7 @@ class UserRepositoryTest {
 
     @Test
     void generateUserData() {
-        String url = "jdbc:mysql://127.0.0.1:3306/driftwood-cloud?serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true";
+        String url = "jdbc:mysql://192.168.50.139:3306/driftwood-cloud?serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true";
         String username = "root";
         String password = "ALLURE_love921";
         Connection connection = null;
@@ -224,7 +224,7 @@ class UserRepositoryTest {
 
     @Test
     void generateUserProfileData() {
-        String url = "jdbc:mysql://127.0.0.1:3306/driftwood-cloud?serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true";
+        String url = "jdbc:mysql://192.168.50.139:3306/driftwood-cloud?serverTimezone=Asia/Shanghai&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true";
         String username = "root";
         String password = "ALLURE_love921";
         Connection connection = null;

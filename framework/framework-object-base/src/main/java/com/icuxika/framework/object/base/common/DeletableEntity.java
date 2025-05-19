@@ -3,15 +3,19 @@ package com.icuxika.framework.object.base.common;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @MappedSuperclass
 public class DeletableEntity extends BaseEntity {
 
     @TableLogic
-    @Column(name = "deleted", nullable = false, insertable = false, columnDefinition = "bigint default 0")
-    private Long deleted;
+    @Column(name = "deleted", nullable = false, insertable = false, columnDefinition = "TINYINT(1) default false")
+    private Boolean deleted;
 
     /**
      * MyBatis 方式只能借助自动填充更新`updateTime`作为删除时间，而 Hibernate 方式会同时更新`updateTime`和`deleteTime`
@@ -21,19 +25,4 @@ public class DeletableEntity extends BaseEntity {
     @Column()
     private LocalDateTime deleteTime;
 
-    public Long getDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(Long deleted) {
-        this.deleted = deleted;
-    }
-
-    public LocalDateTime getDeleteTime() {
-        return deleteTime;
-    }
-
-    public void setDeleteTime(LocalDateTime deleteTime) {
-        this.deleteTime = deleteTime;
-    }
 }

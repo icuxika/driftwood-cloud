@@ -2,9 +2,11 @@ package com.icuxika.user.runner;
 
 import com.icuxika.framework.basic.constant.SystemConstant;
 import com.icuxika.framework.object.modules.user.entity.User;
+import com.icuxika.framework.object.modules.user.entity.UserProfile;
+import com.icuxika.user.repository.UserProfileRepository;
 import com.icuxika.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,10 +17,11 @@ import java.util.Optional;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class AdminInitializeRunner implements CommandLineRunner {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final UserProfileRepository userProfileRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -52,6 +55,9 @@ public class AdminInitializeRunner implements CommandLineRunner {
             if (log.isInfoEnabled()) {
                 log.info("管理员用户[{}]创建成功，用户 id 为：{}", adminUsername, user.getId());
             }
+            UserProfile userProfile = new UserProfile();
+            userProfile.setUserId(user.getId());
+            userProfileRepository.save(userProfile);
         }
     }
 

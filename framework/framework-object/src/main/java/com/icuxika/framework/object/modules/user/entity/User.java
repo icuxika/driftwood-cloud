@@ -8,7 +8,7 @@ import org.hibernate.annotations.Where;
 
 @Table(name = "user")
 @Entity
-@Where(clause = "deleted = 0")
+@Where(clause = "deleted = false")
 public class User extends DeletableEntity {
 
     /**
