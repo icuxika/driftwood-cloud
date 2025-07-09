@@ -3,6 +3,7 @@ package com.icuxika.framework.service.bailian;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.document.Document;
+import org.springframework.ai.reader.jsoup.JsoupDocumentReader;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.annotation.Autowired;

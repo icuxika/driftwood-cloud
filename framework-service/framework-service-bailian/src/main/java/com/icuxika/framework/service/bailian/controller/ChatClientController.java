@@ -5,9 +5,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
-import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.model.ModelOptionsUtils;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.http.codec.ServerSentEvent;
@@ -20,8 +21,8 @@ import reactor.core.publisher.Flux;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY;
-import static org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor.CHAT_MEMORY_RETRIEVE_SIZE_KEY;
+import static org.springframework.ai.chat.client.advisor.vectorstore.VectorStoreChatMemoryAdvisor.TOP_K;
+
 
 /**
  * <a href="https://github.com/springaialibaba/spring-ai-alibaba-examples/blob/main/spring-ai-alibaba-chat-example/dashscope-chat/dashscope-chat-client/src/main/java/com/alibaba/cloud/ai/example/chat/dashscope/controller/DashScopeChatClientController.java">DashScopeChatClientController.java</a>
@@ -40,13 +41,12 @@ public class ChatClientController {
         this.chatClient = builder
                 .defaultSystem(DEFAULT_SYSTEM_PROMPT)
                 .defaultAdvisors(
-                        new MessageChatMemoryAdvisor(new InMemoryChatMemory()),
-                        new SimpleLoggerAdvisor(
-                                ModelOptionsUtils::toJsonStringPrettyPrinter,
-                                ModelOptionsUtils::toJsonStringPrettyPrinter,
-                                0
-                        ),
-                        new QuestionAnswerAdvisor(vectorStore)
+                        MessageChatMemoryAdvisor.builder(MessageWindowChatMemory.builder().build()).build(),
+                        QuestionAnswerAdvisor.builder(vectorStore).build(),
+                        SimpleLoggerAdvisor.builder()
+                                .requestToString(ModelOptionsUtils::toJsonStringPrettyPrinter)
+                                .responseToString(ModelOptionsUtils::toJsonStringPrettyPrinter)
+                                .build()
                 )
                 .defaultTools(flightTools)
                 .build();
@@ -65,8 +65,8 @@ public class ChatClientController {
         return chatClient.prompt().user(userText)
                 .advisors(
                         advisorSpec -> advisorSpec
-                                .param(CHAT_MEMORY_CONVERSATION_ID_KEY, id)
-                                .param(CHAT_MEMORY_RETRIEVE_SIZE_KEY, 100)
+                                .param(ChatMemory.CONVERSATION_ID, id)
+                                .param(TOP_K, 10)
                 )
                 .stream().content();
     }

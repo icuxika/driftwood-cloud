@@ -30,22 +30,6 @@ spring:
         options:
           model: qwen-max
           top_p: 0.7
-    ollama:
-      base-url: http://localhost:11434
-      chat:
-        enabled: false
-        model: qwen2.5
-      embedding:
-        enabled: false
-    openai:
-      api-key: ${DEEPSEEK_API_KEY}
-      base-url: https://api.deepseek.com
-      chat:
-        enabled: false
-        options:
-          model: deepseek-chat
-      embedding:
-        enabled: false
 
 logging:
   level:

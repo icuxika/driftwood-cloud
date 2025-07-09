@@ -13,29 +13,10 @@
 
     <properties>
         <!-- Spring AI -->
-        <spring-ai.version>1.0.0-M6</spring-ai.version>
+        <spring-ai.version>1.0.0</spring-ai.version>
         <!-- Spring AI Alibaba -->
-        <spring-ai-alibaba.version>1.0.0-M6.1</spring-ai-alibaba.version>
+        <spring-ai-alibaba.version>1.0.0.2</spring-ai-alibaba.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>spring-snapshots</id>
-            <name>Spring Snapshots</name>
-            <url>https://repo.spring.io/snapshot</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -52,28 +33,16 @@
     <dependencies>
         <dependency>
             <groupId>com.alibaba.cloud.ai</groupId>
-            <artifactId>spring-ai-alibaba-starter</artifactId>
+            <artifactId>spring-ai-alibaba-starter-dashscope</artifactId>
             <version>${spring-ai-alibaba.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <artifactId>spring-ai-advisors-vector-store</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-        </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.ai</groupId>-->
-        <!--            <artifactId>spring-ai-jsoup-document-reader</artifactId>-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>org.jsoup</groupId>
-            <artifactId>jsoup</artifactId>
-            <version>1.19.1</version>
+            <artifactId>spring-ai-jsoup-document-reader</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.ai</groupId>
@@ -93,15 +62,15 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+        </dependency>
 
-        <!--        <dependency>-->
-        <!--            <groupId>com.alibaba.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-        <!--        </dependency>-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.icuxika</groupId>
